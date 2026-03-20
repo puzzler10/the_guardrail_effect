@@ -55,7 +55,7 @@
 - [x] Minimap when zoomed in
 - [x] Performance tuning
 - [x] Layout presets (clustered, flow, ring) - Improved structured distribution
-- [x] UI/UX Polish (glassmorphism, animations, label visibility)
+- [x] UI/UX Polish (glassmorphism, animations, label visibility, particle contrast, node count)
 
 ## Phase 6: E2E & Deploy
 - [ ] Minimal Playwright tests (page loads, no errors, buttons work)
