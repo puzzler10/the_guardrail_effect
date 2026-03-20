@@ -83,7 +83,8 @@ export function tick(state: SimulationState, deltaMs: number, nowMs: number): Si
   if (spawnCount > 0) {
     const entryNodes = getEntryNodes(nodes)
     for (let i = 0; i < spawnCount; i++) {
-      if (particles.length < config.particleCount) {
+      const activeCount = particles.filter(p => !['completed', 'failed', 'exploded'].includes(p.state)).length
+      if (activeCount < config.particleCount) {
         const startNode = entryNodes[Math.floor(Math.random() * entryNodes.length)]
         if (startNode) {
           const newParticle = createParticle(nextParticleId++, startNode.id, startNode.neighbors)

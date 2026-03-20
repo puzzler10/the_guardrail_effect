@@ -16,7 +16,7 @@ Non-technical audience. Shareable URL. 2-minute interactive exploration.
 | Language | TypeScript |
 | Unit Testing | Vitest |
 | E2E Testing | Playwright |
-| UI Controls | lil-gui |
+| UI Controls | Custom HTML/CSS (Vanilla TS) |
 | Deploy | Netlify |
 
 ## Architecture
@@ -42,10 +42,12 @@ src/
 │   ├── sound-engine.ts        # Ambient drone, master controls
 │   └── events.ts              # Event-triggered sounds
 ├── ui/                        # UI chrome
-│   ├── controls.ts            # lil-gui panel setup
-│   ├── stats.ts               # Stats bar
-│   ├── event-log.ts           # Scrollable event log panel
-│   └── help.ts                # Help/about overlay
+│   ├── styles.css             # Modern glassmorphism UI styling
+│   ├── controls.ts            # Custom control panel (Model, Rate, Speed, etc.)
+│   ├── stats.ts               # Stats bar (Active, Completed, Failures, ☠)
+│   ├── event-log.ts           # Severity-filtered event history
+│   ├── help.ts                # Help/about overlay with color guide
+│   └── keyboard.ts            # Keyboard shortcut handler (Space, G, D, etc.)
 ├── config.ts                  # All tuneable constants
 └── types.ts                   # Shared TypeScript types
 tests/
@@ -57,15 +59,18 @@ tests/
 ## Design Decisions
 
 1. **Simulation/rendering split** — enables TDD, deterministic testing
-2. **Fixed timestep** — 60Hz simulation, rendering interpolates
-3. **Spatial hash** — O(1) neighbor lookups for shockwaves
-4. **Object pooling** — pre-allocated particles, no GC pauses
-5. **Graph with cycles** — supports agent retry/polling loops
-6. **Deterministic layouts** — consistent node positioning using ID-based seeding for clustered, flow, and ring presets
-7. **Spatial signatures** — layout presets provide distinct arrangements (Clustered: neighborhoods, Flow: left-to-right workflow, Ring: concentric rings by risk level)
-8. **Tool-node variety** — 35 nodes spanning all 5 risk levels (safe to critical) representing real AI agent capabilities
-9. **WebGL** — GPU-accelerated for 500+ particles at 60fps
-10. **Guardrails are perfect** — tier 4 = 0%, tier 3 ≈ 0% when on. Clear message.
+2. **Custom UI suite** — replaced lil-gui with custom HTML/CSS for better non-technical audience appeal and branding
+3. **Fixed timestep** — 60Hz simulation, rendering interpolates
+4. **Spatial hash** — O(1) neighbor lookups for shockwaves
+5. **Object pooling** — pre-allocated particles, no GC pauses
+6. **Graph with cycles** — supports agent retry/polling loops
+7. **Deterministic layouts** — consistent node positioning using ID-based seeding for clustered, flow, and ring presets
+8. **Spatial signatures** — layout presets provide distinct arrangements (Clustered: neighborhoods, Flow: left-to-right workflow, Ring: concentric rings by risk level)
+9. **Tool-node variety** — 35 nodes spanning all 5 risk levels (safe to critical) representing real AI agent capabilities
+10. **WebGL** — GPU-accelerated for 500+ particles at 60fps
+11. **Guardrails are perfect** — tier 4 = 0%, tier 3 ≈ 0% when on. Clear message.
+12. **Simulation Reliability** — verified by Monte Carlo integration tests in `tests/integration/` ensuring correct failure distributions across model presets and multipliers.
+13. **Active-Only Spawning** — simulation spawning logic correctly tracks active vs. inactive particles to ensure consistent density regardless of particle lifespan.
 
 ## Parallel Development
 

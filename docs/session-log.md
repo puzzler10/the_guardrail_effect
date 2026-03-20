@@ -218,3 +218,45 @@ Key decisions made during spec review:
 **What's next:**
 - Write 3 integration tests (failure-distribution, guardrail-effectiveness, simulation-flow).
 - Complete remaining Phase 3 and Phase 4 tasks.
+
+## 2026-03-20 — Session 10: Phase 4 UI Implementation
+
+**What was done:**
+- Implemented full UI suite in \`src/ui/\` using pure TypeScript and DOM APIs.
+- \`styles.css\`: Custom dark/light mode styles, panel animations, and component styling.
+- \`controls.ts\`: Left-side panel with 8+ simulation controls (presets, sliders, toggles).
+- \`stats.ts\`: Bottom bar with real-time counters and uptime.
+- \`event-log.ts\`: Right-side panel with severity-filtered event history.
+- \`help.ts\`: Modal overlay with color guides and keyboard shortcuts.
+- \`keyboard.ts\`: Global shortcut handler (Space, G, D, M, L, ?, R).
+- Verified implementation with \`tsc\` and \`eslint\`.
+- All UI components are ready to be wired in Phase 5.
+
+**Key decisions:**
+- Used CSS backdrop-filter for modern glassmorphism aesthetic.
+- Implemented robust UI-to-Config sync logic in \`syncControls\`.
+- Added automatic light/dark mode body class switching.
+
+**What's next:**
+- Phase 5: Integration & Polish (wiring UI to simulation and sound in `main.ts`).
+
+## 2026-03-20 — Session 11: Phase 1 Integration Tests Completion
+
+**What was done:**
+- Implemented three comprehensive integration test files in `tests/integration/`:
+  - `simulation-flow.test.ts`: Verified particle termination, step limits, and stats consistency.
+  - `failure-distribution.test.ts`: Verified tier distribution (T1 > T2 > T3 > T4), multiplier scaling, and model preset differences.
+  - `guardrail-effectiveness.test.ts`: Verified T4 elimination, T3 reduction, and guardrail event generation.
+- Identified and fixed a critical bug in `src/simulation/simulation.ts` where inactive particles were incorrectly counted against the `particleCount` limit, preventing continuous spawning.
+- Fixed type errors and lint warnings in `src/ui/controls.ts` and the new test files.
+- Verified the entire project with `npm run check` (92 tests passing, clean TSC, clean ESLint, successful build).
+
+**Key decisions:**
+- Increased simulation speed and decreased `deltaMs` in integration tests to gather sufficient statistical data quickly.
+- Implemented robust failure and guardrail event counting by tracking timestamps within the simulation loop.
+- Adjusted test tolerances (±30%) to account for the stochastic nature of the simulation without sacrificing reliability.
+
+**What's next:**
+- Phase 5: Integration & Polish (wiring everything together in `main.ts`).
+- Phase 6: E2E & Deploy.
+

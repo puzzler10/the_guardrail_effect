@@ -22,9 +22,9 @@
 - [x] `src/simulation/failure.ts` + `tests/unit/failure.test.ts`
 - [x] `src/simulation/guardrails.ts` + `tests/unit/guardrails.test.ts`
 - [x] `src/simulation/simulation.ts` + `tests/unit/simulation.test.ts`
-- [ ] `tests/integration/failure-distribution.test.ts`
-- [ ] `tests/integration/guardrail-effectiveness.test.ts`
-- [ ] `tests/integration/simulation-flow.test.ts`
+- [x] `tests/integration/failure-distribution.test.ts`
+- [x] `tests/integration/guardrail-effectiveness.test.ts`
+- [x] `tests/integration/simulation-flow.test.ts`
 
 ## Phase 2: Rendering (p5.js 2D canvas) ✅ DONE
 - [x] `src/rendering/renderer.ts` — main loop, camera (zoom/pan)
@@ -39,13 +39,13 @@
 - [ ] "Enable Sound" overlay button
 - [ ] (stretch) Ambient drone layer
 
-## Phase 4: UI & Controls
-- [ ] Custom HTML/CSS controls panel (slides from left)
-- [ ] Stats bar (always visible, bottom)
-- [ ] Event log panel (slides from right)
-- [ ] Help/about overlay
-- [ ] Keyboard shortcuts
-- [ ] Dark/light mode
+## Phase 4: UI & Controls ✅ DONE
+- [x] Custom HTML/CSS controls panel (slides from left)
+- [x] Stats bar (always visible, bottom)
+- [x] Event log panel (slides from right)
+- [x] Help/about overlay
+- [x] Keyboard shortcuts
+- [x] Dark/light mode
 - [ ] URL query params
 
 ## Phase 5: Integration & Polish
