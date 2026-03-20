@@ -4,7 +4,18 @@
       "Bash(git init:*)",
       "Bash(git add:*)",
       "Bash(git commit -m \"chore: initial project setup with spec, project docs, and task roadmap:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm create:*)",
+      "Bash(cp /Users/tomroth/Documents/encode_hackathon/tmp/vite-scaffold/tsconfig.json /Users/tomroth/Documents/encode_hackathon/tsconfig.json)",
+      "Bash(cp /Users/tomroth/Documents/encode_hackathon/tmp/vite-scaffold/package.json /Users/tomroth/Documents/encode_hackathon/package.json)",
+      "Bash(mkdir -p /Users/tomroth/Documents/encode_hackathon/public /Users/tomroth/Documents/encode_hackathon/src)",
+      "Bash(rm -rf /Users/tomroth/Documents/encode_hackathon/tmp)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(/Users/tomroth/Documents/encode_hackathon/docs/session-log.md:*)",
+      "Bash(git worktree:*)",
+      "Read(//Users/tomroth/Documents/encode_hackathon-failure/**)",
+      "Bash(npx vitest:*)"
     ]
   }
 }

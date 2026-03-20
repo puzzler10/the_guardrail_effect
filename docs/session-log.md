@@ -88,3 +88,29 @@ Key decisions made during spec review:
 **What's next:**
 - Phase 1 continues: `src/simulation/graph.ts`, `failure.ts`, `guardrails.ts`, `simulation.ts`
 - Integration tests for failure distribution and guardrail effectiveness
+
+## 2026-03-20 — Session 4: Graph Module (Phase 1)
+
+**What was done:**
+- Implemented `src/simulation/graph.ts` using TDD
+- Created `tests/unit/graph.test.ts` with 11 tests covering:
+  - Node count (30-40) for all layouts
+  - Field validation (id, name, icon, risk, x, y, neighbors)
+  - Connectivity (BFS reachability from entry nodes)
+  - Neighbor ID validation
+  - Risk level distribution (all 5 levels present)
+  - Entry/Exit node filtering (safe/low risk only)
+  - Layout coordinate differences (clustered vs flow vs ring)
+  - Helper functions (getNeighbors, getNodeById)
+- Implemented 35 tool-nodes representing AI agent capabilities (Read Docs, DB Drop, etc.)
+- Implemented deterministic layout coordinate calculation (1200x800 canvas)
+- Verified implementation with `npm run check` (all 38 tests passing, types green, lint clean, build successful)
+
+**Key decisions:**
+- Used a deterministic seed based on node ID string to ensure consistent positioning within a layout across rebuilds
+- Ensured full connectivity with a predefined adjacency list that includes cycles
+- Implemented distinct spatial signatures for each layout (Clustered: neighborhoods, Flow: left-to-right, Ring: concentric)
+
+**What's next:**
+- Phase 1 continues: `src/simulation/failure.ts`, `src/simulation/guardrails.ts`, `src/simulation/simulation.ts`
+- Phase 2: Rendering (p5.js)
