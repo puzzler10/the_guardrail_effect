@@ -114,3 +114,30 @@ Key decisions made during spec review:
 **What's next:**
 - Phase 1 continues: `src/simulation/failure.ts`, `src/simulation/guardrails.ts`, `src/simulation/simulation.ts`
 - Phase 2: Rendering (p5.js)
+
+## 2026-03-20 — Session 5: Guardrails Module (Phase 1)
+
+**What was done:**
+- Implemented `src/simulation/guardrails.ts` using TDD
+- Created `tests/unit/guardrails.test.ts` with 21 tests covering:
+  - `isProtectedNode` (high/critical = protected, safe/low/medium = not)
+  - `shouldIntercept` (disabled when guardrails off; tier 4 always intercepted; tier 3 on protected nodes only; tier 1/2 pass through)
+  - `interceptParticle` (reroutes to safe neighbor, sets state=recovering, immutable, no-op on empty neighbors)
+  - `getSafeNeighbors` (filters out high/critical neighbors)
+  - `pickGuardrailMessage` (non-empty, varied)
+  - `createGuardrailEvent` (all fields)
+- `npm run check` passes: 59 tests, tsc clean, eslint clean, build green
+- Committed: `feat: guardrails module with intercept logic` on `feat/simulation-core`
+
+**Status of Phase 1 (parallel agents):**
+- ✅ `graph.ts` + tests — done (Gemini agent)
+- ✅ `particle.ts` + tests — done (Gemini agent)
+- ✅ `guardrails.ts` + tests — done (Claude)
+- ⏳ `failure.ts` + tests — pending (Gemini agent)
+- ⏳ `simulation.ts` + tests — blocked on failure.ts
+
+**What's next:**
+- Merge `failure.ts` when Gemini agent finishes
+- Then implement `simulation.ts` (orchestrates graph, particle, failure, guardrails)
+- Then 3 integration tests (failure-distribution, guardrail-effectiveness, simulation-flow)
+- Then Phase 2: Rendering

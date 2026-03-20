@@ -19,7 +19,7 @@
 ## Phase 1: Simulation Core (TDD — pure TypeScript, no rendering)
 - [x] `src/simulation/graph.ts` + `tests/unit/graph.test.ts`
 - [x] `src/simulation/particle.ts` + `tests/unit/particle.test.ts`
-- [ ] `src/simulation/failure.ts` + `tests/unit/failure.test.ts`
+- [x] `src/simulation/failure.ts` + `tests/unit/failure.test.ts`
 - [ ] `src/simulation/guardrails.ts` + `tests/unit/guardrails.test.ts`
 - [ ] `src/simulation/simulation.ts` + `tests/unit/simulation.test.ts`
 - [ ] `tests/integration/failure-distribution.test.ts`

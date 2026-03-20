@@ -61,8 +61,11 @@ tests/
 3. **Spatial hash** — O(1) neighbor lookups for shockwaves
 4. **Object pooling** — pre-allocated particles, no GC pauses
 5. **Graph with cycles** — supports agent retry/polling loops
-6. **WebGL** — GPU-accelerated for 500+ particles at 60fps
-7. **Guardrails are perfect** — tier 4 = 0%, tier 3 ≈ 0% when on. Clear message.
+6. **Deterministic layouts** — consistent node positioning using ID-based seeding for clustered, flow, and ring presets
+7. **Spatial signatures** — layout presets provide distinct arrangements (Clustered: neighborhoods, Flow: left-to-right workflow, Ring: concentric rings by risk level)
+8. **Tool-node variety** — 35 nodes spanning all 5 risk levels (safe to critical) representing real AI agent capabilities
+9. **WebGL** — GPU-accelerated for 500+ particles at 60fps
+10. **Guardrails are perfect** — tier 4 = 0%, tier 3 ≈ 0% when on. Clear message.
 
 ## Parallel Development
 
