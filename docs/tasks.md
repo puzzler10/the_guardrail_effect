@@ -49,7 +49,7 @@
 - [ ] URL query params
 
 ## Phase 5: Integration & Polish
-- [ ] Wire everything together in main.ts
+- [x] Wire everything together in main.ts
 - [ ] First-load experience
 - [ ] Auto-zoom on catastrophic events
 - [ ] Minimap when zoomed in

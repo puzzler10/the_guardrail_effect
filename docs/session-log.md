@@ -86,7 +86,7 @@ Key decisions made during spec review:
 - Fixed type-only import issue (`import type`) for `verbatimModuleSyntax` compatibility
 
 **What's next:**
-- Phase 1 continues: `src/simulation/graph.ts`, `failure.ts`, `guardrails.ts`, \`simulation.ts\`
+- Phase 1 continues: `src/simulation/graph.ts`, `failure.ts`, `guardrails.ts`, `simulation.ts`
 - Integration tests for failure distribution and guardrail effectiveness
 
 ## 2026-03-20 — Session 4: Graph Module (Phase 1)
@@ -159,25 +159,25 @@ Key decisions made during spec review:
 - ⏳ 3 integration tests — not started
 
 **What's next:**
-- Implement \`simulation.ts\` (orchestrator that wires graph, particle, failure, guardrails)
+- Implement `simulation.ts` (orchestrator that wires graph, particle, failure, guardrails)
 - Write 3 integration tests (failure-distribution, guardrail-effectiveness, simulation-flow)
 - Then Phase 2: Rendering
 
 ## 2026-03-20 — Session 7: Phase 2 Rendering Implementation
 
 **What was done:**
-- Implemented the full rendering layer in \`src/rendering/\`.
-- \`renderer.ts\`: Main p5.js sketch with camera pan/zoom, coordinate mapping, and event-to-effect bridge.
-- \`node-renderer.ts\`: Risk-based node visualization with labels, icons, and guardrail pulse rings.
-- \`particle-renderer.ts\`: Dynamic particle drawing with health/failure states, fading trails, and glow effects.
-- \`effects.ts\`: Visual feedback system for shockwaves and camera shake on catastrophic failures.
-- \`text-overlay.ts\`: Floating status messages for failure and guardrail events.
-- Fixed lint and type errors in \`src/simulation/simulation.ts\` and the new rendering files.
-- Verified all systems with \`npm run check\`.
+- Implemented the full rendering layer in `src/rendering/`.
+- `renderer.ts`: Main p5.js sketch with camera pan/zoom, coordinate mapping, and event-to-effect bridge.
+- `node-renderer.ts`: Risk-based node visualization with labels, icons, and guardrail pulse rings.
+- `particle-renderer.ts`: Dynamic particle drawing with health/failure states, fading trails, and glow effects.
+- `effects.ts`: Visual feedback system for shockwaves and camera shake on catastrophic failures.
+- `text-overlay.ts`: Floating status messages for failure and guardrail events.
+- Fixed lint and type errors in `src/simulation/simulation.ts` and the new rendering files.
+- Verified all systems with `npm run check`.
 
 **Key decisions:**
 - Managed camera state (pan/zoom) directly in the renderer to allow for independent UI scaling later.
-- Used a \`processedEventIds\` Set to ensure events from the simulation only trigger visual effects once.
+- Used a `processedEventIds` Set to ensure events from the simulation only trigger visual effects once.
 - Implemented a rising and fading animation for floating text based on event severity.
 
 **What's next:**
@@ -222,19 +222,19 @@ Key decisions made during spec review:
 ## 2026-03-20 — Session 10: Phase 4 UI Implementation
 
 **What was done:**
-- Implemented full UI suite in \`src/ui/\` using pure TypeScript and DOM APIs.
-- \`styles.css\`: Custom dark/light mode styles, panel animations, and component styling.
-- \`controls.ts\`: Left-side panel with 8+ simulation controls (presets, sliders, toggles).
-- \`stats.ts\`: Bottom bar with real-time counters and uptime.
-- \`event-log.ts\`: Right-side panel with severity-filtered event history.
-- \`help.ts\`: Modal overlay with color guides and keyboard shortcuts.
-- \`keyboard.ts\`: Global shortcut handler (Space, G, D, M, L, ?, R).
-- Verified implementation with \`tsc\` and \`eslint\`.
+- Implemented full UI suite in `src/ui/` using pure TypeScript and DOM APIs.
+- `styles.css`: Custom dark/light mode styles, panel animations, and component styling.
+- `controls.ts`: Left-side panel with 8+ simulation controls (presets, sliders, toggles).
+- `stats.ts`: Bottom bar with real-time counters and uptime.
+- `event-log.ts`: Right-side panel with severity-filtered event history.
+- `help.ts`: Modal overlay with color guides and keyboard shortcuts.
+- `keyboard.ts`: Global shortcut handler (Space, G, D, M, L, ?, R).
+- Verified implementation with `tsc` and `eslint`.
 - All UI components are ready to be wired in Phase 5.
 
 **Key decisions:**
 - Used CSS backdrop-filter for modern glassmorphism aesthetic.
-- Implemented robust UI-to-Config sync logic in \`syncControls\`.
+- Implemented robust UI-to-Config sync logic in `syncControls`.
 - Added automatic light/dark mode body class switching.
 
 **What's next:**
@@ -260,3 +260,17 @@ Key decisions made during spec review:
 - Phase 5: Integration & Polish (wiring everything together in `main.ts`).
 - Phase 6: E2E & Deploy.
 
+## 2026-03-20 — Session 12: Phase 5 Integration `main.ts`
+
+**What was done:**
+- Wrote and executed a comprehensive implementation plan to wire everything together in `src/main.ts`.
+- Integrated `createSimulation()`, `tick()`, and `applyConfig()` from the simulation module.
+- Bootstrapped Tone.js sound engine and passed it to the `events.ts` sound triggers.
+- Initialized p5.js renderer and provided it with the reactive global simulation state.
+- Wired all DOM UI modules (`initEventLog`, `initStats`, `initHelp`, `initControls`, `initKeyboard`) to internal callbacks.
+- Implemented a decoupled `requestAnimationFrame` simulation loop capping `deltaMs` to prevent background-tab death spirals.
+- Implemented deduplication logic for passing events to the event log and sound engine using a sliding `processedEventIds` set.
+- Successfully verified full application integrity using `npm run check` (92 passing tests, clean build).
+
+**What's next:**
+- Phase 5: Integration & Polish (First-load experience, Auto-zoom, Minimap, Performance tuning).
