@@ -20,22 +20,22 @@
 - [x] `src/simulation/graph.ts` + `tests/unit/graph.test.ts`
 - [x] `src/simulation/particle.ts` + `tests/unit/particle.test.ts`
 - [x] `src/simulation/failure.ts` + `tests/unit/failure.test.ts`
-- [ ] `src/simulation/guardrails.ts` + `tests/unit/guardrails.test.ts`
-- [ ] `src/simulation/simulation.ts` + `tests/unit/simulation.test.ts`
+- [x] `src/simulation/guardrails.ts` + `tests/unit/guardrails.test.ts`
+- [x] `src/simulation/simulation.ts` + `tests/unit/simulation.test.ts`
 - [ ] `tests/integration/failure-distribution.test.ts`
 - [ ] `tests/integration/guardrail-effectiveness.test.ts`
 - [ ] `tests/integration/simulation-flow.test.ts`
 
-## Phase 2: Rendering (p5.js 2D canvas)
-- [ ] `src/rendering/renderer.ts` — main loop, camera (zoom/pan)
-- [ ] `src/rendering/node-renderer.ts` — node circles, pulses, icons
-- [ ] `src/rendering/particle-renderer.ts` — particles + trails + glow (shadowBlur)
-- [ ] `src/rendering/effects.ts` — shockwaves, explosions, screen shake
-- [ ] `src/rendering/text-overlay.ts` — floating failure text
+## Phase 2: Rendering (p5.js 2D canvas) ✅ DONE
+- [x] `src/rendering/renderer.ts` — main loop, camera (zoom/pan)
+- [x] `src/rendering/node-renderer.ts` — node circles, pulses, icons
+- [x] `src/rendering/particle-renderer.ts` — particles + trails + glow (shadowBlur)
+- [x] `src/rendering/effects.ts` — shockwaves, explosions, screen shake
+- [x] `src/rendering/text-overlay.ts` — floating failure text
 
 ## Phase 3: Sound (reduced scope)
-- [ ] `src/sound/sound-engine.ts` — Tone.js setup, master controls
-- [ ] `src/sound/events.ts` — event sounds by severity (7 sounds)
+- [x] `src/sound/sound-engine.ts` — Tone.js setup, master controls
+- [x] `src/sound/events.ts` — event sounds by severity (5 sounds: 4 tiers + guardrail)
 - [ ] "Enable Sound" overlay button
 - [ ] (stretch) Ambient drone layer
 

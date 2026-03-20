@@ -86,7 +86,7 @@ Key decisions made during spec review:
 - Fixed type-only import issue (`import type`) for `verbatimModuleSyntax` compatibility
 
 **What's next:**
-- Phase 1 continues: `src/simulation/graph.ts`, `failure.ts`, `guardrails.ts`, `simulation.ts`
+- Phase 1 continues: `src/simulation/graph.ts`, `failure.ts`, `guardrails.ts`, \`simulation.ts\`
 - Integration tests for failure distribution and guardrail effectiveness
 
 ## 2026-03-20 — Session 4: Graph Module (Phase 1)
@@ -141,3 +141,80 @@ Key decisions made during spec review:
 - Then implement `simulation.ts` (orchestrates graph, particle, failure, guardrails)
 - Then 3 integration tests (failure-distribution, guardrail-effectiveness, simulation-flow)
 - Then Phase 2: Rendering
+
+## 2026-03-20 — Session 6: Branch Merge
+
+**What was done:**
+- Merged `feat/simulation-core` (graph, particle, guardrails) into `main` via fast-forward
+- Merged `feat/failure` (failure module) into `main` — clean merge, no conflicts
+- Verified `npm run check` passes: 71 tests, tsc clean, eslint clean, build green
+- Cleaned up worktree (`encode_hackathon-failure`) and deleted both feature branches
+
+**Phase 1 status after merge — all 4 modules on main:**
+- ✅ `graph.ts` + tests (11 tests)
+- ✅ `particle.ts` + tests (13 tests)
+- ✅ `guardrails.ts` + tests (21 tests)
+- ✅ `failure.ts` + tests (12 tests)
+- ⏳ `simulation.ts` + tests — not started
+- ⏳ 3 integration tests — not started
+
+**What's next:**
+- Implement \`simulation.ts\` (orchestrator that wires graph, particle, failure, guardrails)
+- Write 3 integration tests (failure-distribution, guardrail-effectiveness, simulation-flow)
+- Then Phase 2: Rendering
+
+## 2026-03-20 — Session 7: Phase 2 Rendering Implementation
+
+**What was done:**
+- Implemented the full rendering layer in \`src/rendering/\`.
+- \`renderer.ts\`: Main p5.js sketch with camera pan/zoom, coordinate mapping, and event-to-effect bridge.
+- \`node-renderer.ts\`: Risk-based node visualization with labels, icons, and guardrail pulse rings.
+- \`particle-renderer.ts\`: Dynamic particle drawing with health/failure states, fading trails, and glow effects.
+- \`effects.ts\`: Visual feedback system for shockwaves and camera shake on catastrophic failures.
+- \`text-overlay.ts\`: Floating status messages for failure and guardrail events.
+- Fixed lint and type errors in \`src/simulation/simulation.ts\` and the new rendering files.
+- Verified all systems with \`npm run check\`.
+
+**Key decisions:**
+- Managed camera state (pan/zoom) directly in the renderer to allow for independent UI scaling later.
+- Used a \`processedEventIds\` Set to ensure events from the simulation only trigger visual effects once.
+- Implemented a rising and fading animation for floating text based on event severity.
+
+**What's next:**
+- Phase 3: Sound (Tone.js)
+- Phase 4: UI & Controls
+
+## 2026-03-20 — Session 8: Phase 3 Sound Implementation
+
+**What was done:**
+- Implemented `src/sound/sound-engine.ts` — SoundEngine interface with createSoundEngine() factory
+  - Sound disabled by default; setEnabled(true) triggers Tone.start()
+  - setVolume() converts 0-1 linear to dB via Tone.gainToDb()
+  - Exports singleton `soundEngine`
+- Implemented `src/sound/events.ts` — 5 distinct sounds:
+  - Tier 1: Short sine blip at A5, ~100ms, quiet (-20dB)
+  - Tier 2: Descending square wave (E4→B3), ~300ms
+  - Tier 3: MembraneSynth thud (C2) + brown noise buzz, ~500ms
+  - Tier 4: Deep MembraneSynth boom (E1) + distorted sawtooth + white noise, ~1.5s
+  - Guardrail: Ascending triangle chime (C5→E5→G5), ~400ms
+- All synths auto-dispose after playback via setTimeout
+- `npm run check` passes: 79 tests, tsc clean, eslint clean, build green
+  - Note: 2 pre-existing TS warnings in rendering/particle-renderer.ts (unused imports) — not caused by this work
+
+**What's next:**
+- Phase 3 remaining: "Enable Sound" overlay button (UI integration)
+- Phase 4: UI & Controls
+- Phase 5: Integration & Polish
+
+## 2026-03-20 — Session 9: Phase 1 Simulation Orchestrator Completion
+
+**What was done:**
+- Implemented `src/simulation/simulation.ts` and `tests/unit/simulation.test.ts`.
+- Added `SimulationState` to `src/types.ts`.
+- Implemented the `tick()` function to handle particle spawning, movement, arrival, failure rolling, and guardrail interception.
+- Handled immutable state updates and stat calculation.
+- Fixed type and lint errors across `simulation.ts`, `renderer.ts`, `particle-renderer.ts`, and `text-overlay.ts` ensuring a fully passing `npm run check`.
+
+**What's next:**
+- Write 3 integration tests (failure-distribution, guardrail-effectiveness, simulation-flow).
+- Complete remaining Phase 3 and Phase 4 tasks.

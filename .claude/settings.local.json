@@ -15,7 +15,9 @@
       "Bash(/Users/tomroth/Documents/encode_hackathon/docs/session-log.md:*)",
       "Bash(git worktree:*)",
       "Read(//Users/tomroth/Documents/encode_hackathon-failure/**)",
-      "Bash(npx vitest:*)"
+      "Bash(npx vitest:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)"
     ]
   }
 }
