@@ -1,8 +1,10 @@
-# Project: Particle Swarm City
+# Project: Particle Swarm City (Agent Swarm)
 
 ## Overview
 
 Interactive p5.js visualization showing AI agents as particles flowing through a network of tool-nodes. Demonstrates the need for agent guardrails by visualizing cascading failures — and how guardrails prevent them.
+
+Non-technical audience. Shareable URL. 2-minute interactive exploration.
 
 ## Tech Stack
 
@@ -12,58 +14,76 @@ Interactive p5.js visualization showing AI agents as particles flowing through a
 | Sound | Tone.js |
 | Build | Vite |
 | Language | TypeScript |
-| Testing | Vitest |
+| Unit Testing | Vitest |
+| E2E Testing | Playwright |
 | UI Controls | lil-gui |
-| Deploy | Vercel / GitHub Pages |
+| Deploy | Netlify |
 
 ## Architecture
 
-Simulation logic is fully decoupled from rendering. All simulation code is pure TypeScript with no p5.js dependency, making it unit-testable.
+Simulation logic is fully decoupled from rendering — pure TypeScript, no p5.js dependency, fully unit-testable.
 
 ```
 src/
 ├── main.ts                    # Entry point, p5.js sketch
 ├── simulation/                # Pure logic, no rendering deps
-│   ├── graph.ts               # Workflow graph: nodes, edges, layout
-│   ├── particle.ts            # Particle agent: state, movement
-│   ├── failure.ts             # Failure probabilities, events
-│   ├── guardrails.ts          # Force fields, deflection
-│   └── simulation.ts          # Orchestrator: spawning, stats
+│   ├── graph.ts               # Workflow graph: nodes, edges, loops, layout
+│   ├── particle.ts            # Particle agent: state machine, movement
+│   ├── failure.ts             # Failure probabilities, events, tiers
+│   ├── guardrails.ts          # Force fields, deflection, blocking
+│   └── simulation.ts          # Orchestrator: spawning, stats, pause/reset
 ├── rendering/                 # p5.js rendering
-│   ├── renderer.ts            # Main render loop, camera
-│   ├── node-renderer.ts       # Node visuals
+│   ├── renderer.ts            # Main render loop, camera (zoom/pan)
+│   ├── node-renderer.ts       # Node visuals, icons, pulses
 │   ├── particle-renderer.ts   # Particle + trail visuals
 │   ├── effects.ts             # Shockwaves, explosions, shake
 │   └── text-overlay.ts        # Floating failure text
 ├── sound/                     # Tone.js audio
-│   ├── sound-engine.ts        # Ambient layer, setup
+│   ├── sound-engine.ts        # Ambient drone, master controls
 │   └── events.ts              # Event-triggered sounds
-├── ui/                        # Controls and stats
-│   ├── controls.ts            # lil-gui setup
+├── ui/                        # UI chrome
+│   ├── controls.ts            # lil-gui panel setup
 │   ├── stats.ts               # Stats bar
-│   └── help.ts                # Help overlay
+│   ├── event-log.ts           # Scrollable event log panel
+│   └── help.ts                # Help/about overlay
 ├── config.ts                  # All tuneable constants
-└── types.ts                   # Shared types
+└── types.ts                   # Shared TypeScript types
+tests/
+├── unit/                      # Vitest — pure simulation logic
+├── integration/               # Vitest — Monte Carlo distribution tests
+└── e2e/                       # Playwright — browser automation tests
 ```
 
 ## Design Decisions
 
 1. **Simulation/rendering split** — enables TDD, deterministic testing
 2. **Fixed timestep** — 60Hz simulation, rendering interpolates
-3. **Spatial hash** — O(1) neighbor lookups for shockwave propagation
+3. **Spatial hash** — O(1) neighbor lookups for shockwaves
 4. **Object pooling** — pre-allocated particles, no GC pauses
-5. **WebGL** — GPU-accelerated for 500+ particles at 60fps
+5. **Graph with cycles** — supports agent retry/polling loops
+6. **WebGL** — GPU-accelerated for 500+ particles at 60fps
+7. **Guardrails are perfect** — tier 4 = 0%, tier 3 ≈ 0% when on. Clear message.
+
+## Parallel Development
+
+Modules have clean interfaces. Can be developed in separate git worktrees:
+
+| Branch | Module | Can merge after |
+|--------|--------|----------------|
+| `feat/types-config` | `types.ts`, `config.ts` | — (merge first) |
+| `feat/simulation-core` | `simulation/*` | types-config |
+| `feat/rendering` | `rendering/*` | types-config |
+| `feat/sound` | `sound/*` | types-config |
+| `feat/ui` | `ui/*`, `index.html` | types-config |
+| `feat/e2e-tests` | `tests/e2e/*` | all above |
 
 ## Key Specs
 
 - See `docs/spec.md` for full specification
-- Target: 60fps with 500 particles on M1 MacBook
-- 30-40 graph nodes across 5 risk categories
+- 30-40 graph nodes, 5 risk categories, all with nonzero failure rates
 - 4-tier failure system with escalating visual/audio severity
-- Guardrail toggle with force field visualization
-
-## Known Limitations
-
-- No mobile optimization (laptop target only)
-- Sound starts muted (browser autoplay policy)
-- Failure rates are illustrative, not benchmarked
+- 5 model presets (Frontier → Small/Local)
+- Guardrail toggle: perfect blocking of catastrophic events
+- Dark/light mode, event log, help overlay
+- Sound design with Tone.js (muted by default)
+- Deploy to Netlify with shareable URL
