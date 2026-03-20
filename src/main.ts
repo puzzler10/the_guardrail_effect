@@ -8,6 +8,8 @@ import { initEventLog, addFailureEvent, addGuardrailEvent, toggleEventLog } from
 import { initStats, updateStats } from './ui/stats'
 import { initHelp, toggleHelp } from './ui/help'
 import { initKeyboard } from './ui/keyboard'
+import { initSoundOverlay } from './ui/sound-overlay'
+import { initOnboarding } from './ui/onboarding'
 import type { SimulationState } from './types'
 
 // 1. State Initialization & Global Variables
@@ -77,6 +79,7 @@ function init() {
       soundEngine.setEnabled(newSoundEnabled)
       // If we mute, maybe we set volume to 0 in UI? It's better to just use the engine toggle.
       // The UI volume slider might still show > 0, but it won't play if disabled.
+      syncControls(currentState.config)
     },
     onLogToggle: () => {
       toggleEventLog()
@@ -97,11 +100,24 @@ function init() {
 
   // Initial Sync
   syncControls(currentState.config)
-  if (currentState.config.soundEnabled) {
-    soundEngine.setEnabled(true)
-  }
   soundEngine.setVolume(currentState.config.soundVolume)
   document.body.classList.toggle('light-mode', !currentState.config.darkMode)
+
+  // Sound Overlay (required for Web Audio unlock)
+  initSoundOverlay({
+    onEnable: () => {
+      currentState = applyConfig(currentState, { soundEnabled: true })
+      soundEngine.setEnabled(true)
+      syncControls(currentState.config)
+    },
+    onSkip: () => {
+      currentState = applyConfig(currentState, { soundEnabled: false })
+      soundEngine.setEnabled(false)
+      syncControls(currentState.config)
+    }
+  })
+
+  initOnboarding()
 
   // 3. Rendering Initialization
   const { sketch } = createSketch(() => currentState)

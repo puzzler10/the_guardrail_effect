@@ -33,11 +33,11 @@
 - [x] `src/rendering/effects.ts` — shockwaves, explosions, screen shake
 - [x] `src/rendering/text-overlay.ts` — floating failure text
 
-## Phase 3: Sound (reduced scope)
+## Phase 3: Sound (reduced scope) ✅ DONE
 - [x] `src/sound/sound-engine.ts` — Tone.js setup, master controls
 - [x] `src/sound/events.ts` — event sounds by severity (5 sounds: 4 tiers + guardrail)
-- [ ] "Enable Sound" overlay button
-- [ ] (stretch) Ambient drone layer
+- [x] "Enable Sound" overlay button
+- [x] (stretch) Ambient drone layer
 
 ## Phase 4: UI & Controls ✅ DONE
 - [x] Custom HTML/CSS controls panel (slides from left)
@@ -48,13 +48,13 @@
 - [x] Dark/light mode
 - [ ] URL query params
 
-## Phase 5: Integration & Polish
+## Phase 5: Integration & Polish ✅ DONE
 - [x] Wire everything together in main.ts
-- [ ] First-load experience
-- [ ] Auto-zoom on catastrophic events
-- [ ] Minimap when zoomed in
-- [ ] Performance tuning
-- [ ] Layout presets (clustered, flow, ring)
+- [x] First-load experience
+- [x] Auto-zoom on catastrophic events
+- [x] Minimap when zoomed in
+- [x] Performance tuning
+- [x] Layout presets (clustered, flow, ring)
 
 ## Phase 6: E2E & Deploy
 - [ ] Minimal Playwright tests (page loads, no errors, buttons work)

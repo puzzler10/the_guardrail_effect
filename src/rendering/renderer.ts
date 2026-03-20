@@ -17,24 +17,32 @@ import {
   pruneFloatingTexts, 
   createFloatingText 
 } from './text-overlay'
+import { drawMinimap } from './minimap'
 
 export interface Renderer {
   sketch: (p: p5) => void
-  setCameraTarget: (x: number, y: number) => void
+  setCameraTarget: (x: number, y: number, zoom?: number) => void
 }
 
 export function createSketch(getState: () => SimulationState): Renderer {
-  let camX = 600 // Default center (based on graph.ts CANVAS_WIDTH/2)
-  let camY = 400 // Default center (based on graph.ts CANVAS_HEIGHT/2)
-  let zoom = 1.0
+  let camX = 600 // Current camera X
+  let camY = 400 // Current camera Y
+  let zoom = 1.0 // Current zoom
+  
+  let targetCamX = 600
+  let targetCamY = 400
+  let targetZoom = 1.0
+  let focusEndTime = 0
   
   let effects: Effect[] = []
   let floatingTexts: FloatingText[] = []
   const processedEventIds = new Set<string>()
 
-  const setCameraTarget = (x: number, y: number) => {
-    camX = x
-    camY = y
+  const setCameraTarget = (x: number, y: number, z?: number) => {
+    targetCamX = x
+    targetCamY = y
+    if (z !== undefined) targetZoom = z
+    else focusEndTime = 0 // Manual move resets focus
   }
 
   const sketch = (p: p5) => {
@@ -45,14 +53,11 @@ export function createSketch(getState: () => SimulationState): Renderer {
 
     p.draw = () => {
       const state = getState()
-      const nowMs = p.millis() // Using p5 millis which starts at 0 on setup
-      // We might need to sync nowMs with simulation's idea of time, 
-      // but p5's millis is usually fine for visual effects.
+      const nowMs = p.millis()
       
       const colors = state.config.darkMode ? COLORS_DARK : COLORS_LIGHT
 
       // 1. Process new events from state
-      // We'll use a combination of nodeId and timestamp as a key
       state.recentFailures.forEach(event => {
         const id = `fail-${event.nodeId}-${event.timestamp}`
         if (!processedEventIds.has(id)) {
@@ -62,7 +67,12 @@ export function createSketch(getState: () => SimulationState): Renderer {
           if (event.tier === 4) {
             effects.push(createShockwave(event.x, event.y, nowMs))
             effects.push(createScreenShake(nowMs))
-            setCameraTarget(event.x, event.y)
+            
+            // Auto-zoom on catastrophe
+            targetCamX = event.x
+            targetCamY = event.y
+            targetZoom = 2.0
+            focusEndTime = nowMs + 2500 // Hold for 2.5s
           }
         }
       })
@@ -75,9 +85,22 @@ export function createSketch(getState: () => SimulationState): Renderer {
         }
       })
 
-      // 2. Prune old effects/texts (limit processedEventIds too to prevent leak)
+      // Auto-return to default view
+      if (focusEndTime > 0 && nowMs > focusEndTime) {
+        targetCamX = 600
+        targetCamY = 400
+        targetZoom = 1.0
+        focusEndTime = 0
+      }
+
+      // Smooth camera LERP
+      const lerpFactor = 0.1
+      camX = p.lerp(camX, targetCamX, lerpFactor)
+      camY = p.lerp(camY, targetCamY, lerpFactor)
+      zoom = p.lerp(zoom, targetZoom, lerpFactor)
+
+      // 2. Prune old effects/texts
       if (processedEventIds.size > 200) {
-        // Clear old IDs - this is a bit crude but works for last 50 events
         processedEventIds.clear()
       }
       
@@ -102,6 +125,9 @@ export function createSketch(getState: () => SimulationState): Renderer {
       drawFloatingTexts(p, floatingTexts, nowMs, colors)
 
       p.pop()
+
+      // 5. Draw UI Elements (Unscaled)
+      drawMinimap(p, state.nodes, state.config, camX, camY, zoom)
     }
 
     p.windowResized = () => {
@@ -109,17 +135,21 @@ export function createSketch(getState: () => SimulationState): Renderer {
     }
 
     p.mouseDragged = () => {
-      // Don't pan if clicking UI? usually lil-gui handles its own events
-      camX -= (p.mouseX - p.pmouseX) / zoom
-      camY -= (p.mouseY - p.pmouseY) / zoom
+      // Manual pan overrides auto-zoom
+      focusEndTime = 0
+      targetCamX -= (p.mouseX - p.pmouseX) / zoom
+      targetCamY -= (p.mouseY - p.pmouseY) / zoom
+      // We set camX/camY immediately to feel responsive during drag
+      camX = targetCamX
+      camY = targetCamY
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     p.mouseWheel = (event?: any) => {
       if (!event) return
-      // Zoom toward mouse position would be nice, but simple center zoom for now
+      focusEndTime = 0
       const delta = event.delta > 0 ? 0.9 : 1.1
-      zoom = p.constrain(zoom * delta, UI.zoomMin, UI.zoomMax)
+      targetZoom = p.constrain(targetZoom * delta, UI.zoomMin, UI.zoomMax)
       return false // Prevent page scroll
     }
   }

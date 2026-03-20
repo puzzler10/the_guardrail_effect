@@ -10,14 +10,50 @@ export interface SoundEngine {
 export function createSoundEngine(): SoundEngine {
   let enabled = false
   let ready = false
+  let drone: Tone.Noise | null = null
+  let droneFilter: Tone.AutoFilter | null = null
+
+  const initDrone = () => {
+    // Create a low-frequency ambient "data center" drone
+    drone = new Tone.Noise('brown').start()
+    
+    // AutoFilter creates a breathing, shifting movement
+    droneFilter = new Tone.AutoFilter({
+      frequency: 0.1,
+      baseFrequency: 50,
+      octaves: 2,
+      type: 'sine',
+      filter: {
+        type: 'lowpass',
+        Q: 1,
+        rolloff: -12
+      }
+    }).connect(Tone.getDestination()).start()
+
+    drone.connect(droneFilter)
+    drone.volume.value = -35 // Very subtle
+  }
 
   return {
     setEnabled(value: boolean) {
       enabled = value
-      if (value && !ready) {
-        Tone.start().then(() => {
-          ready = true
-        })
+      if (value) {
+        if (!ready) {
+          Tone.start().then(() => {
+            ready = true
+            initDrone()
+          })
+        } else if (drone && droneFilter) {
+          drone.mute = false
+          droneFilter.start()
+        }
+      } else {
+        if (drone) {
+          drone.mute = true
+        }
+        if (droneFilter) {
+          droneFilter.stop()
+        }
       }
     },
 

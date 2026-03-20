@@ -37,7 +37,8 @@ src/
 │   ├── node-renderer.ts       # Node visuals, icons, pulses
 │   ├── particle-renderer.ts   # Particle + trail visuals
 │   ├── effects.ts             # Shockwaves, explosions, shake
-│   └── text-overlay.ts        # Floating failure text
+│   ├── text-overlay.ts        # Floating failure text
+│   └── minimap.ts             # Bottom-right navigation overview
 ├── sound/                     # Tone.js audio
 │   ├── sound-engine.ts        # Ambient drone, master controls
 │   └── events.ts              # Event-triggered sounds
@@ -47,7 +48,9 @@ src/
 │   ├── stats.ts               # Stats bar (Active, Completed, Failures, ☠)
 │   ├── event-log.ts           # Severity-filtered event history
 │   ├── help.ts                # Help/about overlay with color guide
-│   └── keyboard.ts            # Keyboard shortcut handler (Space, G, D, etc.)
+│   ├── onboarding.ts          # First-load welcome experience
+│   ├── keyboard.ts            # Keyboard shortcut handler (Space, G, D, etc.)
+│   └── sound-overlay.ts       # Sound enablement modal
 ├── config.ts                  # All tuneable constants
 └── types.ts                   # Shared TypeScript types
 tests/

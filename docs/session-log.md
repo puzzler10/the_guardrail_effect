@@ -274,3 +274,45 @@ Key decisions made during spec review:
 
 **What's next:**
 - Phase 5: Integration & Polish (First-load experience, Auto-zoom, Minimap, Performance tuning).
+
+## 2026-03-20 — Session 13: Phase 3 Sound Completion
+
+**What was done:**
+- Implemented "Enable Sound" overlay in `src/ui/sound-overlay.ts`.
+- Created glassmorphic UI for initial load to satisfy Web Audio unlock requirement.
+- Added ambient drone in `src/sound/sound-engine.ts` using `Tone.Noise('brown')` + `Tone.AutoFilter`.
+- Wired overlay into `src/main.ts` with proper sound activation logic.
+- Updated `src/ui/styles.css` with sound-specific visual components.
+- Verified all systems with `npm run check`.
+
+**Key decisions:**
+- Used a brown noise source with low-pass filtering for a subtle "data center" atmosphere.
+- Integrated sound enablement with `SimulationConfig` to ensure UI controls stay synced with the engine state.
+- Utilized CSS backdrop-filter to maintain the project's modern aesthetic for the sound overlay.
+
+## 2026-03-20 — Session 14: Phase 5 Polish & Navigation
+
+**What was done:**
+- Implemented **Auto-zoom on Catastrophe** in `src/rendering/renderer.ts`.
+  - Added smooth LERP for camera pan (`camX`, `camY`) and `zoom`.
+  - Tier 4 catastrophic events now trigger a 2.5s focus lock on the node where the event occurred.
+  - Camera automatically returns to the default view after the focus duration.
+- Implemented **Minimap Navigation** in `src/rendering/minimap.ts`.
+  - Added a glassmorphic minimap overlay in the bottom-right of the canvas.
+  - Visualizes all graph nodes as risk-colored dots.
+  - Draws a real-time "viewport rectangle" showing the current camera view area.
+- Implemented **First-load Onboarding** in `src/ui/onboarding.ts`.
+  - Created a glassmorphic welcome overlay using `localStorage` for persistence.
+  - Includes a color-coded risk guide and explanation of the "G" key for Guardrail toggling.
+  - Integrated into `src/main.ts` to appear after the sound initialization.
+- Verified all changes with `npm run check` (92 tests passed, clean build).
+
+**Key decisions:**
+- Used a LERP factor of 0.1 for smooth camera transitions that feel responsive but not jarring.
+- Positioned the minimap above the stats bar to avoid UI overlap.
+- Reused existing CSS variables and glassmorphic styles for a consistent "high-tech" look.
+
+**What's next:**
+- Phase 6: E2E & Deploy.
+- Minimal Playwright tests for final verification.
+- Deploy to Netlify.
