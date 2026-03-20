@@ -61,9 +61,14 @@ export function drawNodes(p: p5, nodes: GraphNode[], colors: typeof COLORS_DARK,
 }
 
 export function drawEdges(p: p5, nodes: GraphNode[], colors: typeof COLORS_DARK): void {
+  const nodeMap = new Map<string, GraphNode>()
+  for (const node of nodes) {
+    nodeMap.set(node.id, node)
+  }
+
   for (const from of nodes) {
     for (const neighborId of from.neighbors) {
-      const to = nodes.find(n => n.id === neighborId)
+      const to = nodeMap.get(neighborId)
       if (to) {
         drawEdge(p, from, to, colors)
       }

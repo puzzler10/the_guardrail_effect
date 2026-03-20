@@ -5,7 +5,7 @@ import type {
   Particle,
 } from '../types'
 import { DEFAULT_CONFIG, PARTICLE } from '../config'
-import { buildGraph, getEntryNodes, getNodeById } from './graph'
+import { buildGraph, getEntryNodes } from './graph'
 import {
   createParticle,
   advanceParticle,
@@ -71,6 +71,8 @@ export function tick(state: SimulationState, deltaMs: number, nowMs: number): Si
   let { particles, nextParticleId, lastSpawnMs } = state
   const { config, nodes, recentFailures, recentGuardrails } = state
 
+  const nodeMap = new Map(nodes.map(n => [n.id, n]))
+
   // 1. Spawn new particles
   const spawnInterval = 1000 / PARTICLE.spawnRate
   if (lastSpawnMs === 0) {
@@ -82,13 +84,20 @@ export function tick(state: SimulationState, deltaMs: number, nowMs: number): Si
 
   if (spawnCount > 0) {
     const entryNodes = getEntryNodes(nodes)
+    let activeCount = 0
+    for (const p of particles) {
+      if (!['completed', 'failed', 'exploded'].includes(p.state)) {
+        activeCount++
+      }
+    }
+
     for (let i = 0; i < spawnCount; i++) {
-      const activeCount = particles.filter(p => !['completed', 'failed', 'exploded'].includes(p.state)).length
       if (activeCount < config.particleCount) {
         const startNode = entryNodes[Math.floor(Math.random() * entryNodes.length)]
         if (startNode) {
           const newParticle = createParticle(nextParticleId++, startNode.id, startNode.neighbors)
           particles = [...particles, newParticle]
+          activeCount++
         }
       }
     }
@@ -108,8 +117,8 @@ export function tick(state: SimulationState, deltaMs: number, nowMs: number): Si
     }
 
     // Update trail based on current position
-    const currentNode = getNodeById(nodes, p.currentNodeId)
-    const targetNode = getNodeById(nodes, p.targetNodeId)
+    const currentNode = nodeMap.get(p.currentNodeId)
+    const targetNode = nodeMap.get(p.targetNodeId)
     
     if (currentNode && targetNode) {
       const x = currentNode.x + (targetNode.x - currentNode.x) * p.progress
@@ -122,7 +131,7 @@ export function tick(state: SimulationState, deltaMs: number, nowMs: number): Si
 
     // Handle arrival
     if (p.progress >= 1.0) {
-      const nodeReached = getNodeById(nodes, p.targetNodeId)
+      const nodeReached = nodeMap.get(p.targetNodeId)
       if (!nodeReached) {
         // Should not happen, but for safety
         p = { ...p, state: 'completed' }
@@ -161,22 +170,37 @@ export function tick(state: SimulationState, deltaMs: number, nowMs: number): Si
     nextParticles.push(p)
   }
 
-  // 3. Prune particles
-  // Keep active particles AND last 200 non-active ones for rendering trails
-  const activeParticles = nextParticles.filter(p => !['completed', 'failed', 'exploded'].includes(p.state))
-  const inactiveParticles = nextParticles.filter(p => ['completed', 'failed', 'exploded'].includes(p.state))
-  
-  const prunedInactive = inactiveParticles.slice(-200)
-  const finalParticles = [...activeParticles, ...prunedInactive]
+  // 3. Prune and Update stats in one pass
+  const finalParticles: Particle[] = []
+  const activeParticles: Particle[] = []
+  const inactiveParticles: Particle[] = []
 
-  // 4. Update stats
-  const refinedStats: SimulationStats = {
-    active: nextParticles.filter(p => p.state === 'active' || p.state === 'spawning' || p.state === 'recovering').length,
-    completed: nextParticles.filter(p => p.state === 'completed').length,
-    selfCorrected: nextParticles.filter(p => p.failureTier === 1).length,
-    failed: nextParticles.filter(p => p.failureTier === 2 || p.failureTier === 3).length,
-    catastrophic: nextParticles.filter(p => p.failureTier === 4).length,
+  const stats: SimulationStats = {
+    active: 0,
+    completed: 0,
+    selfCorrected: 0,
+    failed: 0,
+    catastrophic: 0,
   }
+
+  for (const p of nextParticles) {
+    const isInactive = ['completed', 'failed', 'exploded'].includes(p.state)
+    if (isInactive) {
+      inactiveParticles.push(p)
+    } else {
+      activeParticles.push(p)
+      stats.active++
+    }
+
+    // Tally stats
+    if (p.state === 'completed') stats.completed++
+    if (p.failureTier === 1) stats.selfCorrected++
+    else if (p.failureTier === 2 || p.failureTier === 3) stats.failed++
+    else if (p.failureTier === 4) stats.catastrophic++
+  }
+
+  const prunedInactive = inactiveParticles.slice(-200)
+  finalParticles.push(...activeParticles, ...prunedInactive)
 
   // 5. Cap recent events
   const finalFailures = nextFailures.slice(-50)
@@ -185,7 +209,7 @@ export function tick(state: SimulationState, deltaMs: number, nowMs: number): Si
   return {
     ...state,
     particles: finalParticles,
-    stats: refinedStats,
+    stats,
     recentFailures: finalFailures,
     recentGuardrails: finalGuardrails,
     nextParticleId,

@@ -2,9 +2,9 @@ import p5 from 'p5'
 import type { Particle, GraphNode } from '../types'
 import { COLORS_DARK } from '../config'
 
-export function getParticlePosition(particle: Particle, nodes: GraphNode[]): { x: number; y: number } | null {
-  const from = nodes.find(n => n.id === particle.currentNodeId)
-  const to = nodes.find(n => n.id === particle.targetNodeId)
+export function getParticlePosition(particle: Particle, nodeMap: Map<string, GraphNode>): { x: number; y: number } | null {
+  const from = nodeMap.get(particle.currentNodeId)
+  const to = nodeMap.get(particle.targetNodeId)
   if (!from || !to) return null
 
   return {
@@ -14,39 +14,34 @@ export function getParticlePosition(particle: Particle, nodes: GraphNode[]): { x
 }
 
 export function drawParticles(p: p5, particles: Particle[], nodes: GraphNode[], colors: typeof COLORS_DARK): void {
+  const nodeMap = new Map<string, GraphNode>()
+  for (const node of nodes) {
+    nodeMap.set(node.id, node)
+  }
+
+  const particleColor = p.color(colors.particleHealthy)
+  const trailColor = p.color(colors.particleHealthy)
+  trailColor.setAlpha(255 * 0.15) // Fixed alpha for batching
+
   for (const particle of particles) {
-    const pos = getParticlePosition(particle, nodes)
+    const pos = getParticlePosition(particle, nodeMap)
     if (!pos) continue
 
-    // 1. Draw Trail
+    // 1. Draw Trail (Batched)
     if (particle.trail.length > 1) {
       p.noFill()
-      
-      // Use drawing context for glow if possible
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const ctx = (p as any).drawingContext
-      if (ctx) {
-        ctx.shadowBlur = 4
-        ctx.shadowColor = colors.particleHealthy
-      }
-
+      p.stroke(trailColor)
       p.strokeWeight(2)
-      for (let i = 0; i < particle.trail.length - 1; i++) {
-        const alpha = (i / particle.trail.length) * 0.3 * 255
-        const c = p.color(colors.particleHealthy)
-        c.setAlpha(alpha)
-        p.stroke(c)
-        p.line(particle.trail[i].x, particle.trail[i].y, particle.trail[i + 1].x, particle.trail[i + 1].y)
+      p.beginShape()
+      for (const pt of particle.trail) {
+        p.vertex(pt.x, pt.y)
       }
-
-      if (ctx) {
-        ctx.shadowBlur = 0
-      }
+      p.endShape()
     }
 
     // 2. Draw Particle Dot
     let dotSize = 6
-    let dotColor = p.color(colors.particleHealthy)
+    let dotColor = particleColor
     
     if (particle.state === 'recovering') {
       dotColor = p.color(colors.tier1)
