@@ -39,3 +39,27 @@ Key decisions made during spec review:
 - **Sound scope reduced** — event sounds only, ambient drone is stretch goal
 - **Playwright E2E minimal** — page loads + no crashes, lean on unit tests
 - **Guardrails are perfect** — tier 4 = 0%, tier 3 ≈ 0% when on
+
+## 2026-03-20 — Session 2: Phase 0 Execution
+
+**What was done:**
+- Executed plans/phase-0-setup.md step by step
+- Manually scaffolded Vite vanilla-ts project (create-vite cancels on non-empty dirs)
+- Installed all deps: p5, tone, vitest, @playwright/test, eslint, @eslint/js, typescript-eslint, @types/p5
+- Configured package.json scripts including `npm run check`
+- Created vite.config.ts (uses `vitest/config` for `test` property — not plain `vite`)
+- Created src/types.ts: RiskLevel, FailureTier, ParticleState, GraphNode, Particle, SimulationStats, ModelPreset, FailureEvent, GuardrailEvent, SimulationConfig
+- Created src/config.ts: 5 model presets, default config, failure messages (60+ across 4 tiers), guardrail messages, dark/light color palettes, UI limits
+- Created index.html, src/main.ts (spinning cyan circle proof-of-life), netlify.toml, .gitignore
+- Created tests/unit/config.test.ts (14 tests — all passing)
+- `npm run check` exits 0: 14 tests pass, tsc clean, eslint clean, build succeeds
+
+**What's next:**
+- Phase 1: Simulation core (TDD — pure TypeScript, no rendering)
+  - graph.ts, particle.ts, failure.ts, guardrails.ts, simulation.ts
+  - Unit tests first, then implementation
+
+**Notes:**
+- The `check` script includes eslint — requires eslint.config.js with typescript-eslint
+- ESLint v10 uses flat config format (eslint.config.js, not .eslintrc)
+- vitest `test` config must use `vitest/config` not plain `vite`

@@ -1,21 +1,20 @@
 # Tasks
 
-## Phase 0: Project Setup ← START HERE
+## Phase 0: Project Setup ✅ DONE
 - [x] Write spec (docs/spec.md)
 - [x] Write project docs (docs/project.md)
 - [x] Init git repo
-- [ ] Initialize Vite + TypeScript project (`npm create vite@latest . -- --template vanilla-ts`)
-- [ ] Install deps: `npm install p5 tone`
-- [ ] Install dev deps: `npm install -D vitest playwright @playwright/test eslint @types/p5 typescript`
-- [ ] Configure `npm run check` script in package.json: `vitest run && tsc --noEmit && vite build`
-- [ ] Configure vitest in vite.config.ts
-- [ ] Create `src/types.ts` — all shared interfaces (see spec section 6.1, 11.3)
-- [ ] Create `src/config.ts` — all tuneable constants, model presets, color palettes (see spec sections 2.4, 3.2, 3.3)
-- [ ] Create basic `index.html` with full-screen canvas container
-- [ ] Create `src/main.ts` — minimal p5.js 2D canvas sketch that renders a colored background
-- [ ] Verify `npm run dev` shows the canvas, `npm run check` passes
-- [ ] Create `netlify.toml`
-- [ ] Commit: "chore: project setup with Vite, p5.js, TypeScript, Vitest"
+- [x] Initialize Vite + TypeScript project
+- [x] Install deps: p5, tone, vitest, playwright, eslint, @types/p5, typescript, @eslint/js, typescript-eslint
+- [x] Configure `npm run check`: `vitest run && tsc --noEmit && eslint src/ tests/ && vite build`
+- [x] Configure vitest in vite.config.ts (uses `vitest/config`)
+- [x] Create `src/types.ts` — all shared interfaces
+- [x] Create `src/config.ts` — model presets, failure messages, guardrail messages, color palettes, UI limits
+- [x] Create `index.html` with full-screen canvas container
+- [x] Create `src/main.ts` — proof-of-life p5.js sketch
+- [x] Create `netlify.toml`
+- [x] `npm run check` passes (14 tests, types, eslint, build all green)
+- [x] Committed: "chore: project setup with Vite, p5.js, TypeScript, Vitest"
 
 ## Phase 1: Simulation Core (TDD — pure TypeScript, no rendering)
 - [ ] `src/simulation/graph.ts` + `tests/unit/graph.test.ts`
