@@ -27,6 +27,15 @@
 - Gemini co-building same project, need clean module boundaries
 
 **What's next:**
-- Review spec, get approval
-- Initialize project (Vite + p5.js + TypeScript)
-- Begin Phase 2: simulation core with TDD
+- Phase 0: Initialize project — follow `plans/phase-0-setup.md` step by step
+- Then Phase 1: simulation core with TDD
+
+## Implementation decisions (2026-03-20)
+
+Key decisions made during spec review:
+- **p5.js 2D canvas mode** (not WebGL) — text just works, perf fine for 500 particles, upgrade only if needed
+- **Custom HTML/CSS controls** instead of lil-gui — better for non-technical audience
+- **Preset layouts** (clustered, flow, ring) instead of force-directed — simpler, no d3-force dep
+- **Sound scope reduced** — event sounds only, ambient drone is stretch goal
+- **Playwright E2E minimal** — page loads + no crashes, lean on unit tests
+- **Guardrails are perfect** — tier 4 = 0%, tier 3 ≈ 0% when on

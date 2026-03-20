@@ -43,12 +43,14 @@ The "city" is a graph of **tool-nodes** connected by **paths**. Each node repres
 #### Graph Structure
 
 - ~30-40 nodes total
-- Safe nodes clustered in center ("safe district"), dangerous nodes on periphery ("outskirts")
 - **Multiple paths** — particles take different routes through the graph (representing different workflows)
 - **Loops exist** — e.g., Read DB → Process → Check → Read DB (retry loop), or Slack → Read response → Slack (conversation loop)
 - Some loops are healthy (retry/polling), some are pathological (infinite loops = failure mode)
-- Force-directed layout for organic positioning
-- **Layout is interactive** — user can drag nodes to rearrange (nice-to-have)
+- **Preset layouts** (user can switch via dropdown):
+  - **Clustered** — nodes grouped by risk category in neighborhoods (default)
+  - **Flow** — left-to-right workflow arrangement (entry left, exit right, danger toward bottom)
+  - **Ring** — concentric rings by risk level (safe center, danger outside)
+- Layouts are just different coordinate assignments — same graph, different positions
 
 ### 2.2 Particle Agents
 
@@ -398,13 +400,13 @@ Modal overlay triggered by [?] button. Contains:
 
 | Layer | Choice | Why |
 |-------|--------|-----|
-| **Rendering** | p5.js in WebGL mode | GPU-accelerated, handles 1000+ particles, huge example ecosystem to borrow from |
-| **Sound** | Tone.js | Programmatic synthesis, no audio files, cross-browser |
+| **Rendering** | p5.js in **2D canvas mode** | Text/shapes just work, 500 particles fine on modern hardware, simplest to build. Glow faked via `drawingContext.shadowBlur`. Upgrade to WebGL only if perf demands it. |
+| **Sound** | Tone.js | Programmatic synthesis, no audio files, cross-browser. **Scope reduced:** event sounds only, ambient drone is stretch goal. |
 | **Build** | Vite | Fast dev, instant HMR, trivial config |
 | **Language** | TypeScript | Type safety critical for multi-agent development |
 | **Unit Testing** | Vitest | Native Vite integration, fast, TS-native |
-| **E2E Testing** | Playwright | Automated visual/interaction testing in headless browser |
-| **UI Controls** | lil-gui | Lightweight, zero-config, creative coding standard |
+| **E2E Testing** | Playwright | **Minimal scope:** page loads, no console errors, buttons don't crash. Canvas pixel testing is too fragile. |
+| **UI Controls** | Custom HTML/CSS | Styled sliders, toggles, dropdowns. More polished for non-technical audience than lil-gui. |
 | **Deployment** | Netlify | User has existing account |
 | **Package manager** | npm | Standard |
 

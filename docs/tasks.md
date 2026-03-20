@@ -1,73 +1,63 @@
 # Tasks
 
-## Phase 0: Project Setup
+## Phase 0: Project Setup ← START HERE
 - [x] Write spec (docs/spec.md)
 - [x] Write project docs (docs/project.md)
 - [x] Init git repo
-- [ ] Initialize Vite + TypeScript project (`npm create vite`)
-- [ ] Install deps: p5.js, tone, lil-gui
-- [ ] Install dev deps: vitest, playwright, eslint, @types/*
-- [ ] Configure `npm run check` script (vitest + tsc + eslint + vite build)
-- [ ] Configure Playwright for headless E2E
-- [ ] Create `types.ts` and `config.ts` (shared foundation)
-- [ ] Verify blank p5.js WebGL canvas renders
-- [ ] Set up netlify.toml
+- [ ] Initialize Vite + TypeScript project (`npm create vite@latest . -- --template vanilla-ts`)
+- [ ] Install deps: `npm install p5 tone`
+- [ ] Install dev deps: `npm install -D vitest playwright @playwright/test eslint @types/p5 typescript`
+- [ ] Configure `npm run check` script in package.json: `vitest run && tsc --noEmit && vite build`
+- [ ] Configure vitest in vite.config.ts
+- [ ] Create `src/types.ts` — all shared interfaces (see spec section 6.1, 11.3)
+- [ ] Create `src/config.ts` — all tuneable constants, model presets, color palettes (see spec sections 2.4, 3.2, 3.3)
+- [ ] Create basic `index.html` with full-screen canvas container
+- [ ] Create `src/main.ts` — minimal p5.js 2D canvas sketch that renders a colored background
+- [ ] Verify `npm run dev` shows the canvas, `npm run check` passes
+- [ ] Create `netlify.toml`
+- [ ] Commit: "chore: project setup with Vite, p5.js, TypeScript, Vitest"
 
 ## Phase 1: Simulation Core (TDD — pure TypeScript, no rendering)
-- [ ] `graph.ts` — nodes (30-40), edges, loops, risk categories, force-directed layout
-- [ ] `graph.test.ts` — reachability, cycles, layout non-overlap, edge weight normalization
-- [ ] `particle.ts` — state machine (spawn → active → complete/fail/explode), movement, trail buffer, recycling
-- [ ] `particle.test.ts` — state transitions, interpolation, trail buffer, max step limit
-- [ ] `failure.ts` — probability engine, 4 tiers, 5 model presets, multiplier, event catalog
-- [ ] `failure.test.ts` — rates match config, multiplier scaling, tier distribution, text selection
-- [ ] `guardrails.ts` — force fields, deflection, perfect tier 4 blocking, 95% tier 3 reduction
-- [ ] `guardrails.test.ts` — deflection rates, routing, tier 1-2 unaffected
-- [ ] `simulation.ts` — orchestrator: spawn rate, update loop, stats aggregation, pause/reset
-- [ ] `simulation.test.ts` — spawn rate, active count, stats, pause/reset
-- [ ] Integration: `failure-distribution.test.ts` — 10k particles, verify rates ±5%
-- [ ] Integration: `guardrail-effectiveness.test.ts` — 10k particles, tier 4 = 0 with guardrails
-- [ ] Integration: `simulation-flow.test.ts` — no stuck particles, all complete or fail
+- [ ] `src/simulation/graph.ts` + `tests/unit/graph.test.ts`
+- [ ] `src/simulation/particle.ts` + `tests/unit/particle.test.ts`
+- [ ] `src/simulation/failure.ts` + `tests/unit/failure.test.ts`
+- [ ] `src/simulation/guardrails.ts` + `tests/unit/guardrails.test.ts`
+- [ ] `src/simulation/simulation.ts` + `tests/unit/simulation.test.ts`
+- [ ] `tests/integration/failure-distribution.test.ts`
+- [ ] `tests/integration/guardrail-effectiveness.test.ts`
+- [ ] `tests/integration/simulation-flow.test.ts`
 
-## Phase 2: Rendering (p5.js WebGL)
-- [ ] `renderer.ts` — main render loop, camera (zoom/pan), WebGL setup
-- [ ] `node-renderer.ts` — node circles, pulses, halos, icons, risk-colored
-- [ ] `particle-renderer.ts` — particles with trails, glow, color per state
-- [ ] `effects.ts` — shockwaves (expanding ring), explosions (sub-particles), screen shake
-- [ ] `text-overlay.ts` — floating text: spawn at position, drift up, fade, tier-colored, tier 4 larger/longer
+## Phase 2: Rendering (p5.js 2D canvas)
+- [ ] `src/rendering/renderer.ts` — main loop, camera (zoom/pan)
+- [ ] `src/rendering/node-renderer.ts` — node circles, pulses, icons
+- [ ] `src/rendering/particle-renderer.ts` — particles + trails + glow (shadowBlur)
+- [ ] `src/rendering/effects.ts` — shockwaves, explosions, screen shake
+- [ ] `src/rendering/text-overlay.ts` — floating failure text
 
-## Phase 3: Sound
-- [ ] `sound-engine.ts` — Tone.js ambient drone, dissonance scaling with failure rate
-- [ ] `events.ts` — event sounds: pluck (spawn), chime (complete), click (t1), buzz (t2), bass+alarm (t3), boom+siren (t4), shield ping (guardrail)
+## Phase 3: Sound (reduced scope)
+- [ ] `src/sound/sound-engine.ts` — Tone.js setup, master controls
+- [ ] `src/sound/events.ts` — event sounds by severity (7 sounds)
 - [ ] "Enable Sound" overlay button
+- [ ] (stretch) Ambient drone layer
 
 ## Phase 4: UI & Controls
-- [ ] `controls.ts` — lil-gui: model preset, failure rate, speed, particle count, guardrails, dark/light, volume
-- [ ] `stats.ts` — live stats bar: active, completed, self-corrected, failures, catastrophic (☠), uptime
-- [ ] `event-log.ts` — scrollable event feed (slides from right), filterable by severity
-- [ ] `help.ts` — help/about overlay: what is this, node legend, color legend, keyboard shortcuts, credits
-- [ ] Keyboard shortcuts: Space (pause), G (guardrails), R (reset), M (mute), ? (help), L (log), D (dark/light)
-- [ ] Dark/light mode toggle with separate color palettes
-- [ ] URL query params for shareable presets
+- [ ] Custom HTML/CSS controls panel (slides from left)
+- [ ] Stats bar (always visible, bottom)
+- [ ] Event log panel (slides from right)
+- [ ] Help/about overlay
+- [ ] Keyboard shortcuts
+- [ ] Dark/light mode
+- [ ] URL query params
 
 ## Phase 5: Integration & Polish
-- [ ] `main.ts` — wire simulation + rendering + sound + UI together
-- [ ] First-load experience: loading indicator → particles flowing → "Enable Sound" overlay
+- [ ] Wire everything together in main.ts
+- [ ] First-load experience
 - [ ] Auto-zoom on catastrophic events
 - [ ] Minimap when zoomed in
-- [ ] Performance tuning: 60fps at 500 particles
-- [ ] Visual polish: bloom, trail fade, guardrail ambient glow
+- [ ] Performance tuning
+- [ ] Layout presets (clustered, flow, ring)
 
-## Phase 6: E2E Tests & Deploy
-- [ ] `canvas-renders.spec.ts` — page loads, canvas exists, not blank
-- [ ] `controls-work.spec.ts` — panel opens, sliders work, guardrails toggle
-- [ ] `zoom-pan.spec.ts` — zoom/pan work, minimap appears
-- [ ] `guardrails-toggle.spec.ts` — catastrophic count stops with guardrails on
-- [ ] `sound-toggle.spec.ts` — sound button works, no crashes
+## Phase 6: E2E & Deploy
+- [ ] Minimal Playwright tests (page loads, no errors, buttons work)
 - [ ] Deploy to Netlify
-- [ ] Test on different laptop screen sizes
-
-## Future / Nice-to-have
-- [ ] Tree visualization mode
-- [ ] Layout toggle (different force-directed algorithms)
-- [ ] Mobile touch support
-- [ ] Portfolio mode (custom domain, polished branding)
+- [ ] Test on different screens
