@@ -17,8 +17,8 @@
 - [x] Committed: "chore: project setup with Vite, p5.js, TypeScript, Vitest"
 
 ## Phase 1: Simulation Core (TDD — pure TypeScript, no rendering)
-- [ ] `src/simulation/graph.ts` + `tests/unit/graph.test.ts`
-- [ ] `src/simulation/particle.ts` + `tests/unit/particle.test.ts`
+- [x] `src/simulation/graph.ts` + `tests/unit/graph.test.ts`
+- [x] `src/simulation/particle.ts` + `tests/unit/particle.test.ts`
 - [ ] `src/simulation/failure.ts` + `tests/unit/failure.test.ts`
 - [ ] `src/simulation/guardrails.ts` + `tests/unit/guardrails.test.ts`
 - [ ] `src/simulation/simulation.ts` + `tests/unit/simulation.test.ts`

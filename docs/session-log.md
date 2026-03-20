@@ -63,3 +63,28 @@ Key decisions made during spec review:
 - The `check` script includes eslint — requires eslint.config.js with typescript-eslint
 - ESLint v10 uses flat config format (eslint.config.js, not .eslintrc)
 - vitest `test` config must use `vitest/config` not plain `vite`
+- vitest run does not support glob patterns easily on some OS, using `vitest run` instead of `vitest run tests/unit/*.test.ts`
+
+## 2026-03-20 — Session 3: Particle Module (Phase 1)
+
+**What was done:**
+- Implemented `src/simulation/particle.ts` using TDD
+- Created `tests/unit/particle.test.ts` with 13 tests covering:
+  - Initial state creation
+  - Random step range validation
+  - Progress advancement with deltaMs/speed
+  - Progress clamping
+  - Node arrival logic (state transitions, step increments)
+  - Failure tier application (recovering vs failed vs exploded)
+  - Trail management (append and trim)
+  - Immutability across all operations
+- Verified implementation with `npm run check` (all tests passing, types green, lint clean, build successful)
+
+**Key decisions:**
+- Adhered strictly to pure TypeScript requirement in `src/simulation/`
+- Ensured all functions are immutable, returning new objects
+- Fixed type-only import issue (`import type`) for `verbatimModuleSyntax` compatibility
+
+**What's next:**
+- Phase 1 continues: `src/simulation/graph.ts`, `failure.ts`, `guardrails.ts`, `simulation.ts`
+- Integration tests for failure distribution and guardrail effectiveness
