@@ -81,3 +81,15 @@ export interface SimulationConfig {
   soundVolume: number        // 0 – 1
   layout: LayoutPreset
 }
+
+// Global simulation state
+export interface SimulationState {
+  nodes: GraphNode[]
+  particles: Particle[]
+  stats: SimulationStats
+  config: SimulationConfig
+  recentFailures: FailureEvent[]
+  recentGuardrails: GuardrailEvent[]
+  nextParticleId: number
+  lastSpawnMs: number
+}
