@@ -1,7 +1,7 @@
 import p5 from 'p5'
 import type { SimulationState } from '../types'
 import { COLORS_DARK, COLORS_LIGHT, UI } from '../config'
-import { drawNodes, drawEdges } from './node-renderer'
+import { drawNodes } from './node-renderer'
 import { drawParticles } from './particle-renderer'
 import type { Effect } from './effects'
 import { 
@@ -118,8 +118,7 @@ export function createSketch(getState: () => SimulationState): Renderer {
       p.translate(-camX, -camY)
 
       // 4. Draw Layers
-      drawEdges(p, state.nodes, colors)
-      drawNodes(p, state.nodes, colors, state.config.guardrailsEnabled)
+      drawNodes(p, state.nodes, colors, state.config.guardrailsEnabled, zoom)
       drawParticles(p, state.particles, state.nodes, colors)
       drawEffects(p, effects, nowMs)
       drawFloatingTexts(p, floatingTexts, nowMs, colors)

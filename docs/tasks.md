@@ -54,7 +54,8 @@
 - [x] Auto-zoom on catastrophic events
 - [x] Minimap when zoomed in
 - [x] Performance tuning
-- [x] Layout presets (clustered, flow, ring)
+- [x] Layout presets (clustered, flow, ring) - Improved structured distribution
+- [x] UI/UX Polish (glassmorphism, animations, label visibility)
 
 ## Phase 6: E2E & Deploy
 - [ ] Minimal Playwright tests (page loads, no errors, buttons work)

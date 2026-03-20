@@ -47,7 +47,7 @@ export const PARTICLE = {
   maxSteps: 20,
   spawnRate: 15,          // particles per second
   trailLength: 30,        // frames to keep in trail
-  baseSpeed: 0.008,       // progress units per ms at 1x speed
+  baseSpeed: 0.005,       // progress units per ms at 1x speed
 }
 
 // ─── Failure messages by tier ─────────────────────────────────────────────────
@@ -146,15 +146,15 @@ export const GUARDRAIL_MESSAGES: string[] = [
 // ─── Color palettes ───────────────────────────────────────────────────────────
 
 export const COLORS_DARK = {
-  background: '#0a0a0f',
-  particleHealthy: '#00f0ff',
-  particleTrail: 'rgba(0, 240, 255, 0.3)',
+  background: '#05050a',
+  particleHealthy: '#00ffff',
+  particleTrail: 'rgba(0, 255, 255, 0.4)',
   nodeByRisk: {
-    safe: '#4488cc',
-    low: '#44bb88',
-    medium: '#ffaa22',
-    high: '#ff5533',
-    critical: '#ff0066',
+    safe: '#3b6e9e',
+    low: '#368c6a',
+    medium: '#c2811b',
+    high: '#c24127',
+    critical: '#c2004d',
   } as Record<RiskLevel, string>,
   tier1: '#ffee00',
   tier2: '#ff8800',
@@ -166,15 +166,15 @@ export const COLORS_DARK = {
 }
 
 export const COLORS_LIGHT = {
-  background: '#f5f5f0',
-  particleHealthy: '#2266cc',
-  particleTrail: 'rgba(34, 102, 204, 0.3)',
+  background: '#fcfcf7',
+  particleHealthy: '#0055ff',
+  particleTrail: 'rgba(0, 85, 255, 0.4)',
   nodeByRisk: {
-    safe: '#5577aa',
-    low: '#337755',
-    medium: '#cc7700',
-    high: '#cc3300',
-    critical: '#cc2244',
+    safe: '#6086b3',
+    low: '#4d8a6b',
+    medium: '#b3771b',
+    high: '#b3471b',
+    critical: '#b31b3b',
   } as Record<RiskLevel, string>,
   tier1: '#aa9900',
   tier2: '#cc5500',

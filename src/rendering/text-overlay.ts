@@ -73,11 +73,28 @@ export function drawFloatingTexts(p: p5, texts: FloatingText[], nowMs: number, c
 
     const c = typeof textColor === 'string' ? p.color(textColor) : textColor
     c.setAlpha(alpha)
-    p.fill(c)
+    
+    // Draw dark halo/shadow for readability
     p.noStroke()
+    const haloColor = p.color(0, alpha * 0.8)
+    p.fill(haloColor)
     p.textSize(textSize)
     p.textStyle(textStyle)
-    p.text(displayText, text.x, text.y - 20 - yOffset)
+    
+    // Subtle shiver for tier 4
+    let xOffset = 0
+    let yJitter = 0
+    if (text.tier === 4) {
+      xOffset = (Math.random() - 0.5) * 4
+      yJitter = (Math.random() - 0.5) * 4
+    }
+
+    // Offset shadow
+    p.text(displayText, text.x + 1 + xOffset, text.y - 19 - yOffset + yJitter)
+    p.text(displayText, text.x - 1 + xOffset, text.y - 21 - yOffset + yJitter)
+    
+    p.fill(c)
+    p.text(displayText, text.x + xOffset, text.y - 20 - yOffset + yJitter)
   }
   p.pop()
 }

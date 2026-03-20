@@ -10,7 +10,13 @@ const NODE_SIZES: Record<RiskLevel, number> = {
   critical: 36,
 }
 
-export function drawNode(p: p5, node: GraphNode, colors: typeof COLORS_DARK, guardrailsEnabled: boolean = false): void {
+export function drawNode(
+  p: p5, 
+  node: GraphNode, 
+  colors: typeof COLORS_DARK, 
+  guardrailsEnabled: boolean = false,
+  zoom: number = 1.0
+): void {
   const size = NODE_SIZES[node.risk] || 16
   const nodeColor = colors.nodeByRisk[node.risk] || '#ffffff'
 
@@ -38,11 +44,19 @@ export function drawNode(p: p5, node: GraphNode, colors: typeof COLORS_DARK, gua
   p.fill(0, 150) // dark overlay for icon visibility on bright colors
   p.text(node.icon, node.x, node.y)
 
-  // Label
-  p.textAlign(p.CENTER, p.TOP)
-  p.textSize(10)
-  p.fill(200)
-  p.text(node.name, node.x, node.y + size / 2 + 4)
+  // Label - only show if zoomed in or if it's a high-risk node
+  const showLabel = zoom > 1.2 || node.risk === 'high' || node.risk === 'critical'
+  if (showLabel) {
+    p.textAlign(p.CENTER, p.TOP)
+    p.textSize(10)
+
+    // Shadow for readability
+    p.fill(0, 180)
+    p.text(node.name, node.x + 1, node.y + size / 2 + 5)
+
+    p.fill(200)
+    p.text(node.name, node.x, node.y + size / 2 + 4)
+  }
 }
 
 export function drawEdge(p: p5, from: GraphNode, to: GraphNode, colors: typeof COLORS_DARK): void {
@@ -54,9 +68,15 @@ export function drawEdge(p: p5, from: GraphNode, to: GraphNode, colors: typeof C
   p.line(from.x, from.y, to.x, to.y)
 }
 
-export function drawNodes(p: p5, nodes: GraphNode[], colors: typeof COLORS_DARK, guardrailsEnabled: boolean = false): void {
+export function drawNodes(
+  p: p5, 
+  nodes: GraphNode[], 
+  colors: typeof COLORS_DARK, 
+  guardrailsEnabled: boolean = false,
+  zoom: number = 1.0
+): void {
   for (const node of nodes) {
-    drawNode(p, node, colors, guardrailsEnabled)
+    drawNode(p, node, colors, guardrailsEnabled, zoom)
   }
 }
 

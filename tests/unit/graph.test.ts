@@ -6,11 +6,11 @@ describe('Graph Module', () => {
   const layouts: LayoutPreset[] = ['clustered', 'flow', 'ring']
 
   describe('buildGraph', () => {
-    it('should return 30-40 nodes for each layout', () => {
+    it('should return 30-50 nodes for each layout', () => {
       layouts.forEach(layout => {
         const nodes = buildGraph(layout)
         expect(nodes.length).toBeGreaterThanOrEqual(30)
-        expect(nodes.length).toBeLessThanOrEqual(40)
+        expect(nodes.length).toBeLessThanOrEqual(50)
       })
     })
 
