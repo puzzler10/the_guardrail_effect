@@ -1,6 +1,6 @@
 import p5 from 'p5'
 import type { SimulationState } from '../types'
-import { COLORS_DARK, COLORS_LIGHT, UI } from '../config'
+import { COLORS_DARK, COLORS_LIGHT, UI, CANVAS_WIDTH, CANVAS_HEIGHT } from '../config'
 
 const DEFAULT_ZOOM = 0.6
 import { drawNodes, drawEdges } from './node-renderer'
@@ -30,12 +30,12 @@ export interface Renderer {
 }
 
 export function createSketch(getState: () => SimulationState): Renderer {
-  let camX = 1000 // Current camera X
-  let camY = 700 // Current camera Y
+  let camX = CANVAS_WIDTH / 2 // Current camera X
+  let camY = CANVAS_HEIGHT / 2 // Current camera Y
   let zoom = DEFAULT_ZOOM // Current zoom
 
-  let targetCamX = 1000
-  let targetCamY = 700
+  let targetCamX = CANVAS_WIDTH / 2
+  let targetCamY = CANVAS_HEIGHT / 2
   let targetZoom = DEFAULT_ZOOM
   let focusEndTime = 0
   
@@ -102,8 +102,8 @@ export function createSketch(getState: () => SimulationState): Renderer {
 
       // Auto-return to default view
       if (focusEndTime > 0 && nowMs > focusEndTime) {
-        targetCamX = 1000
-        targetCamY = 700
+        targetCamX = CANVAS_WIDTH / 2
+        targetCamY = CANVAS_HEIGHT / 2
         targetZoom = DEFAULT_ZOOM
         focusEndTime = 0
       }

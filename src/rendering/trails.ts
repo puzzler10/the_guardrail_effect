@@ -1,5 +1,5 @@
 import p5 from 'p5'
-import { TRAIL, COLORS_DARK } from '../config'
+import { TRAIL, COLORS_DARK, CANVAS_WIDTH, CANVAS_HEIGHT } from '../config'
 import type { Particle, GraphNode } from '../types'
 import { getParticlePosition } from '../simulation/particle'
 
@@ -7,8 +7,7 @@ let trailBuffer: p5.Graphics
 
 export function initTrails(p: p5) {
   // Create a buffer that matches the simulation world size
-  // Phase 7 expanded world to 2000x1400
-  trailBuffer = p.createGraphics(2000, 1400)
+  trailBuffer = p.createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT)
   trailBuffer.pixelDensity(1)
   trailBuffer.clear()
 }

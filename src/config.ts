@@ -35,6 +35,9 @@ export const SCENARIOS = [
 
 // ─── Default simulation config ────────────────────────────────────────────────
 
+export const CANVAS_WIDTH = 3000
+export const CANVAS_HEIGHT = 2000
+
 export const DEFAULT_CONFIG: SimulationConfig = {
   modelPreset: 'frontier',
   scenario: 'global',

@@ -1,6 +1,6 @@
 import p5 from 'p5'
 import type { GraphNode, SimulationConfig } from '../types'
-import { COLORS_DARK, COLORS_LIGHT } from '../config'
+import { COLORS_DARK, COLORS_LIGHT, CANVAS_WIDTH, CANVAS_HEIGHT } from '../config'
 
 export function drawMinimap(
   p: p5,
@@ -17,8 +17,8 @@ export function drawMinimap(
   const y = p.height - height - margin - 40 // Above stats bar
 
   const colors = config.darkMode ? COLORS_DARK : COLORS_LIGHT
-  const virtualWidth = 1200
-  const virtualHeight = 800
+  const virtualWidth = CANVAS_WIDTH
+  const virtualHeight = CANVAS_HEIGHT
 
   // 1. Draw Background
   p.push()
