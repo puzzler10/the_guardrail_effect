@@ -252,3 +252,14 @@ The simulation is now noticeably smoother, especially during transitions. The "A
 
 ## Results
 The UI is now much more informative and accessible. Users can easily understand what each node represents via the enhanced tooltips, and they have direct access to a stylish, scrolling terminal that logs all simulation events in real-time.
+
+## 2026-03-21 — Agent merge: simulation-core
+
+## Tasks completed
+- Fix layout coordinate generation in simulation to respect CANVAS_WIDTH and CANVAS_HEIGHT bounds
+- Resolve minimap clipping and out-of-bounds nodes issue for 'ring' and 'clustered' layouts
+- Prevent particle trails from being clipped outside simulation area limits
+
+## Technical details
+- Decreased layout radius and distance parameters in \`src/simulation/graph.ts\`
+- Tested with local dev server and standard suite (\`npm run check\`)
