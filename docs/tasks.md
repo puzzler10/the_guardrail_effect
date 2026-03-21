@@ -2,6 +2,15 @@
 
 *(Note: Tasks from Phase 0 to Phase 9 have been completed and archived. See [docs/archive/completed-tasks.md](archive/completed-tasks.md) for history.)*
 
+## Phase 11: UI/UX Polish ✅ DONE
+- [x] Fix GitLab "foxes" icon bug → 🦊
+- [x] Reduce failure rate to 1/100th (failureMultiplier default 0.01)
+- [x] Slow particles (baseSpeed 0.0012, spawnRate 8)
+- [x] Stop node breathing animation (breatheAmount 0)
+- [x] Default zoom 0.6 to show full network, zoomMin 0.3
+- [x] Reduce camera shake (±2px), edge opacity (0.15), trail intensity
+- [x] Particles fade at node boundaries (no clipping through icons)
+
 ## Phase 10: Performance & Dynamic Theming (Cha Cha Cha) ✅ DONE
 - [x] **Performance Optimization**: Remove O(N) allocations and object creation in render loop; fix background noise lag spikes.
 - [x] **Palette Configuration**: Define `theme.storm` and `theme.rainbow` in `src/config.ts`.

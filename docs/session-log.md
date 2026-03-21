@@ -1,5 +1,25 @@
 # Session Log
 
+## 2026-03-21 — Session 22: UI/UX Polish
+
+**What was done:**
+- Fixed GitLab icon bug (`' foxes'` → `'🦊'`) in `src/config.ts`
+- Reduced failure rate to 1/100th: `failureMultiplier` default 1→0.01, `UI.failureMultiplierMin` 0.1→0.01
+- Slowed particles: `baseSpeed` 0.0035→0.0012, `spawnRate` 15→8
+- Stopped node breathing animation: `NODE_GLOW.breatheAmount` 0.08→0
+- Default zoom changed to 0.6 (zoomed out to show full network), `zoomMin` 0.5→0.3
+- Reduced camera shake intensity: ±8px→±2px
+- Reduced edge line opacity: 0.3→0.15 alpha
+- Softened trails: `alphaMax` 180→100, `widthMax` 3.5→2.5, faster fade (fill alpha 15→25)
+- Particles fade in/out at node boundaries (no longer clip through icons): exported `NODE_SIZES` from config.ts, modified `getParticlePosition` in `particle.ts` to return alpha based on proximity to node edge, applied alpha in particle-renderer and trails
+- All changes implemented in git worktree, merged to main. 111 tests passing.
+
+**What's next:**
+- Visual review of the calmer, zoomed-out experience
+- Further UX refinements as needed
+
+
+
 ## 2026-03-21 — Session 21: E2E Tests & Visual Upgrades
 
 **What was done:**
@@ -129,3 +149,15 @@
 
 ## Results
 The simulation now runs "smooth as butter" with a stabilized frame rate even at high particle counts. The visual theme provides visceral feedback on the security state of the system.
+
+## 2026-03-21 — Agent merge: atmospheric-storm
+
+## Tasks completed
+- **Atmospheric "Rolling Clouds"**: Replaced the simple panning noise with a multi-layered, independently animated "cloud" system. 
+    - Layer 1: Dark, deep-blue/grey base clouds (slow moving).
+    - Layer 2: Faster, wispy red-tinted upper clouds using `p.blendMode(p.ADD)` for atmospheric depth.
+- **Intense Red Flashes**: Updated `stormFlash` from red-orange to a deep, pure red (`#ee0000`). Doubled the flash duration (400ms -> 800ms) and adjusted the fade curve for maximum visual impact.
+- **Storm Palette Intensification**: Updated `THEME.storm` in `config.ts` with a darker background (`#010103`) and a tighter vignette (`0.75`) to create a more claustrophobic, intense feeling when guardrails are off.
+
+## Results
+The "Angry Storm" state is now much more atmospheric and visceral. The layered clouds provide a sense of scale and motion, while the pure red flashes clearly distinguish the high-risk state from the safer rainbow mode.
