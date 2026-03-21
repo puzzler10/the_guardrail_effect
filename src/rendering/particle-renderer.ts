@@ -23,7 +23,7 @@ export function drawParticles(p: p5, particles: Particle[], nodes: GraphNode[], 
     // 1. Draw Particle Dot (Trails are now handled by drawTrails buffer)
     let dotSize = 6
     let dotColor = healthyColor
-    
+
     if (particle.state === 'recovering') {
       dotColor = tier1Color
       dotSize = 6 + Math.sin(p.millis() * 0.01) * 2 // pulsing
@@ -36,18 +36,20 @@ export function drawParticles(p: p5, particles: Particle[], nodes: GraphNode[], 
       const pulse = (p.millis() % 500) / 500
       p.noFill()
       const c = p.color(255)
-      c.setAlpha((1 - pulse) * 255)
+      c.setAlpha((1 - pulse) * 255 * pos.alpha)
       p.stroke(c)
       p.strokeWeight(2)
       p.ellipse(pos.x, pos.y, pulse * 40)
-      
+
       dotColor = explodedColor
       dotSize = 0 // Gone after explosion
     }
 
     if (dotSize > 0) {
       p.noStroke()
-      p.fill(dotColor)
+      const dc = p.color(dotColor)
+      dc.setAlpha(p.alpha(dotColor) * pos.alpha)
+      p.fill(dc)
       p.ellipse(pos.x, pos.y, dotSize)
     }
   }

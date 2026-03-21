@@ -59,7 +59,7 @@ export function drawTrails(p: p5, particles: Particle[], nodes: GraphNode[], col
     // The cumulative effect of these points creates the trail
     trailBuffer.noStroke()
     for (let i = 2; i > 0; i--) {
-      const alpha = (TRAIL.alphaMax / 2) / i
+      const alpha = ((TRAIL.alphaMax / 2) / i) * pos.alpha
       trailBuffer.fill(r, g, b, alpha)
       const size = (TRAIL.widthMax / 2) * (1 + i * 0.5)
       trailBuffer.ellipse(pos.x, pos.y, size)

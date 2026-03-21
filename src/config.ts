@@ -59,6 +59,16 @@ export const PARTICLE = {
   baseSpeed: 0.0012,       // progress units per ms at 1x speed
 }
 
+// ─── Node sizes (used for particle fade at boundaries) ───────────────────────
+
+export const NODE_SIZES: Record<string, number> = {
+  safe: 16,
+  low: 18,
+  medium: 22,
+  high: 28,
+  critical: 36,
+}
+
 // ─── Trail rendering ─────────────────────────────────────────────────────────
 
 export const TRAIL = {
@@ -329,7 +339,7 @@ export const COLORS_LIGHT = {
 // ─── UI limits ────────────────────────────────────────────────────────────────
 
 export const UI = {
-  failureMultiplierMin: 0.1,
+  failureMultiplierMin: 0.01,
   failureMultiplierMax: 10,
   agentSpeedMin: 0.25,
   agentSpeedMax: 4,
