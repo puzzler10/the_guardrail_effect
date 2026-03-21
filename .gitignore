@@ -4,6 +4,8 @@ dist/
 .env.local
 .DS_Store
 .claude/
+.claire/
+.worktrees/
 test-results/
 .agent-summary.md
 .agent-progress.md
