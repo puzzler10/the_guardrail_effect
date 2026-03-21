@@ -55,7 +55,7 @@ export const PARTICLE = {
   minSteps: 8,
   maxSteps: 20,
   spawnRate: 8,           // particles per second
-  trailLength: 15,        // frames to keep in trail
+  trailLength: 20,        // frames to keep in trail (increased for smoother comet tails)
   baseSpeed: 0.0012,       // progress units per ms at 1x speed
 }
 
@@ -72,11 +72,25 @@ export const NODE_SIZES: Record<string, number> = {
 // ─── Trail rendering ─────────────────────────────────────────────────────────
 
 export const TRAIL = {
-  alphaMax: 100,
+  alphaMax: 55,           // Reduced: persistence buffer is now atmospheric support only
   alphaExponent: 1.5,     // Exponential curve for fade
   widthMin: 1,
   widthMax: 2.5,
   smoothing: false,       // Disabled for performance (splines are expensive)
+}
+
+// ─── Particle visual identity (luminous comet style) ─────────────────────────
+
+export const PARTICLE_VISUALS = {
+  hueMin: 170,            // cyan (HSB degrees)
+  hueMax: 300,            // magenta
+  baseSizeMin: 4,         // size at start of journey
+  baseSizeMax: 8,         // size at end of journey
+  glowMultiplier: 3.5,    // glow ellipse diameter = baseSize * this
+  glowAlpha: 35,          // outer glow alpha (0-255)
+  trailTaperPower: 1.8,   // exponential taper: 1 = linear, 2 = quadratic
+  cometElongation: 2.0,   // comet body width:height ratio
+  coreSize: 2.8,          // white-hot core diameter (px) - ensures visibility on all backgrounds
 }
 
 // ─── Failure messages by tier ─────────────────────────────────────────────────

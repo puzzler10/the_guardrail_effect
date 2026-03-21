@@ -16,11 +16,11 @@ export function initTrails(p: p5) {
 export function drawTrails(p: p5, particles: Particle[], _nodes: GraphNode[], colors: typeof COLORS_DARK, nodeMap: Map<string, GraphNode>) {
   if (!trailBuffer) return
 
-  // 1. Slow fade of the buffer
-  // We use a semi-transparent black to fade old trails
-  // The alpha determines how long the "ghost" lasts
+  // 1. Fade the buffer
+  // Persistence buffer is now atmospheric support only — primary trails are in particle-renderer.ts
+  // Faster fade (higher alpha value) keeps it subtle and non-competing
   trailBuffer.push()
-  trailBuffer.fill(0, 25) // Lower = longer trails
+  trailBuffer.fill(0, 40) // was 25; higher = shorter ghost
   trailBuffer.noStroke()
   trailBuffer.rect(0, 0, trailBuffer.width, trailBuffer.height)
   trailBuffer.pop()
