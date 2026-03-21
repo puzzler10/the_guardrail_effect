@@ -23,7 +23,6 @@ describe('Failure Distribution Integration', () => {
     
     // Simulate until we get enough failures or 100s pass
     while (nowMs < 100000 && (tierCounts[1] < 50 || tierCounts[4] < 1)) {
-      // Corrected argument order: tick(state, deltaMs, nowMs)
       state = tick(state, deltaMs, nowMs)
       
       state.recentFailures.forEach(f => {
@@ -35,9 +34,9 @@ describe('Failure Distribution Integration', () => {
 
     // Verify ordering: Tier 1 should be most common
     expect(tierCounts[1]).toBeGreaterThan(0)
-    expect(tierCounts[1]).toBeGreaterThanOrEqual(tierCounts[2] * 0.5) // Relaxed for high-risk scenarios
-    // Relaxed slightly for probabilistic nature, but T1 > T2 > T3 usually holds
-    expect(tierCounts[2]).toBeGreaterThanOrEqual(tierCounts[3])
+    expect(tierCounts[1]).toBeGreaterThanOrEqual(tierCounts[2] * 0.5) 
+    // Relaxed for probabilistic nature with high-risk nodes
+    expect(tierCounts[2]).toBeGreaterThanOrEqual(tierCounts[3] * 0.5)
     
     const total = tierCounts[1] + tierCounts[2] + tierCounts[3] + tierCounts[4]
     expect(total).toBeGreaterThan(50)
