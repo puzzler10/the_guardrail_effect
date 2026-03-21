@@ -3,3 +3,12 @@ dist/
 .env
 .env.local
 .worktrees/
+.DS_Store
+.claude/
+test-results/
+.agent-summary.md
+.agent-progress.md
+.agent-pid
+.agent-output.log
+test.txt
+
