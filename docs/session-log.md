@@ -74,3 +74,22 @@
 ## Results
 - `npm run check` passed: 99 tests (including 7 new unit tests), clean build, clean lint.
 - URL is now a reactive source of truth for the simulation state.
+
+## 2026-03-21 — Orchestrator: Stability & Test Expansion
+
+**What was done:**
+- **Investigated Loading Issue:** Diagnosed a test failure caused by a module incompatibility in `p5.js@2.2.2`. The issue was resolved by downgrading to the more stable `p5.js@1.9.0`.
+- **Expanded Test Coverage:** Implemented new unit test suites for previously untested, critical areas of the codebase:
+  - `tests/unit/scenarios.test.ts`: Validates the integrity of all scenario definitions.
+  - `tests/unit/background.test.ts`: Verifies the initialization logic for the complex background rendering.
+  - `tests/unit/ui-event-log.test.ts`: Ensures the UI event log correctly adds, caps, and filters events.
+- **Fixed Test Environment:** Installed the `jsdom` dev dependency and configured tests to use it, resolving `window is not defined` errors.
+- **Code Quality:** Fixed all subsequent TypeScript and ESLint errors that arose from the new tests, ensuring the entire project passes the `npm run check` command successfully.
+- **Orchestration:** Managed the project state by merging a feature branch from a sub-agent, cleaning up failed agent worktrees, and committing all final changes directly to `main`.
+
+**Key decisions:**
+- Chose to downgrade `p5.js` rather than apply complex Vitest configuration workarounds, prioritizing stability and simplicity.
+- Acted directly to implement the test expansion task after the dispatched sub-agent failed repeatedly, ensuring the user's request was completed efficiently.
+
+**What's next:**
+- The project is feature-complete according to the current task list. Remaining items are deployment and a stretch goal for theming.
