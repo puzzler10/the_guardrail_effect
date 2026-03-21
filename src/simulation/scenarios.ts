@@ -107,6 +107,7 @@ export function buildScenarioGraph(scenarioId: string, layout: LayoutPreset = 'f
       name: template?.name || n.id,
       icon: template?.icon || '❓',
       risk: template?.risk || ('medium' as const),
+      description: template?.description,
       flowX: n.x,
       flowY: n.y,
       neighbors: def.connections[n.id] || []

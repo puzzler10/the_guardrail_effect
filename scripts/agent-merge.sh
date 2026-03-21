@@ -11,12 +11,21 @@ fi
 
 BRANCH="$1"
 REPO_ROOT="$(git rev-parse --path-format=absolute --git-common-dir | sed 's|/\.git$||')"
-WORKTREE_DIR="${REPO_ROOT}/.worktrees/${BRANCH##*/}"
+
+# Dynamically find worktree path for the branch
+WORKTREE_DIR=$(git worktree list --porcelain | grep -B 2 "branch refs/heads/$BRANCH" | grep "^worktree" | awk '{print $2}' || echo "")
+
+if [ -z "$WORKTREE_DIR" ] || [ ! -d "$WORKTREE_DIR" ]; then
+  # Fallback to legacy naming convention
+  WORKTREE_DIR="${REPO_ROOT}/.worktrees/${BRANCH##*/}"
+fi
 
 if [ ! -d "$WORKTREE_DIR" ]; then
-  echo "ERROR: No worktree found at $WORKTREE_DIR"
+  echo "ERROR: No worktree found for branch $BRANCH"
   exit 1
 fi
+
+echo "=== Found worktree at $WORKTREE_DIR ==="
 
 # Check agent is finished
 PID=$(cat "$WORKTREE_DIR/.agent-pid" 2>/dev/null || echo "0")
@@ -55,6 +64,11 @@ echo ""
 
 # Merge into main
 cd "$REPO_ROOT"
+
+# Conflict Mitigation: discard local changes to build artifacts
+echo "=== Cleaning up build artifacts in main ==="
+git checkout -- dist/ node_modules/.vite/ 2>/dev/null || true
+
 echo "=== Merging $BRANCH into main ==="
 git merge --no-ff "$BRANCH" -m "merge: ${BRANCH##*/}" || {
   echo ""

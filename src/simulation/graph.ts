@@ -65,6 +65,7 @@ export function buildGraph(layout: LayoutPreset, scenarioId: string = 'global'):
       name: template.name,
       icon: template.icon,
       risk: template.risk,
+      description: template.description,
       x: coords.x,
       y: coords.y,
       neighbors: Array.from(new Set(neighbors)),

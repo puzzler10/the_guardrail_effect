@@ -2,6 +2,19 @@
 
 *(Note: Tasks from Phase 0 to Phase 9 have been completed and archived. See [docs/archive/completed-tasks.md](archive/completed-tasks.md) for history.)*
 
+## Phase 17: Robust Agent Automation ✅ DONE
+- [x] **Dynamic Path Finding**: Update `agent-merge.sh` to find worktrees via `git worktree list`.
+- [x] **Artifact Auto-Cleanup**: Automated discarding of `dist/` and `.vite/` results before merging.
+- [x] **Permanent Tool Access**: Moved `.worktrees/` to `.git/info/exclude` to avoid gitignore blindness.
+- [x] **Doc Cleanup**: Reverted manual worktree rules in `AGENTS.md` as they are now automated.
+
+## Phase 16: UI Overhaul (Descriptions & Terminal) ✅ DONE
+- [x] **Node Descriptions**: Added 2-line descriptions to all connectors in `config.ts`.
+- [x] **Mapping**: Verified `description` field mapping in `graph.ts` and `scenarios.ts`.
+- [x] **Dual-Mode UI**: Implemented minimal hover tooltips and detailed click info cards.
+- [x] **Terminal Log**: Overhauled hidden log into a sleek, continuous bottom-right terminal.
+- [x] **Terminal Toggle**: Added a visible "Terminal >_" button to the main control panel.
+
 ## Phase 15: Serpentine Flow Aesthetic ✅ DONE
 - [x] Horizontal serpentine grid layout (4x15) for global graph
 - [x] Left-to-Right, Right-to-Left "S-curve" motion
