@@ -71,7 +71,7 @@ function updateRainbowBuffer(p: p5) {
       const n = p.noise(x * BACKGROUND.noiseScale * 0.5, y * BACKGROUND.noiseScale * 0.5, 100)
       // Soft rainbow hues
       const hue = (n * 360) % 360
-      rainbowBuffer.fill(hue, 30, 15, 1)
+      rainbowBuffer.fill(hue, 85, 45, 1)
       rainbowBuffer.rect(x, y, step, step)
     }
   }
@@ -110,8 +110,11 @@ export function drawBackground(p: p5, guardrailsEnabled: boolean) {
     p.tint(255, transitionFactor * 255)
     // Rainbow buffer rolls slightly differently
     const rOffset = (p.frameCount * BACKGROUND.noiseSpeed * 40) % p.width
-    p.image(rainbowBuffer, -rOffset, 0)
-    p.image(rainbowBuffer, p.width - rOffset, 0)
+    
+    p.blendMode(p.SCREEN);
+    p.image(rainbowBuffer, -rOffset, 0);
+    p.image(rainbowBuffer, p.width - rOffset, 0);
+    p.blendMode(p.BLEND);
   }
   p.pop()
 
