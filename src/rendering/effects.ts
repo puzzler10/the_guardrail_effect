@@ -31,7 +31,7 @@ export function createStormFlash(nowMs: number): Effect {
   return {
     type: 'stormFlash',
     startMs: nowMs,
-    durationMs: 400, // Quick flash
+    durationMs: 800, // Longer flash for intensity
   }
 }
 
@@ -40,12 +40,12 @@ export function drawEffects(p: p5, effects: Effect[], nowMs: number): void {
     if (effect.type === 'stormFlash') {
       const elapsed = nowMs - effect.startMs
       const progress = Math.min(elapsed / effect.durationMs, 1)
-      const alpha = Math.pow(1 - progress, 3) * 120 // exponential fade-out
+      const alpha = Math.pow(1 - progress, 2) * 160 // Slower fade-out for more impact
       
       p.push()
       p.resetMatrix() // Screen space flash
       p.noStroke()
-      p.fill(255, 50, 0, alpha) // Red-orange flash
+      p.fill(220, 0, 0, alpha) // Intense deep red
       p.rect(0, 0, p.width, p.height)
       p.pop()
     }
