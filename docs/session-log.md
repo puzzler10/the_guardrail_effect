@@ -33,7 +33,44 @@
 - Sequential overlay display (Sound -> Onboarding) improves user flow and prevents interaction conflicts.
 - Offscreen buffering for noise and vignette ensures high performance even with complex background effects.
 
+
+## 2026-03-21 — Session 23: Phase 9 Visual Upgrades
+
+**What was done:**
+- Conducted a comprehensive **Visual Quality Audit** against the project's aesthetic and p5.js quality criteria.
+- Implemented **Persistent Trail Buffer** in `src/rendering/trails.ts`:
+  - Replaced immediate-mode polylines with a world-space buffer that fades over time.
+  - Used `SCREEN` blend mode for luminous, additive trail effects.
+- Implemented **Cinematic Camera Easing** in `src/rendering/renderer.ts`:
+  - Split LERP factors for pan and zoom.
+  - Added "snap-to-focus" behavior for catastrophic failure events.
+- Enhanced **Shockwave Effects** in `src/rendering/effects.ts`:
+  - Added secondary ripples and 15 noise-directed debris particles per shockwave.
+- Documented findings and improvements in `docs/visual-review-feedback-v1.md`.
+- Fixed lint/type errors and verified with `npm run check`.
+
+**Key decisions:**
+- Using a 2000x1400 world-space buffer for trails allows them to stay fixed to the simulation grid during camera movements, creating a "solid" feel.
+- Lowered the trail fade rate (`fill(0, 15)`) to create long, ghostly wakes that emphasize agent paths.
+
 **What's next:**
-- Phase 6 finalization: Deploy to Netlify and final cross-device verification.
-- Phase 7 stretch: Themed options (cars, ships) as alternative particle visuals.
-- Phase 9: Advanced Mega-Scenarios expansion (more connectors, complex branching).
+- Final polish and user feedback review.
+
+## 2026-03-21 — Agent merge: fix-loading
+
+## Tasks completed
+- [x] URL query params implemented and tested
+- [x] Added unit tests for URL parsing logic
+- [x] Integrated URL state with simulation configuration
+
+## Technical details
+- Created `src/ui/url-params.ts` with `parseUrlParams` and `updateUrlParams`.
+- Parameters: `model`, `scenario`, `layout`, `multiplier`, `speed`, `count`, `guardrails`, `autozoom`, `dark`, `sound`, `volume`.
+- Clamped numerical inputs to valid config ranges.
+- Initial state in `main.ts` now honors URL params.
+- State changes in UI now trigger `window.history.replaceState`.
+- Mocked global `location` and `history` in `tests/unit/url-params.test.ts` to verify parsing and updating.
+
+## Results
+- `npm run check` passed: 99 tests (including 7 new unit tests), clean build, clean lint.
+- URL is now a reactive source of truth for the simulation state.

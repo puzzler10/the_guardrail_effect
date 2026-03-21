@@ -103,3 +103,9 @@
 - [x] **Scenario Logic**: Update `buildGraph` and simulation `tick` to support scenario-based filtering and custom connections.
 - [x] **Non-Repetition Engine**: Implement `usedMessages` persistence to ensure unique errors per session.
 - [x] **UI Integration**: Add Scenario Selector and Complexity Slider to the controls panel.
+
+## Phase 9: OpenProcessing Quality Upgrades ✅ DONE
+- [x] **Persistent Trails Buffer**: Ghostly, world-space persistent trails with SCREEN blending.
+- [x] **Cinematic Easing**: Responsive camera LERP with snap-to-focus on catastrophic events.
+- [x] **Advanced FX**: Secondary ripples and noise-based debris for shockwaves.
+- [x] **Visual Review**: Comprehensive audit against aesthetic and p5.js quality criteria.
