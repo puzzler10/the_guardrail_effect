@@ -10,7 +10,7 @@ export function initTrails(p: p5) {
   // Phase 7 expanded world to 2000x1400
   trailBuffer = p.createGraphics(2000, 1400)
   trailBuffer.pixelDensity(1)
-  trailBuffer.clear(0, 0, 0, 0)
+  trailBuffer.clear()
 }
 
 export function drawTrails(p: p5, particles: Particle[], nodes: GraphNode[], colors: typeof COLORS_DARK) {
@@ -71,6 +71,7 @@ export function drawTrails(p: p5, particles: Particle[], nodes: GraphNode[], col
   p.push()
   p.blendMode(p.SCREEN) // Screen blending makes trails feel luminous
   p.image(trailBuffer, 0, 0)
+  p.blendMode(p.BLEND)
   p.pop()
 }
 
