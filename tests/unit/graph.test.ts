@@ -134,20 +134,18 @@ describe('Graph Module', () => {
       expect(getNodeById(nodes, 'non-existent')).toBeUndefined()
     })
 
-    it('getEntryNodes should return safe or low risk nodes', () => {
+    it('getEntryNodes should return many nodes for uniform spread', () => {
       const entryNodes = getEntryNodes(nodes)
       expect(entryNodes.length).toBeGreaterThan(0)
-      entryNodes.forEach(n => {
-        expect(['safe', 'low']).toContain(n.risk)
-      })
+      // Should include first few regardless of risk
+      expect(entryNodes.some(n => n.id === nodes[0].id)).toBe(true)
     })
 
-    it('getExitNodes should return safe or low risk nodes', () => {
+    it('getExitNodes should return many nodes for uniform spread', () => {
       const exitNodes = getExitNodes(nodes)
       expect(exitNodes.length).toBeGreaterThan(0)
-      exitNodes.forEach(n => {
-        expect(['safe', 'low']).toContain(n.risk)
-      })
+      // Should include last few regardless of risk
+      expect(exitNodes.some(n => n.id === nodes[nodes.length - 1].id)).toBe(true)
     })
   })
 })
