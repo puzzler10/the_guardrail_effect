@@ -2,6 +2,21 @@
 
 *(Note: Tasks from Phase 0 to Phase 9 have been completed and archived. See [docs/archive/completed-tasks.md](archive/completed-tasks.md) for history.)*
 
+## Phase 13: Visual Bug Fix Pass ✅ DONE
+- [x] Fix ghosting/after-images (missing `p.background()` call)
+- [x] Fix red stripe artifacts (stormFlash moved to screen-space)
+- [x] Fix 5-circle layout → flow default
+- [x] Fix layout dropdown for non-global scenarios
+- [x] Fix stale node sizes in node-renderer.ts
+- [x] Increase node sizes + default zoom (less tinny)
+- [x] Rescale failure rate slider (max 3, 0.01 step)
+- [x] Remove Model Preset + Dark Mode controls
+- [x] Default agent speed 0.5x
+- [x] Tone down rainbow mode
+- [x] Particle path variety
+- [x] Wider scrollbar
+- [x] Node click tooltip
+
 ## Phase 12: Luminous Agent Particles ✅ DONE
 - [x] Individual hue identity per particle (cool spectrum cyan→magenta, golden-angle distribution)
 - [x] Directional comet shape (elongated ellipse rotated along travel direction)

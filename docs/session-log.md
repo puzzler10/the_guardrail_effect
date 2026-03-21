@@ -1,5 +1,27 @@
 # Session Log
 
+## 2026-03-21 — Session 24: Visual Bug Fix Pass + Merge
+
+**What was done:**
+- Fixed ghosting/after-images: added `p.background()` call at top of draw loop
+- Fixed red horizontal stripe artifacts: moved `stormFlash` to screen-space (after `p.pop()`), removed `p.resetMatrix()` call
+- Fixed 5-circle layout: defaulted config to `flow` layout (was `clustered`)
+- Fixed layout dropdown for non-global scenarios: `buildScenarioGraph` now respects `layout` param
+- Fixed stale node sizes: removed local `NODE_SIZES` override in `node-renderer.ts`, imports from config
+- Increased node sizes ~25% and default zoom to 0.8 (less tinny)
+- Rescaled failure rate slider: max 10→3, step 0.01, 2dp display
+- Removed Model Preset dropdown and Dark Mode toggle from controls panel
+- Defaulted agent speed to 0.5x
+- Toned down rainbow mode: saturation 85→50, brightness 45→25, vignette 0.2→0.4
+- Added particle path variety: multi-frequency wobble (S-curve + detour pattern)
+- Widened scrollbar: 4px→8px
+- Added node click tooltip (name + risk tier, color-coded)
+- Merged `worktree-luminous-agents` into main (resolved conflict in graph.ts x-spacing)
+- 105 tests passing
+
+**What's next:**
+- Visual review of merged changes in browser
+
 ## 2026-03-21 — Session 23: Luminous Agent Particle Overhaul
 
 **What was done:**
