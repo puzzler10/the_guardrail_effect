@@ -1,4 +1,4 @@
-import { CONNECTOR_LIBRARY } from '../config'
+import { CONNECTOR_LIBRARY, CANVAS_WIDTH, CANVAS_HEIGHT } from '../config'
 import type { GraphNode } from '../types'
 import type { LayoutPreset } from '../types'
 
@@ -127,8 +127,6 @@ export function buildScenarioGraph(scenarioId: string, layout: LayoutPreset = 'f
   }
 
   // For clustered/ring: reposition by risk level
-  const CANVAS_WIDTH = 2000
-  const CANVAS_HEIGHT = 1400
   const CENTER_X = CANVAS_WIDTH / 2
   const CENTER_Y = CANVAS_HEIGHT / 2
   const riskOrder = ['safe', 'low', 'medium', 'high', 'critical'] as const
@@ -158,7 +156,7 @@ export function buildScenarioGraph(scenarioId: string, layout: LayoutPreset = 'f
       x = cx + Math.cos(localAngle) * localDist + jitter(20)
       y = cy + Math.sin(localAngle) * localDist + jitter(20)
     } else { // ring
-      const radius = 200 + riskIndex * 150
+      const radius = 150 + riskIndex * 120
       const angleOffset = riskIndex * 0.5
       const angle = angleOffset + (index / Math.max(count, 1)) * Math.PI * 2
       x = CENTER_X + Math.cos(angle) * radius + jitter(10)

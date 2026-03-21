@@ -1,15 +1,33 @@
 import { describe, it, expect } from 'vitest'
 import { buildGraph, getNeighbors, getNodeById, getEntryNodes, getExitNodes } from '../../src/simulation/graph'
 import type { LayoutPreset } from '../../src/types'
+import { CANVAS_WIDTH, CANVAS_HEIGHT, SCENARIOS } from '../../src/config'
 
 describe('Graph Module', () => {
   const layouts: LayoutPreset[] = ['clustered', 'flow', 'ring']
+  const scenarioIds = SCENARIOS.map(s => s.id)
 
   describe('buildGraph', () => {
     it('should return 65 nodes for global layout', () => {
       layouts.forEach(layout => {
         const nodes = buildGraph(layout, 'global')
         expect(nodes.length).toBe(65)
+      })
+    })
+
+    it('should always generate coordinates within canvas bounds [0, CANVAS_WIDTH] [0, CANVAS_HEIGHT]', () => {
+      // Check every combination of layout and scenario
+      layouts.forEach(layout => {
+        scenarioIds.forEach(scenarioId => {
+          const nodes = buildGraph(layout, scenarioId)
+          nodes.forEach(node => {
+            // Check boundaries with small margin to account for node sizes (though coordinates are center points)
+            expect(node.x).toBeGreaterThanOrEqual(0)
+            expect(node.x).toBeLessThanOrEqual(CANVAS_WIDTH)
+            expect(node.y).toBeGreaterThanOrEqual(0)
+            expect(node.y).toBeLessThanOrEqual(CANVAS_HEIGHT)
+          })
+        })
       })
     })
 

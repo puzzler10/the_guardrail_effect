@@ -3,6 +3,7 @@
 *(Note: Tasks from Phase 0 to Phase 9 have been completed and archived. See [docs/archive/completed-tasks.md](archive/completed-tasks.md) for history.)*
 
 ## Phase 14: Visual Polish & Layout Fixes ✅ DONE
+- [x] Fix minimap and layout bounds (constrained to canvas dimensions)
 - [x] Fix vertical seam in scrolling backgrounds (seamless noise)
 - [x] Reduce minimap background opacity (transparency for background visibility)
 - [x] Horizontal flow layout (utilize full 3000px canvas width)

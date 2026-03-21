@@ -2,7 +2,6 @@ node_modules/
 dist/
 .env
 .env.local
-.worktrees/
 .DS_Store
 .claude/
 test-results/
