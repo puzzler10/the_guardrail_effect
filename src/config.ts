@@ -335,7 +335,7 @@ export const UI = {
   agentSpeedMax: 4,
   particleCountMin: 50,
   particleCountMax: 2000,
-  zoomMin: 0.5,
+  zoomMin: 0.3,
   zoomMax: 4,
   eventLogMax: 50,
   floatingTextDurationMs: { 1: 1500, 2: 2000, 3: 3000, 4: 4000 } as Record<1 | 2 | 3 | 4, number>,
