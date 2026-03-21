@@ -39,14 +39,14 @@ export const DEFAULT_CONFIG: SimulationConfig = {
   modelPreset: 'frontier',
   scenario: 'global',
   failureMultiplier: 0.01,
-  agentSpeed: 1,
+  agentSpeed: 0.5,
   particleCount: 300,
   guardrailsEnabled: false,
   autoZoomEnabled: true,
   darkMode: true,
   soundEnabled: false,
   soundVolume: 0.5,
-  layout: 'clustered',
+  layout: 'flow',
 }
 
 // ─── Particle settings ────────────────────────────────────────────────────────
@@ -354,7 +354,7 @@ export const COLORS_LIGHT = {
 
 export const UI = {
   failureMultiplierMin: 0.01,
-  failureMultiplierMax: 10,
+  failureMultiplierMax: 3,
   agentSpeedMin: 0.25,
   agentSpeedMax: 4,
   particleCountMin: 50,
@@ -400,7 +400,7 @@ export const THEME = {
   rainbow: {
     // Rainbow uses HSB, so these are base saturation/brightness
     background: '#050510',
-    vignette: 0.2,
+    vignette: 0.4,
     noiseIntensity: 0.03,
     speedMultiplier: 0.4,
   }

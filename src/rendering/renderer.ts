@@ -6,13 +6,14 @@ const DEFAULT_ZOOM = 0.6
 import { drawNodes, drawEdges } from './node-renderer'
 import { drawParticles } from './particle-renderer'
 import type { Effect } from './effects'
-import { 
-  drawEffects, 
-  pruneEffects, 
-  getCameraShakeOffset, 
-  createShockwave, 
-  createScreenShake, 
-  createStormFlash 
+import {
+  drawWorldEffects,
+  drawScreenEffects,
+  pruneEffects,
+  getCameraShakeOffset,
+  createShockwave,
+  createScreenShake,
+  createStormFlash
 } from './effects'
 import type { FloatingText } from './text-overlay'
 import { 
@@ -126,7 +127,8 @@ export function createSketch(getState: () => SimulationState): Renderer {
       effects = pruneEffects(effects, nowMs)
       floatingTexts = pruneFloatingTexts(floatingTexts, nowMs)
 
-      // 3. Draw Background (Screen space)
+      // 3. Clear canvas then draw background (Screen space)
+      p.background(colors.background)
       drawBackground(p, state.config.guardrailsEnabled)
       
       const shake = getCameraShakeOffset(effects, nowMs)
@@ -158,12 +160,15 @@ export function createSketch(getState: () => SimulationState): Renderer {
       drawEdges(p, state.nodes, colors, nodeMap)
       drawNodes(p, state.nodes, colors, state.config.guardrailsEnabled, hoveredNodeId)
       drawParticles(p, state.particles, state.nodes, colors, nodeMap)
-      drawEffects(p, effects, nowMs)
+      drawWorldEffects(p, effects, nowMs)
       drawFloatingTexts(p, floatingTexts, nowMs, colors)
 
       p.pop()
 
-      // 5. Draw UI Elements (Unscaled)
+      // 5. Draw screen-space effects (outside camera transform)
+      drawScreenEffects(p, effects, nowMs)
+
+      // 6. Draw UI Elements (Unscaled)
       drawMinimap(p, state.nodes, state.config, camX, camY, zoom)
 
       // Vignette effect (Phase 9)

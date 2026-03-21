@@ -86,7 +86,7 @@ function calculateCoordinates(
       y: clusterCenterY + Math.sin(localAngle) * localDist + jitter(20),
     }
   } else if (layout === 'flow') {
-    const xBase = 200 + (riskIndex * 350)
+    const xBase = 150 + (riskIndex * 400)
     const yPadding = 150
     const availableHeight = CANVAS_HEIGHT - (yPadding * 2)
     const yStep = count > 1 ? availableHeight / (count - 1) : 0
