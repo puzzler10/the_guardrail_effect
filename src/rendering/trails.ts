@@ -20,7 +20,7 @@ export function drawTrails(p: p5, particles: Particle[], nodes: GraphNode[], col
   // We use a semi-transparent black to fade old trails
   // The alpha determines how long the "ghost" lasts
   trailBuffer.push()
-  trailBuffer.fill(0, 15) // Lower = longer trails
+  trailBuffer.fill(0, 25) // Lower = longer trails
   trailBuffer.noStroke()
   trailBuffer.rect(0, 0, trailBuffer.width, trailBuffer.height)
   trailBuffer.pop()

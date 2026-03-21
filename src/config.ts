@@ -62,10 +62,10 @@ export const PARTICLE = {
 // ─── Trail rendering ─────────────────────────────────────────────────────────
 
 export const TRAIL = {
-  alphaMax: 180,
+  alphaMax: 100,
   alphaExponent: 1.5,     // Exponential curve for fade
   widthMin: 1,
-  widthMax: 3.5,
+  widthMax: 2.5,
   smoothing: false,       // Disabled for performance (splines are expensive)
 }
 
