@@ -22,6 +22,9 @@ export interface GraphNode {
   neighbors: string[]  // adjacency list (supports cycles)
 }
 
+// Particle path types for varied movement
+export type PathType = 'straight' | 'arc' | 'wobble' | 'loop' | 'zigzag'
+
 // Particle
 export interface Particle {
   id: number
@@ -33,6 +36,7 @@ export interface Particle {
   maxSteps: number
   trail: { x: number; y: number }[]
   speedMultiplier: number // 0.8 - 1.2 variation
+  pathType: PathType
   failureTier?: FailureTier
   failureText?: string
 }

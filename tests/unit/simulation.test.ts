@@ -63,7 +63,7 @@ describe('Simulation', () => {
       progress: 0,
       stepsCompleted: 0,
       maxSteps: 10,
-      speedMultiplier: 1,
+      speedMultiplier: 1, pathType: 'straight' as const,
       trail: []
     }]
 
@@ -92,7 +92,7 @@ describe('Simulation', () => {
       progress: 0.99, // Near arrival
       stepsCompleted: 0,
       maxSteps: 10,
-      speedMultiplier: 1,
+      speedMultiplier: 1, pathType: 'straight' as const,
       trail: []
     }]
 
@@ -123,7 +123,7 @@ describe('Simulation', () => {
       progress: 0.99,
       stepsCompleted: 0,
       maxSteps: 10,
-      speedMultiplier: 1,
+      speedMultiplier: 1, pathType: 'straight' as const,
       trail: []
     }]
 
@@ -157,7 +157,7 @@ describe('Simulation', () => {
       progress: 0.99,
       stepsCompleted: 0,
       maxSteps: 10,
-      speedMultiplier: 1,
+      speedMultiplier: 1, pathType: 'straight' as const,
       trail: []
     }]
 
@@ -183,11 +183,11 @@ describe('Simulation', () => {
     state.lastSpawnMs = 100
     
     state.particles = [
-      { id: 1, state: 'active', currentNodeId: 'a', targetNodeId: 'b', progress: 0, stepsCompleted: 0, maxSteps: 10, speedMultiplier: 1, trail: [] },
-      { id: 2, state: 'completed', currentNodeId: 'a', targetNodeId: 'b', progress: 0, stepsCompleted: 10, maxSteps: 10, speedMultiplier: 1, trail: [] },
-      { id: 3, state: 'recovering', failureTier: 1, currentNodeId: 'a', targetNodeId: 'b', progress: 0, stepsCompleted: 5, maxSteps: 10, speedMultiplier: 1, trail: [] },
-      { id: 4, state: 'failed', failureTier: 2, currentNodeId: 'a', targetNodeId: 'b', progress: 0, stepsCompleted: 5, maxSteps: 10, speedMultiplier: 1, trail: [] },
-      { id: 5, state: 'exploded', failureTier: 4, currentNodeId: 'a', targetNodeId: 'b', progress: 0, stepsCompleted: 5, maxSteps: 10, speedMultiplier: 1, trail: [] },
+      { id: 1, state: 'active', currentNodeId: 'a', targetNodeId: 'b', progress: 0, stepsCompleted: 0, maxSteps: 10, speedMultiplier: 1, pathType: 'straight' as const, trail: [] },
+      { id: 2, state: 'completed', currentNodeId: 'a', targetNodeId: 'b', progress: 0, stepsCompleted: 10, maxSteps: 10, speedMultiplier: 1, pathType: 'straight' as const, trail: [] },
+      { id: 3, state: 'recovering', failureTier: 1, currentNodeId: 'a', targetNodeId: 'b', progress: 0, stepsCompleted: 5, maxSteps: 10, speedMultiplier: 1, pathType: 'straight' as const, trail: [] },
+      { id: 4, state: 'failed', failureTier: 2, currentNodeId: 'a', targetNodeId: 'b', progress: 0, stepsCompleted: 5, maxSteps: 10, speedMultiplier: 1, pathType: 'straight' as const, trail: [] },
+      { id: 5, state: 'exploded', failureTier: 4, currentNodeId: 'a', targetNodeId: 'b', progress: 0, stepsCompleted: 5, maxSteps: 10, speedMultiplier: 1, pathType: 'straight' as const, trail: [] },
     ]
 
     state = tick(state, 0, 100) // Just to trigger stats update

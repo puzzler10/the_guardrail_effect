@@ -76,16 +76,17 @@ canvas {
 .controls-panel {
   top: 15px;
   left: 15px;
-  width: 300px;
-  height: calc(100% - 75px); /* Leave room for stats bar */
+  width: 260px;
+  max-height: calc(100% - 75px);
   transform: translateX(-120%);
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  padding: 12px;
   box-sizing: border-box;
   overflow-y: auto;
   border-radius: 12px;
   opacity: 0;
+  gap: 2px;
 }
 
 .controls-panel.open {
@@ -101,10 +102,10 @@ canvas {
   background: var(--bg-dark);
   border: 1px solid var(--border);
   color: var(--text-dark);
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 18px;
   backdrop-filter: var(--blur);
   transition: border-color 0.2s, background 0.2s;
 }
@@ -112,6 +113,103 @@ canvas {
 .controls-toggle:hover {
   border-color: var(--accent);
   background: rgba(255, 255, 255, 0.05);
+}
+
+/* Top-right icon buttons */
+.top-right-btns {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 25;
+  display: flex;
+  gap: 8px;
+}
+
+/* Generic icon button */
+.icon-btn {
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  color: var(--text-dark);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  backdrop-filter: var(--blur);
+  transition: border-color 0.2s, background 0.2s;
+  line-height: 1;
+}
+
+.icon-btn:hover {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.icon-btn.small {
+  font-size: 14px;
+  padding: 4px 8px;
+}
+
+/* Panel header row */
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+.panel-title {
+  flex: 1;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.6;
+  font-weight: bold;
+}
+
+/* Collapsible section */
+.ctrl-section {
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ctrl-section-header {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-dark);
+  padding: 6px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: bold;
+  transition: background 0.15s;
+  font-family: var(--font-main);
+}
+
+.ctrl-section-header:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.ctrl-section-arrow {
+  opacity: 0.5;
+  font-size: 10px;
+}
+
+.ctrl-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ctrl-section-body.collapsed {
+  display: none;
 }
 
 /* Stats Bar (Bottom) */
@@ -235,30 +333,35 @@ canvas {
 
 /* Controls Components */
 .control-group {
-  margin-bottom: 24px;
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.control-group:last-child {
+  border-bottom: none;
 }
 
 .control-label {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 12px;
+  margin-bottom: 5px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 600;
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 .control-value {
   font-family: var(--font-mono);
   color: var(--accent);
-  font-size: 11px;
+  font-size: 10px;
 }
 
 input[type="range"] {
   width: 100%;
   accent-color: var(--accent);
-  height: 4px;
+  height: 3px;
   background: rgba(255,255,255,0.1);
   border-radius: 2px;
   cursor: pointer;
@@ -269,9 +372,9 @@ select {
   background: rgba(255,255,255,0.03);
   border: 1px solid var(--border);
   color: var(--text-dark);
-  padding: 10px;
+  padding: 6px 8px;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 12px;
   outline: none;
   cursor: pointer;
 }
