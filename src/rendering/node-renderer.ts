@@ -98,7 +98,7 @@ export function drawNode(
 
 export function drawEdge(p: p5, from: GraphNode, to: GraphNode, colors: typeof COLORS_DARK): void {
   const fromColor = p.color(colors.nodeByRisk[from.risk] || '#ffffff')
-  fromColor.setAlpha(255 * 0.3)
+  fromColor.setAlpha(255 * 0.15)
   
   p.stroke(fromColor)
   p.strokeWeight(1)
