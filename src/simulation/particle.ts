@@ -60,13 +60,15 @@ export function getParticlePosition(
   const offsetScale = (Math.sin(particle.id * 1.5) * 40) + (Math.cos(particle.id * 0.7) * 20)
   const offset = Math.sin(particle.progress * Math.PI) * offsetScale
 
-  // Alpha: fade in over first 15%, full for middle 70%, fade out over last 15%
+  // Alpha: fade in over first 8%, full for middle 84%, fade out over last 8%
+  // (narrower fade zone so particles don't vanish mid-path between nodes)
+  const FADE_ZONE = 0.08
   let alpha: number
   const p = particle.progress
-  if (p < 0.15) {
-    alpha = p / 0.15
-  } else if (p > 0.85) {
-    alpha = (1 - p) / 0.15
+  if (p < FADE_ZONE) {
+    alpha = p / FADE_ZONE
+  } else if (p > 1 - FADE_ZONE) {
+    alpha = (1 - p) / FADE_ZONE
   } else {
     alpha = 1
   }
