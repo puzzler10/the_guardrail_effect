@@ -27,12 +27,12 @@ export interface Renderer {
 }
 
 export function createSketch(getState: () => SimulationState): Renderer {
-  let camX = 600 // Current camera X
-  let camY = 400 // Current camera Y
+  let camX = 1000 // Current camera X
+  let camY = 700 // Current camera Y
   let zoom = 1.0 // Current zoom
   
-  let targetCamX = 600
-  let targetCamY = 400
+  let targetCamX = 1000
+  let targetCamY = 700
   let targetZoom = 1.0
   let focusEndTime = 0
   
@@ -96,8 +96,8 @@ export function createSketch(getState: () => SimulationState): Renderer {
 
       // Auto-return to default view
       if (focusEndTime > 0 && nowMs > focusEndTime) {
-        targetCamX = 600
-        targetCamY = 400
+        targetCamX = 1000
+        targetCamY = 700
         targetZoom = 1.0
         focusEndTime = 0
       }

@@ -38,7 +38,7 @@ export function initBackground(p: p5, colors: typeof COLORS_DARK) {
 function updateNoiseBuffer(p: p5, colors: typeof COLORS_DARK) {
   if (!noiseBuffer) return
   
-  noiseBuffer.clear()
+  noiseBuffer.clear(0, 0, 0, 0)
   const baseColor = p.color(colors.background)
   const r = p.red(baseColor)
   const g = p.green(baseColor)
@@ -65,7 +65,7 @@ function updateNoiseBuffer(p: p5, colors: typeof COLORS_DARK) {
 
 function updateVignetteBuffer(p: p5) {
   if (!vignetteBuffer) return
-  vignetteBuffer.clear()
+  vignetteBuffer.clear(0, 0, 0, 0)
   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ctx = (vignetteBuffer as any).drawingContext as CanvasRenderingContext2D
