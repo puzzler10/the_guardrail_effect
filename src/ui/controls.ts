@@ -131,6 +131,17 @@ export function initControls(callbacks: ControlsCallbacks): void {
 
   btnRow.appendChild(pauseBtn);
   btnRow.appendChild(resetBtn);
+
+  const terminalBtn = document.createElement('button');
+  terminalBtn.className = 'btn';
+  terminalBtn.textContent = 'Terminal >_';
+  terminalBtn.onclick = () => {
+    // We can dispatch a custom event or just let the main.ts handle it if we export a callback.
+    // Since main.ts already imports toggleEventLog, let's just dispatch an event on window.
+    window.dispatchEvent(new CustomEvent('toggle-terminal'));
+  };
+
+  btnRow.appendChild(terminalBtn);
   panel.appendChild(btnRow);
 
   document.body.appendChild(panel);

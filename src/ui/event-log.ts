@@ -3,7 +3,6 @@ import { UI, COLORS_DARK } from '../config';
 
 let logPanel: HTMLElement;
 let listContainer: HTMLElement;
-let currentFilter: string = 'all';
 
 export function initEventLog(): void {
   logPanel = document.createElement('div');
@@ -11,34 +10,8 @@ export function initEventLog(): void {
   
   const header = document.createElement('div');
   header.className = 'event-log-header';
-  header.innerHTML = `<h3>Event Log</h3>`;
+  header.innerHTML = `<h3>Terminal >_</h3>`;
   
-  const filters = document.createElement('div');
-  filters.className = 'event-filters';
-  
-  const filterOptions = [
-    { id: 'all', label: 'All' },
-    { id: 't1', label: 'T1' },
-    { id: 't2', label: 'T2' },
-    { id: 't3', label: 'T3' },
-    { id: 't4', label: 'T4' },
-    { id: 'guardrail', label: 'Guard' }
-  ];
-  
-  filterOptions.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'filter-btn' + (opt.id === 'all' ? ' active' : '');
-    btn.textContent = opt.label;
-    btn.onclick = () => {
-      filters.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentFilter = opt.id;
-      filterEntries();
-    };
-    filters.appendChild(btn);
-  });
-  
-  header.appendChild(filters);
   logPanel.appendChild(header);
   
   listContainer = document.createElement('div');
@@ -54,27 +27,22 @@ export function addFailureEvent(event: FailureEvent): void {
   entry.dataset.type = `t${event.tier}`;
   
   const tierColor = getTierColor(event.tier);
-  entry.style.borderLeftColor = tierColor;
-  
-  const dot = document.createElement('span');
-  dot.className = 'event-dot';
-  dot.style.backgroundColor = tierColor;
   
   const time = document.createElement('span');
   time.className = 'event-time';
-  time.textContent = `+${formatTime(event.timestamp)}`;
-  
-  const text = document.createElement('span');
-  text.textContent = event.text;
+  time.textContent = `[${formatTime(event.timestamp)}]`;
   
   const node = document.createElement('span');
   node.className = 'event-node';
-  node.textContent = `node: ${event.nodeId}`;
+  node.style.color = tierColor;
+  node.textContent = `ERR_T${event.tier} @ ${event.nodeId}:`;
   
-  entry.appendChild(dot);
+  const text = document.createElement('span');
+  text.textContent = ` ${event.text}`;
+  
   entry.appendChild(time);
-  entry.appendChild(text);
   entry.appendChild(node);
+  entry.appendChild(text);
   
   listContainer.insertBefore(entry, listContainer.firstChild);
   
@@ -82,38 +50,30 @@ export function addFailureEvent(event: FailureEvent): void {
   while (listContainer.children.length > UI.eventLogMax) {
     listContainer.removeChild(listContainer.lastChild!);
   }
-  
-  filterEntries();
 }
 
 export function addGuardrailEvent(event: GuardrailEvent): void {
   const entry = document.createElement('div');
-  entry.className = 'event-entry';
-  entry.dataset.type = 'guardrail';
+  entry.className = 'event-entry guardrail-entry';
   
   const color = COLORS_DARK.guardrailText;
-  entry.style.borderLeftColor = color;
-  
-  const dot = document.createElement('span');
-  dot.className = 'event-dot';
-  dot.style.backgroundColor = color;
   
   const time = document.createElement('span');
   time.className = 'event-time';
-  time.textContent = `+${formatTime(event.timestamp)}`;
-  
-  const text = document.createElement('span');
-  text.textContent = event.text;
-  text.style.color = color;
+  time.textContent = `[${formatTime(event.timestamp)}]`;
   
   const node = document.createElement('span');
   node.className = 'event-node';
-  node.textContent = `intercepted at: ${event.nodeId}`;
+  node.style.color = color;
+  node.textContent = `GUARDRAIL @ ${event.nodeId}:`;
   
-  entry.appendChild(dot);
+  const text = document.createElement('span');
+  text.textContent = ` ${event.text}`;
+  text.style.color = '#ccc';
+  
   entry.appendChild(time);
-  entry.appendChild(text);
   entry.appendChild(node);
+  entry.appendChild(text);
   
   listContainer.insertBefore(entry, listContainer.firstChild);
   
@@ -121,24 +81,10 @@ export function addGuardrailEvent(event: GuardrailEvent): void {
   while (listContainer.children.length > UI.eventLogMax) {
     listContainer.removeChild(listContainer.lastChild!);
   }
-  
-  filterEntries();
 }
 
 export function toggleEventLog(): void {
   logPanel.classList.toggle('open');
-}
-
-function filterEntries() {
-  const entries = listContainer.querySelectorAll('.event-entry');
-  entries.forEach(entry => {
-    const el = entry as HTMLElement;
-    if (currentFilter === 'all' || el.dataset.type === currentFilter) {
-      el.style.display = 'block';
-    } else {
-      el.style.display = 'none';
-    }
-  });
 }
 
 function getTierColor(tier: FailureTier): string {

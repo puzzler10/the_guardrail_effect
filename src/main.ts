@@ -137,6 +137,10 @@ function init() {
     }
   })
 
+  window.addEventListener('toggle-terminal', () => {
+    toggleEventLog()
+  })
+
   // 3. Rendering Initialization
   const { sketch } = createSketch(() => currentState)
   new p5(sketch, document.getElementById('app') as HTMLElement)

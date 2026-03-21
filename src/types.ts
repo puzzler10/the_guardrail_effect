@@ -16,6 +16,7 @@ export interface GraphNode {
   name: string
   icon: string
   risk: RiskLevel
+  description?: string
   x: number
   y: number
   neighbors: string[]  // adjacency list (supports cycles)
