@@ -38,7 +38,7 @@ export const SCENARIOS = [
 export const DEFAULT_CONFIG: SimulationConfig = {
   modelPreset: 'frontier',
   scenario: 'global',
-  failureMultiplier: 1,
+  failureMultiplier: 0.01,
   agentSpeed: 1,
   particleCount: 300,
   guardrailsEnabled: false,
@@ -54,18 +54,28 @@ export const DEFAULT_CONFIG: SimulationConfig = {
 export const PARTICLE = {
   minSteps: 8,
   maxSteps: 20,
-  spawnRate: 15,          // particles per second
+  spawnRate: 8,           // particles per second
   trailLength: 15,        // frames to keep in trail
-  baseSpeed: 0.0035,       // progress units per ms at 1x speed
+  baseSpeed: 0.0012,       // progress units per ms at 1x speed
+}
+
+// ─── Node sizes (used for particle fade at boundaries) ───────────────────────
+
+export const NODE_SIZES: Record<string, number> = {
+  safe: 16,
+  low: 18,
+  medium: 22,
+  high: 28,
+  critical: 36,
 }
 
 // ─── Trail rendering ─────────────────────────────────────────────────────────
 
 export const TRAIL = {
-  alphaMax: 180,
+  alphaMax: 100,
   alphaExponent: 1.5,     // Exponential curve for fade
   widthMin: 1,
-  widthMax: 3.5,
+  widthMax: 2.5,
   smoothing: false,       // Disabled for performance (splines are expensive)
 }
 
@@ -168,7 +178,7 @@ export const CONNECTOR_LIBRARY: ConnectorTemplate[] = [
 
   // Engineering / Dev
   { id: 'github', name: 'GitHub', icon: '🐙', risk: 'high', scenario: ['devops', 'global'] },
-  { id: 'gitlab', name: 'GitLab', icon: ' foxes', risk: 'high', scenario: ['devops', 'global'] },
+  { id: 'gitlab', name: 'GitLab', icon: '🦊', risk: 'high', scenario: ['devops', 'global'] },
   { id: 'bitbucket', name: 'Bitbucket', icon: '🪣', risk: 'high', scenario: ['global'] },
   { id: 'aws-s3', name: 'AWS S3 Storage', icon: '📦', risk: 'medium', scenario: ['devops', 'global'] },
   { id: 'aws-iam', name: 'AWS IAM Permissions', icon: '🔑', risk: 'critical', scenario: ['devops', 'global'] },
@@ -329,13 +339,13 @@ export const COLORS_LIGHT = {
 // ─── UI limits ────────────────────────────────────────────────────────────────
 
 export const UI = {
-  failureMultiplierMin: 0.1,
+  failureMultiplierMin: 0.01,
   failureMultiplierMax: 10,
   agentSpeedMin: 0.25,
   agentSpeedMax: 4,
   particleCountMin: 50,
   particleCountMax: 2000,
-  zoomMin: 0.5,
+  zoomMin: 0.3,
   zoomMax: 4,
   eventLogMax: 50,
   floatingTextDurationMs: { 1: 1500, 2: 2000, 3: 3000, 4: 4000 } as Record<1 | 2 | 3 | 4, number>,
@@ -348,7 +358,7 @@ export const NODE_GLOW = {
   layersCritical: 5,
   glowSpread: 0.4,     // Multiplier for glow radius per layer
   breatheSpeed: 0.002,  // Radians per ms
-  breatheAmount: 0.08,  // Max size variation (8%)
+  breatheAmount: 0,  // Max size variation (0% - disabled)
 }
 
 export const BACKGROUND = {

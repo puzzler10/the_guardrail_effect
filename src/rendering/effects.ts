@@ -103,7 +103,7 @@ export function getCameraShakeOffset(effects: Effect[], nowMs: number): { dx: nu
     if (effect.type === 'shake') {
       const elapsed = nowMs - effect.startMs
       const progress = Math.min(elapsed / effect.durationMs, 1)
-      const intensity = (1 - progress) * 8 // Max offset ±8px
+      const intensity = (1 - progress) * 2 // Max offset ±2px
 
       dx += (Math.random() * 2 - 1) * intensity
       dy += (Math.random() * 2 - 1) * intensity

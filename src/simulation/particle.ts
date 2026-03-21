@@ -1,5 +1,5 @@
 import type { Particle, FailureTier } from '../types'
-import { PARTICLE } from '../config'
+import { PARTICLE, NODE_SIZES } from '../config'
 
 /**
  * Creates a new particle starting at a given node.
@@ -25,32 +25,56 @@ export function createParticle(id: number, startNodeId: string, neighbors: strin
 
 /**
  * Calculates the visual position of a particle, including "scenic route" curves.
+ * Returns position and alpha (0-1) for fading at node boundaries.
  */
 export function getParticlePosition(
-  particle: Particle, 
-  nodes: Map<string, { x: number; y: number }>
-): { x: number; y: number } | null {
+  particle: Particle,
+  nodes: Map<string, { x: number; y: number; risk?: string }>
+): { x: number; y: number; alpha: number } | null {
   const from = nodes.get(particle.currentNodeId)
   const to = nodes.get(particle.targetNodeId)
   if (!from || !to) return null
 
   const dx = to.x - from.x
   const dy = to.y - from.y
-  const dist = Math.sqrt(dx * dx + dy * dy)
-  
-  if (dist === 0) return { x: from.x, y: from.y }
+  const edgeLength = Math.sqrt(dx * dx + dy * dy)
+
+  if (edgeLength === 0) return { x: from.x, y: from.y, alpha: 1 }
+
+  // Compute node radii from NODE_SIZES (fall back to safe size if unknown)
+  const sourceRadius = NODE_SIZES[from.risk ?? ''] ?? NODE_SIZES.safe
+  const targetRadius = NODE_SIZES[to.risk ?? ''] ?? NODE_SIZES.safe
+
+  // Fraction of the edge occupied by each node boundary
+  const startFraction = sourceRadius / edgeLength
+  const endFraction = targetRadius / edgeLength
+
+  // Remap progress to only travel between node boundaries
+  const adjustedProgress = startFraction + particle.progress * (1 - startFraction - endFraction)
 
   // Scenic route: add a perpendicular offset based on progress and particle ID (Phase 7)
-  const nx = -dy / dist
-  const ny = dx / dist
-  
+  const nx = -dy / edgeLength
+  const ny = dx / edgeLength
+
   // Stable offset based on particle ID
   const offsetScale = (Math.sin(particle.id * 1.5) * 40) + (Math.cos(particle.id * 0.7) * 20)
   const offset = Math.sin(particle.progress * Math.PI) * offsetScale
-  
+
+  // Alpha: fade in over first 15%, full for middle 70%, fade out over last 15%
+  let alpha: number
+  const p = particle.progress
+  if (p < 0.15) {
+    alpha = p / 0.15
+  } else if (p > 0.85) {
+    alpha = (1 - p) / 0.15
+  } else {
+    alpha = 1
+  }
+
   return {
-    x: from.x + dx * particle.progress + nx * offset,
-    y: from.y + dy * particle.progress + ny * offset,
+    x: from.x + dx * adjustedProgress + nx * offset,
+    y: from.y + dy * adjustedProgress + ny * offset,
+    alpha,
   }
 }
 
