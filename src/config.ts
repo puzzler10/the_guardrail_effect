@@ -55,7 +55,7 @@ export const PARTICLE = {
   minSteps: 8,
   maxSteps: 20,
   spawnRate: 8,           // particles per second
-  trailLength: 12,        // frames to keep in trail
+  trailLength: 4,         // short trail = motion blur, not a tail
   baseSpeed: 0.0012,       // progress units per ms at 1x speed
 }
 
@@ -88,8 +88,8 @@ export const PARTICLE_VISUALS = {
   baseSizeMax: 8,         // size at end of journey
   glowMultiplier: 3.5,    // glow ellipse diameter = baseSize * this
   glowAlpha: 35,          // outer glow alpha (0-255)
-  trailTaperPower: 1.0,   // trail fade: 1 = linear (even glow), 2 = quadratic (sharp tail)
-  cometElongation: 1.0,   // comet body width:height ratio (1.0 = circle)
+  trailTaperPower: 3.0,   // sharp taper so motion blur fades fast
+  cometElongation: 1.6,   // directional elongation (shooting star, not sperm)
   coreSize: 2.8,          // white-hot core diameter (px) - ensures visibility on all backgrounds
 }
 
