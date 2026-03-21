@@ -1,5 +1,13 @@
-import type { Particle, FailureTier } from '../types'
-import { PARTICLE, NODE_SIZES } from '../config'
+import type { Particle, FailureTier, PathType } from '../types'
+import { PARTICLE, NODE_SIZES, PATH_TYPES } from '../config'
+
+function pickPathType(): PathType {
+  const r = Math.random() * 100
+  for (let i = 0; i < PATH_TYPES.cumulativeWeights.length; i++) {
+    if (r < PATH_TYPES.cumulativeWeights[i]) return PATH_TYPES.types[i] as PathType
+  }
+  return 'straight'
+}
 
 /**
  * Creates a new particle starting at a given node.
@@ -9,7 +17,8 @@ export function createParticle(id: number, startNodeId: string, neighbors: strin
   const maxSteps = Math.floor(Math.random() * (PARTICLE.maxSteps - PARTICLE.minSteps + 1)) + PARTICLE.minSteps
   // Vary speed multiplier to show non-linear agent behavior (Phase 7)
   const speedMultiplier = 0.8 + Math.random() * 0.4
-  
+  const pathType = pickPathType()
+
   return {
     id,
     state: 'spawning',
@@ -19,6 +28,7 @@ export function createParticle(id: number, startNodeId: string, neighbors: strin
     stepsCompleted: 0,
     maxSteps,
     speedMultiplier,
+    pathType,
     trail: []
   }
 }
@@ -52,19 +62,69 @@ export function getParticlePosition(
   // Remap progress to only travel between node boundaries
   const adjustedProgress = startFraction + particle.progress * (1 - startFraction - endFraction)
 
-  // Scenic route: add a perpendicular offset based on progress and particle ID (Phase 7)
+  // Perpendicular normal vector (for side-to-side offsets)
   const nx = -dy / edgeLength
   const ny = dx / edgeLength
+  // Along-edge unit vector (for forward/backward offsets in loop paths)
+  const ex = dx / edgeLength
+  const ey = dy / edgeLength
 
-  // Stable offset based on particle ID — multi-frequency wobble for varied paths
-  const offsetScale = (Math.sin(particle.id * 1.5) * 20) + (Math.cos(particle.id * 0.7) * 10)
-  const wave1 = Math.sin(particle.progress * Math.PI * 2) * offsetScale * 0.6
-  const wave2 = Math.sin(particle.progress * Math.PI * 3 + particle.id * 0.3) * offsetScale * 0.3
-  const envelope = Math.sin(particle.progress * Math.PI) // fade at endpoints
-  const offset = (wave1 + wave2) * envelope
+  // Envelope: zero at endpoints so particles enter/exit nodes cleanly
+  const envelope = Math.sin(particle.progress * Math.PI)
+  const pr = particle.progress
+
+  let perpOffset = 0   // perpendicular displacement
+  let alongOffset = 0  // along-edge displacement (used by loop type)
+
+  switch (particle.pathType) {
+    case 'straight':
+      // No offset — direct line
+      break
+
+    case 'arc': {
+      // Single smooth bulge to one side (direction alternates by id)
+      const side = (particle.id % 2 === 0) ? 1 : -1
+      perpOffset = Math.sin(pr * Math.PI) * PATH_TYPES.arcScale * side
+      break
+    }
+
+    case 'wobble': {
+      // Classic sine wobble (original behavior)
+      const offsetScale = (Math.sin(particle.id * 1.5) * 20) + (Math.cos(particle.id * 0.7) * 10)
+      const wave1 = Math.sin(pr * Math.PI * 2) * offsetScale * 0.6
+      const wave2 = Math.sin(pr * Math.PI * 3 + particle.id * 0.3) * offsetScale * 0.3
+      perpOffset = (wave1 + wave2) * envelope
+      break
+    }
+
+    case 'loop': {
+      // Particle curves out then loops back on itself before continuing
+      // Loop occurs in the middle 40% of the journey (progress 0.3 → 0.7)
+      if (pr >= 0.3 && pr <= 0.7) {
+        const loopPhase = (pr - 0.3) / 0.4  // 0 → 1 over loop segment
+        const loopAngle = loopPhase * Math.PI * 2
+        const loopEnv = Math.sin(loopPhase * Math.PI) // fade loop at its own ends
+        perpOffset = Math.sin(loopAngle) * PATH_TYPES.loopRadius * loopEnv
+        // Loop also doubles back along the edge (negative = backward)
+        alongOffset = -Math.sin(loopAngle * 0.5) * PATH_TYPES.loopRadius * 0.6 * loopEnv
+      } else {
+        perpOffset = 0
+      }
+      break
+    }
+
+    case 'zigzag': {
+      // Sharp triangle-wave direction changes
+      const peaks = PATH_TYPES.zigzagPeaks
+      const side = (particle.id % 2 === 0) ? 1 : -1
+      const zigT = (pr * peaks) % 1  // 0→1 sawtooth per peak
+      const triangleWave = zigT < 0.5 ? zigT * 2 : (1 - zigT) * 2  // triangle 0→1→0
+      perpOffset = (triangleWave * 2 - 1) * 22 * side * envelope
+      break
+    }
+  }
 
   // Alpha: fade in over first 8%, full for middle 84%, fade out over last 8%
-  // (narrower fade zone so particles don't vanish mid-path between nodes)
   const FADE_ZONE = 0.08
   let alpha: number
   const p = particle.progress
@@ -77,8 +137,8 @@ export function getParticlePosition(
   }
 
   return {
-    x: from.x + dx * adjustedProgress + nx * offset,
-    y: from.y + dy * adjustedProgress + ny * offset,
+    x: from.x + dx * adjustedProgress + nx * perpOffset + ex * alongOffset,
+    y: from.y + dy * adjustedProgress + ny * perpOffset + ey * alongOffset,
     alpha,
   }
 }

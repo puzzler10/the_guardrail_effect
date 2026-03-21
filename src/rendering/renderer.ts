@@ -252,6 +252,18 @@ export function createSketch(getState: () => SimulationState): Renderer {
       camY = targetCamY
     }
 
+    p.mouseMoved = () => {
+      const shake = getCameraShakeOffset(effects, p.millis())
+      const worldMouseX = (p.mouseX - p.width / 2 - shake.dx) / zoom + camX
+      const worldMouseY = (p.mouseY - p.height / 2 - shake.dy) / zoom + camY
+      const state = getState()
+      let hovering = false
+      for (const node of state.nodes) {
+        if (p.dist(worldMouseX, worldMouseY, node.x, node.y) < 40) { hovering = true; break }
+      }
+      p.cursor(hovering ? p.HAND : p.ARROW)
+    }
+
     p.mouseClicked = () => {
       const shake = getCameraShakeOffset(effects, p.millis())
       const worldMouseX = (p.mouseX - p.width / 2 - shake.dx) / zoom + camX

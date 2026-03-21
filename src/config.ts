@@ -51,11 +51,23 @@ export const DEFAULT_CONFIG: SimulationConfig = {
 
 // ─── Particle settings ────────────────────────────────────────────────────────
 
+// ─── Particle path type distribution ─────────────────────────────────────────
+
+export const PATH_TYPES = {
+  // Cumulative weights (must sum to 100)
+  // straight=35, arc=25, wobble=15, loop=15, zigzag=10
+  cumulativeWeights: [35, 60, 75, 90, 100] as const,
+  types: ['straight', 'arc', 'wobble', 'loop', 'zigzag'] as const,
+  loopRadius: 30,   // pixels, how far loops deviate from the edge
+  arcScale: 35,     // perpendicular offset for arc paths (pixels)
+  zigzagPeaks: 3,   // number of direction changes in zigzag
+}
+
 export const PARTICLE = {
   minSteps: 8,
   maxSteps: 20,
   spawnRate: 8,           // particles per second
-  trailLength: 4,         // short trail = motion blur, not a tail
+  trailLength: 8,         // motion blur trail length
   baseSpeed: 0.0012,       // progress units per ms at 1x speed
 }
 

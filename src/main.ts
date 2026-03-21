@@ -49,6 +49,13 @@ function init() {
     },
     onPause: () => {}, // Handled by isPaused() in tick
     onResume: () => {},
+    onToggleHelp: () => toggleHelp(),
+    onToggleSound: () => {
+      const newSoundEnabled = !currentState.config.soundEnabled
+      currentState = applyConfig(currentState, { soundEnabled: newSoundEnabled })
+      soundEngine.setEnabled(newSoundEnabled)
+      syncControls(currentState.config)
+    },
   })
 
   initKeyboard({

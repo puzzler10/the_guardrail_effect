@@ -7,131 +7,112 @@ export interface ControlsCallbacks {
   onReset(): void;
   onPause(): void;
   onResume(): void;
+  onToggleHelp(): void;
+  onToggleSound(): void;
 }
 
 let panel: HTMLElement;
 let toggleBtn: HTMLButtonElement;
+let soundBtn: HTMLButtonElement;
 let paused = false;
 
 export function initControls(callbacks: ControlsCallbacks): void {
-  // Create toggle button
+  // Toggle button (hamburger)
   toggleBtn = document.createElement('button');
   toggleBtn.className = 'controls-toggle';
   toggleBtn.innerHTML = '≡';
+  toggleBtn.setAttribute('aria-label', 'Toggle controls');
   toggleBtn.onclick = () => panel.classList.toggle('open');
   document.body.appendChild(toggleBtn);
 
-  // Create panel
+  // Top-right icon buttons: sound + help
+  const topRight = document.createElement('div');
+  topRight.className = 'top-right-btns';
+
+  soundBtn = document.createElement('button');
+  soundBtn.className = 'icon-btn';
+  soundBtn.innerHTML = '🔇';
+  soundBtn.setAttribute('aria-label', 'Toggle sound');
+  soundBtn.onclick = () => callbacks.onToggleSound();
+  topRight.appendChild(soundBtn);
+
+  const helpBtn = document.createElement('button');
+  helpBtn.className = 'icon-btn';
+  helpBtn.innerHTML = '?';
+  helpBtn.setAttribute('aria-label', 'Help');
+  helpBtn.onclick = () => callbacks.onToggleHelp();
+  topRight.appendChild(helpBtn);
+
+  document.body.appendChild(topRight);
+
+  // Panel
   panel = document.createElement('div');
   panel.className = 'ui-panel controls-panel';
 
-  const title = document.createElement('h2');
-  title.textContent = 'Simulation Controls';
-  title.style.marginTop = '0';
-  panel.appendChild(title);
-
-  // Scenario Selector (Phase 8)
-  createDropdown(
-    'Workflow Scenario',
-    SCENARIOS.map(s => ({ id: s.id, name: s.name })),
-    (val) => callbacks.onConfigChange({ scenario: val }),
-    'scenario-select'
-  );
-
-  // Failure Multiplier
-  createSlider(
-    'Failure Rate',
-    UI.failureMultiplierMin,
-    UI.failureMultiplierMax,
-    0.01,
-    (val) => callbacks.onConfigChange({ failureMultiplier: val }),
-    (val) => `${val.toFixed(2)}x`,
-    'failure-multiplier'
-  );
-
-  // Agent Speed
-  createSlider(
-    'Agent Speed',
-    UI.agentSpeedMin,
-    UI.agentSpeedMax,
-    0.25,
-    (val) => callbacks.onConfigChange({ agentSpeed: val }),
-    (val) => `${val.toFixed(2)}x`,
-    'agent-speed'
-  );
-
-  // Particle Count
-  createSlider(
-    'Particle Count',
-    UI.particleCountMin,
-    UI.particleCountMax,
-    50,
-    (val) => callbacks.onConfigChange({ particleCount: Math.round(val) }),
-    (val) => Math.round(val).toString(),
-    'particle-count'
-  );
-
-  // Guardrails Toggle
-  createToggle(
-    'Guardrails Protection',
-    (val) => callbacks.onConfigChange({ guardrailsEnabled: val }),
-    'guardrails-enabled',
-    true // isGuardrail
-  );
-
-  // Auto-zoom Toggle
-  createToggle(
-    'Auto-zoom on Catastrophe',
-    (val) => callbacks.onConfigChange({ autoZoomEnabled: val }),
-    'auto-zoom-enabled'
-  );
-
-  // Layout Preset
-  createDropdown(
-    'Layout',
-    [
-      { id: 'clustered', name: 'Clustered' },
-      { id: 'flow', name: 'Flow' },
-      { id: 'ring', name: 'Ring' }
-    ],
-    (val) => callbacks.onConfigChange({ layout: val as LayoutPreset }),
-    'layout-preset'
-  );
-
-  // Sound Volume
-  createSlider(
-    'Sound Volume',
-    0,
-    1,
-    0.01,
-    (val) => callbacks.onConfigChange({ soundVolume: val }),
-    (val) => `${Math.round(val * 100)}%`,
-    'sound-volume'
-  );
-
-  // Buttons
-  const btnRow = document.createElement('div');
-  btnRow.className = 'btn-row';
+  // Header row with title + pause/reset
+  const header = document.createElement('div');
+  header.className = 'panel-header';
+  const title = document.createElement('span');
+  title.className = 'panel-title';
+  title.textContent = 'Controls';
 
   const pauseBtn = document.createElement('button');
-  pauseBtn.className = 'btn btn-primary';
+  pauseBtn.className = 'icon-btn small';
   pauseBtn.id = 'pause-btn';
-  pauseBtn.textContent = 'Pause';
+  pauseBtn.title = 'Pause / Resume (Space)';
+  pauseBtn.innerHTML = '⏸';
   pauseBtn.onclick = () => {
     paused = !paused;
-    pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+    pauseBtn.innerHTML = paused ? '▶' : '⏸';
     if (paused) callbacks.onPause();
     else callbacks.onResume();
   };
 
   const resetBtn = document.createElement('button');
-  resetBtn.className = 'btn';
-  resetBtn.textContent = 'Reset Simulation';
+  resetBtn.className = 'icon-btn small';
+  resetBtn.title = 'Reset simulation (R)';
+  resetBtn.innerHTML = '↺';
   resetBtn.onclick = () => callbacks.onReset();
 
-  btnRow.appendChild(pauseBtn);
-  btnRow.appendChild(resetBtn);
-  panel.appendChild(btnRow);
+  header.appendChild(title);
+  header.appendChild(pauseBtn);
+  header.appendChild(resetBtn);
+  panel.appendChild(header);
+
+  // Section: Simulation
+  createSection('Simulation', () => {
+    createDropdown('Scenario', SCENARIOS.map(s => ({ id: s.id, name: s.name })),
+      (val) => callbacks.onConfigChange({ scenario: val }), 'scenario-select');
+    createSlider('Failure Rate', UI.failureMultiplierMin, UI.failureMultiplierMax, 0.01,
+      (val) => callbacks.onConfigChange({ failureMultiplier: val }),
+      (val) => `${val.toFixed(2)}x`, 'failure-multiplier');
+    createSlider('Agent Speed', UI.agentSpeedMin, UI.agentSpeedMax, 0.25,
+      (val) => callbacks.onConfigChange({ agentSpeed: val }),
+      (val) => `${val.toFixed(2)}x`, 'agent-speed');
+    createSlider('Particle Count', UI.particleCountMin, UI.particleCountMax, 50,
+      (val) => callbacks.onConfigChange({ particleCount: Math.round(val) }),
+      (val) => Math.round(val).toString(), 'particle-count');
+  });
+
+  // Section: Display
+  createSection('Display', () => {
+    createDropdown('Layout', [
+      { id: 'clustered', name: 'Clustered' },
+      { id: 'flow', name: 'Flow' },
+      { id: 'ring', name: 'Ring' },
+    ], (val) => callbacks.onConfigChange({ layout: val as LayoutPreset }), 'layout-preset');
+    createToggle('Guardrails', (val) => callbacks.onConfigChange({ guardrailsEnabled: val }),
+      'guardrails-enabled', true);
+    createToggle('Auto-zoom', (val) => callbacks.onConfigChange({ autoZoomEnabled: val }),
+      'auto-zoom-enabled');
+  });
+
+  // Section: Audio
+  createSection('Audio', () => {
+    createSlider('Volume', 0, 1, 0.01,
+      (val) => callbacks.onConfigChange({ soundVolume: val }),
+      (val) => `${Math.round(val * 100)}%`, 'sound-volume');
+  });
 
   document.body.appendChild(panel);
 }
@@ -147,21 +128,49 @@ export function syncControls(config: SimulationConfig): void {
   updateElementValue('sound-volume', config.soundVolume);
 
   document.body.classList.toggle('light-mode', !config.darkMode);
+
+  if (soundBtn) {
+    soundBtn.innerHTML = config.soundEnabled ? '🔊' : '🔇';
+  }
 }
 
 export function isPaused(): boolean {
   return paused;
 }
 
+let currentSection: HTMLElement | null = null;
+
+function createSection(label: string, build: () => void) {
+  const section = document.createElement('div');
+  section.className = 'ctrl-section';
+
+  const sectionHeader = document.createElement('button');
+  sectionHeader.className = 'ctrl-section-header';
+  sectionHeader.innerHTML = `<span>${label}</span><span class="ctrl-section-arrow">▾</span>`;
+
+  const body = document.createElement('div');
+  body.className = 'ctrl-section-body';
+
+  sectionHeader.onclick = () => {
+    const collapsed = body.classList.toggle('collapsed');
+    const arrow = sectionHeader.querySelector('.ctrl-section-arrow') as HTMLElement;
+    if (arrow) arrow.textContent = collapsed ? '▸' : '▾';
+  };
+
+  section.appendChild(sectionHeader);
+  section.appendChild(body);
+  panel.appendChild(section);
+
+  currentSection = body;
+  build();
+  currentSection = null;
+}
+
 function createSlider(
-  label: string,
-  min: number,
-  max: number,
-  step: number,
-  onChange: (val: number) => void,
-  format: (val: number) => string,
-  id: string
+  label: string, min: number, max: number, step: number,
+  onChange: (val: number) => void, format: (val: number) => string, id: string
 ) {
+  const target = currentSection ?? panel;
   const group = document.createElement('div');
   group.className = 'control-group';
 
@@ -176,9 +185,8 @@ function createSlider(
   input.min = min.toString();
   input.max = max.toString();
   input.step = step.toString();
-  
+
   const valDisplay = labelEl.querySelector(`#${id}-val`) as HTMLElement;
-  
   input.oninput = () => {
     const val = parseFloat(input.value);
     valDisplay.textContent = format(val);
@@ -186,15 +194,14 @@ function createSlider(
   };
 
   group.appendChild(input);
-  panel.appendChild(group);
+  target.appendChild(group);
 }
 
 function createDropdown(
-  label: string,
-  options: { id: string; name: string }[],
-  onChange: (val: string) => void,
-  id: string
+  label: string, options: { id: string; name: string }[],
+  onChange: (val: string) => void, id: string
 ) {
+  const target = currentSection ?? panel;
   const group = document.createElement('div');
   group.className = 'control-group';
 
@@ -211,49 +218,43 @@ function createDropdown(
     o.textContent = opt.name;
     select.appendChild(o);
   });
-
   select.onchange = () => onChange(select.value);
 
   group.appendChild(select);
-  panel.appendChild(group);
+  target.appendChild(group);
 }
 
 function createToggle(
-  label: string,
-  onChange: (val: boolean) => void,
-  id: string,
-  isGuardrail = false
+  label: string, onChange: (val: boolean) => void, id: string, isGuardrail = false
 ) {
+  const target = currentSection ?? panel;
   const group = document.createElement('div');
   group.className = 'control-group' + (isGuardrail ? ' guardrail-control' : '');
 
   const container = document.createElement('label');
   container.className = 'toggle-container';
-  
+
   const labelText = document.createElement('span');
   labelText.textContent = label;
-  labelText.style.fontSize = isGuardrail ? '15px' : '14px';
   if (isGuardrail) labelText.style.fontWeight = 'bold';
-  
+
   const switchEl = document.createElement('span');
   switchEl.className = 'switch';
-  
+
   const input = document.createElement('input');
   input.type = 'checkbox';
   input.id = id;
   input.onchange = () => onChange(input.checked);
-  
+
   const slider = document.createElement('span');
   slider.className = 'slider' + (isGuardrail ? ' guardrail' : '');
-  
+
   switchEl.appendChild(input);
   switchEl.appendChild(slider);
-  
   container.appendChild(labelText);
   container.appendChild(switchEl);
-  
   group.appendChild(container);
-  panel.appendChild(group);
+  target.appendChild(group);
 }
 
 function updateElementValue(id: string, value: string | number | boolean) {
@@ -267,7 +268,6 @@ function updateElementValue(id: string, value: string | number | boolean) {
     const valDisplay = document.getElementById(`${id}-val`);
     if (valDisplay) {
       const numValue = typeof value === 'number' ? value : parseFloat(value.toString());
-      // Re-format if needed based on the slider logic
       if (id === 'failure-multiplier') valDisplay.textContent = `${numValue.toFixed(2)}x`;
       else if (id === 'agent-speed') valDisplay.textContent = `${numValue.toFixed(2)}x`;
       else if (id === 'particle-count') valDisplay.textContent = Math.round(numValue).toString();

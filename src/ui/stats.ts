@@ -7,14 +7,14 @@ export function initStats(): void {
   statsBar.className = 'stats-bar';
   
   statsBar.innerHTML = `
-    <div class="stats-item">Active: <span class="stats-value" id="stat-active">0</span></div>
-    <div class="stats-item">Completed: <span class="stats-value" id="stat-completed">0</span></div>
-    <div class="stats-item">Self-corrected: <span class="stats-value" id="stat-corrected">0</span></div>
-    <div class="stats-item">Failures: <span class="stats-value" id="stat-failed">0</span></div>
+    <div class="stats-item"><span class="stats-label">Active</span><span class="stats-value" id="stat-active">0</span></div>
+    <div class="stats-item"><span class="stats-label">Completed</span><span class="stats-value" id="stat-completed">0</span></div>
+    <div class="stats-item"><span class="stats-label">Self-corrected</span><span class="stats-value" id="stat-corrected">0</span></div>
+    <div class="stats-item"><span class="stats-label">Failures</span><span class="stats-value" id="stat-failed">0</span></div>
     <div class="stats-item" id="catastrophic-container" style="display: none;">
       <span class="catastrophic-stat">☠ <span id="stat-catastrophic">0</span></span>
     </div>
-    <div class="stats-item">Uptime: <span class="stats-value" id="stat-uptime">00:00</span></div>
+    <div class="stats-item"><span class="stats-label">Uptime</span><span class="stats-value" id="stat-uptime">00:00</span></div>
   `;
   
   document.body.appendChild(statsBar);
