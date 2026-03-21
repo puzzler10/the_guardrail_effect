@@ -7,67 +7,67 @@ export function buildGraph(layout: LayoutPreset, scenarioId: string = 'global'):
     return buildScenarioGraph(scenarioId, layout)
   }
 
-  // Global Nexus (All Connectors) - Organise into 5 flowchart stages
-  const STAGE_COUNT = 5
-  const stages: (typeof CONNECTOR_LIBRARY)[] = Array.from({ length: STAGE_COUNT }, () => [])
+  // Global Nexus (All Connectors) - Organise into a 4x15 horizontal serpentine grid
+  const ROWS = 4
+  const COLS = 15
+  const totalCells = ROWS * COLS
   
-  // Distribute nodes pseudo-randomly but deterministically into stages
-  CONNECTOR_LIBRARY.forEach((template) => {
-    const seed = template.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-    const stageIndex = seed % STAGE_COUNT
-    stages[stageIndex].push(template)
-  })
-
+  // Create a mapping of nodes to grid positions
   const nodes: GraphNode[] = []
+  
+  CONNECTOR_LIBRARY.forEach((template, index) => {
+    // Basic linear index to grid cell (row, col)
+    const cellIndex = index % totalCells
+    const row = Math.floor(cellIndex / COLS)
+    let col = cellIndex % COLS
+    
+    // Serpentine logic: reverse col on odd rows
+    const isReverseRow = row % 2 === 1
+    if (isReverseRow) {
+      col = (COLS - 1) - col
+    }
 
-  // Auto-generate connections for Global Nexus to simulate a flowchart
-  stages.forEach((stageNodes, stageIndex) => {
-    stageNodes.forEach((template, index) => {
-      // Calculate coordinates using stageIndex as the group index
-      const coords = calculateCoordinates(template.id, stageIndex, index, stageNodes.length, layout)
-      
-      const neighbors: string[] = []
-      
-      // 1. Link within the same stage (form a loop/chain within stage to look like a sub-process)
-      const nextInStage = stageNodes[(index + 1) % stageNodes.length]
-      if (nextInStage && nextInStage.id !== template.id) {
-        neighbors.push(nextInStage.id)
-      }
-      
-      // 2. Link to next stage (primary forward flow)
-      if (stageIndex < STAGE_COUNT - 1) {
-        const nextStage = stages[stageIndex + 1]
-        if (nextStage.length > 0) {
-          const target1 = nextStage[index % nextStage.length]
-          neighbors.push(target1.id)
-          
-          if (nextStage.length > 1) {
-             const target2 = nextStage[(index + 1) % nextStage.length]
-             neighbors.push(target2.id)
-          }
-        }
-      }
+    // Calculate coordinates using grid position
+    const coords = calculateCoordinates(template.id, row, col, index, layout)
+    
+    // Connectivity: Primarily follow the serpentine sequence (index -> index + 1)
+    const neighbors: string[] = []
+    
+    // 1. Next in sequence (main flow)
+    const nextTemplate = CONNECTOR_LIBRARY[(index + 1) % CONNECTOR_LIBRARY.length]
+    if (nextTemplate && nextTemplate.id !== template.id) {
+      neighbors.push(nextTemplate.id)
+    }
 
-      // 3. Deliberate "long jumps" and loops
-      const seed = template.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-      if (seed % 7 === 0 && stageIndex < STAGE_COUNT - 2) {
-        const jumpStage = stages[stageIndex + 2]
-        if (jumpStage.length > 0) neighbors.push(jumpStage[index % jumpStage.length].id)
-      }
-      if (seed % 11 === 0 && stageIndex > 1) {
-        const backStage = stages[stageIndex - 1]
-        if (backStage.length > 0) neighbors.push(backStage[index % backStage.length].id)
-      }
+    // 2. Occasional "long jumps" and loops for visual interest
+    const seed = template.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+    
+    // Skip-ahead jump (long travel time)
+    if (seed % 13 === 0) {
+      const jumpTarget = CONNECTOR_LIBRARY[(index + 5) % CONNECTOR_LIBRARY.length]
+      if (jumpTarget) neighbors.push(jumpTarget.id)
+    }
 
-      nodes.push({
-        id: template.id,
-        name: template.name,
-        icon: template.icon,
-        risk: template.risk,
-        x: coords.x,
-        y: coords.y,
-        neighbors: Array.from(new Set(neighbors)),
-      })
+    // Horizontal bridge (skipping rows)
+    if (seed % 17 === 0) {
+      const rowJumpTarget = CONNECTOR_LIBRARY[(index + COLS) % CONNECTOR_LIBRARY.length]
+      if (rowJumpTarget) neighbors.push(rowJumpTarget.id)
+    }
+
+    // Small backward loop
+    if (seed % 19 === 0 && index > 2) {
+      const backTarget = CONNECTOR_LIBRARY[index - 2]
+      if (backTarget) neighbors.push(backTarget.id)
+    }
+
+    nodes.push({
+      id: template.id,
+      name: template.name,
+      icon: template.icon,
+      risk: template.risk,
+      x: coords.x,
+      y: coords.y,
+      neighbors: Array.from(new Set(neighbors)),
     })
   })
 
@@ -76,52 +76,57 @@ export function buildGraph(layout: LayoutPreset, scenarioId: string = 'global'):
 
 function calculateCoordinates(
   id: string, 
-  groupIndex: number, 
+  row: number, 
+  col: number, 
   index: number, 
-  count: number, 
   layout: LayoutPreset
 ): { x: number; y: number } {
   const CENTER_X = CANVAS_WIDTH / 2
   const CENTER_Y = CANVAS_HEIGHT / 2
 
   const seed = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-  const jitter = (amount: number) => (Math.sin(seed) * amount)
+  const jitter = (amount: number) => (Math.sin(seed * 0.5) * amount)
 
   if (layout === 'clustered') {
+    // Keep cluster logic based on some grouping (risk or just modulo)
+    const groupIndex = index % 5 
     const angles = [0, Math.PI * 0.4, Math.PI * 0.8, Math.PI * 1.2, Math.PI * 1.6]
     const distance = 550
     const clusterCenterX = CENTER_X + Math.cos(angles[groupIndex]) * distance
     const clusterCenterY = CENTER_Y + Math.sin(angles[groupIndex]) * distance
-    const localAngle = (index / count) * Math.PI * 2
-    const localDist = 60 + (index * 12)
+    const localAngle = (index / 12) * Math.PI * 2
+    const localDist = 60 + ((index % 12) * 12)
     
     return {
       x: clusterCenterX + Math.cos(localAngle) * localDist + jitter(20),
       y: clusterCenterY + Math.sin(localAngle) * localDist + jitter(20),
     }
   } else if (layout === 'flow') {
-    const xPadding = 250
-    const availableWidth = CANVAS_WIDTH - (xPadding * 2)
-    // groupIndex is the stage from 0 to 4
-    const xStep = availableWidth / 4
-    const xBase = xPadding + (groupIndex * xStep)
-
+    // Horizontal serpentine layout
+    const xPadding = 200
     const yPadding = 250
+    const COLS = 15
+    const ROWS = 4
+    
+    const availableWidth = CANVAS_WIDTH - (xPadding * 2)
     const availableHeight = CANVAS_HEIGHT - (yPadding * 2)
-    let yBase = CANVAS_HEIGHT / 2
-    if (count > 1) {
-      const yStep = availableHeight / (count - 1)
-      yBase = yPadding + (index * yStep)
-    }
+    
+    const xStep = availableWidth / (COLS - 1)
+    const yStep = availableHeight / (ROWS - 1)
+    
+    // row and col are passed in from buildGraph
+    const xBase = xPadding + (col * xStep)
+    const yBase = yPadding + (row * yStep)
 
+    // Reduced jitter for "tidier" look, but enough to avoid perfect grids
     return {
-      x: xBase + jitter(90),
-      y: yBase + jitter(90),
+      x: xBase + jitter(35),
+      y: yBase + jitter(35),
     }
   } else if (layout === 'ring') {
-    const radius = 250 + (groupIndex * 150)
-    const angleOffset = groupIndex * 0.5
-    const angle = angleOffset + (index / count) * Math.PI * 2
+    const radius = 250 + ((index % 5) * 150)
+    const angleOffset = (index % 5) * 0.5
+    const angle = angleOffset + (index / 12) * Math.PI * 2
     
     return {
       x: CENTER_X + Math.cos(angle) * radius + jitter(10),
@@ -145,10 +150,19 @@ export function getNodeById(nodes: GraphNode[], nodeId: string): GraphNode | und
 }
 
 export function getEntryNodes(nodes: GraphNode[]): GraphNode[] {
-  const entry = nodes.filter(n => n.risk === 'safe' || n.risk === 'low')
-  return entry.length > 0 ? entry : nodes.slice(0, 3)
+  // Always include the first few nodes of the serpentine path to ensure full-length journeys
+  const startNodes = nodes.slice(0, 5)
+  // Plus any safe/low risk nodes for uniform spread
+  const safeNodes = nodes.filter(n => n.risk === 'safe' || n.risk === 'low')
+  
+  return Array.from(new Set([...startNodes, ...safeNodes]))
 }
 
 export function getExitNodes(nodes: GraphNode[]): GraphNode[] {
-  return nodes.filter(n => n.risk === 'safe' || n.risk === 'low')
+  // Exit at the end of the serpentine path
+  const endNodes = nodes.slice(-5)
+  // Plus any safe/low risk nodes
+  const safeNodes = nodes.filter(n => n.risk === 'safe' || n.risk === 'low')
+  
+  return Array.from(new Set([...endNodes, ...safeNodes]))
 }
