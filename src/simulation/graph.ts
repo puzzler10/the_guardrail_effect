@@ -73,11 +73,11 @@ function calculateCoordinates(
 
   if (layout === 'clustered') {
     const angles = [0, Math.PI * 0.4, Math.PI * 0.8, Math.PI * 1.2, Math.PI * 1.6]
-    const distance = 800
+    const distance = 550
     const clusterCenterX = CENTER_X + Math.cos(angles[riskIndex]) * distance
     const clusterCenterY = CENTER_Y + Math.sin(angles[riskIndex]) * distance
     const localAngle = (index / count) * Math.PI * 2
-    const localDist = 100 + (index * 15)
+    const localDist = 60 + (index * 12)
     
     return {
       x: clusterCenterX + Math.cos(localAngle) * localDist + jitter(20),
@@ -103,7 +103,7 @@ function calculateCoordinates(
       y: yBase + jitter(40),
     }
   } else if (layout === 'ring') {
-    const radius = 300 + (riskIndex * 250)
+    const radius = 250 + (riskIndex * 150)
     const angleOffset = riskIndex * 0.5
     const angle = angleOffset + (index / count) * Math.PI * 2
     
