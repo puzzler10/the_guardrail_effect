@@ -61,3 +61,7 @@
 - [ ] Minimal Playwright tests (page loads, no errors, buttons work)
 - [ ] Deploy to Netlify
 - [ ] Test on different screens
+- [ ] URL query params
+
+## Phase 7: Visual Enhancements (OpenProcessing Grade)
+- [x] Enhanced Particle Trails (alpha gradient, width taper, smooth curves, state-based colors)

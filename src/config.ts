@@ -50,6 +50,16 @@ export const PARTICLE = {
   baseSpeed: 0.005,       // progress units per ms at 1x speed
 }
 
+// ─── Trail rendering ─────────────────────────────────────────────────────────
+
+export const TRAIL = {
+  alphaMax: 180,
+  alphaExponent: 1.5,     // Exponential curve for fade
+  widthMin: 1,
+  widthMax: 3.5,
+  smoothing: true,        // Use curveVertex vs vertex
+}
+
 // ─── Failure messages by tier ─────────────────────────────────────────────────
 
 export const FAILURE_MESSAGES: Record<1 | 2 | 3 | 4, string[]> = {
