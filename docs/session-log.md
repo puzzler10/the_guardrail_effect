@@ -1,5 +1,40 @@
 # Session Log
 
+## 2026-03-21 — Session 24: Title + Layout Density + Particle Slider Fix
+
+**What was done:**
+- Renamed project to "The Guardrail Effect" — updated `index.html` title, sound overlay, onboarding modal, `docs/project.md`
+- Added persistent floating title at top-center of viewport (`src/ui/title.ts`, CSS in `styles.css`)
+- Doubled node count: each connector now appears twice in global scenario (~130 nodes), via `expandedByRisk` in `graph.ts`
+- Compacted flow layout: canvas 2000×1400 → 1200×900, column spacing 400→200px, yPadding 150→80
+- Added denser graph connectivity: skip-tier cross-links + same-tier non-adjacent links per node
+- Camera default zoom: 0.8 → 1.2; center: (1000,700) → (600,450)
+- Min zoom raised: 0.3 → 0.5 (prevents zooming out to where everything becomes tiny)
+- Default particle count: 300 → 700
+- Fixed particle slider: spawn rate now scales with deficit (`rampMultiplier`) so target count is reached within seconds
+- Minimap virtualHeight updated: 800 → 900
+- All 105 tests passing
+
+**What's next:**
+- Soundscape improvements (deferred by user)
+
+---
+
+## 2026-03-21 — Session 23: Zoom sensitivity fix + git cleanup
+
+**What was done:**
+- Reduced scroll zoom sensitivity from 10% to 4% per tick (`0.9/1.1` → `0.96/1.04`) in `src/rendering/renderer.ts`
+- Merged `fix-zoom-sensitivity` branch to main
+- Cleaned up stale git worktrees and orphaned directories (agent-ad8a7db2, atmospheric-storm, rendering-perf, storm-polish-perf, storm-v2, vivid-rainbow)
+
+**What's next:**
+- Decide what to do with `prep-public-repo` worktree (1 unmerged commit: strip internal docs for public GitHub release)
+
+**Unresolved:**
+- `prep-public-repo` branch pending user decision (merge, drop, or leave)
+
+---
+
 ## 2026-03-21 — Session 22: UI/UX Polish
 
 **What was done:**

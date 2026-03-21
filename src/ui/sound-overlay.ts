@@ -9,7 +9,7 @@ export function initSoundOverlay(options: SoundOverlayOptions) {
   
   overlay.innerHTML = `
     <div class="sound-card">
-      <h1>AI Guardrail Demo</h1>
+      <h1>The Guardrail Effect</h1>
       <p>This experience includes data-center ambient sound and auditory feedback for agent failures and guardrail interceptions.</p>
       <button class="sound-btn" id="enable-sound-btn">
         <span>🔊</span> ENABLE SOUND

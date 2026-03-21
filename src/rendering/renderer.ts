@@ -2,7 +2,7 @@ import p5 from 'p5'
 import type { SimulationState } from '../types'
 import { COLORS_DARK, COLORS_LIGHT, UI } from '../config'
 
-const DEFAULT_ZOOM = 0.8
+const DEFAULT_ZOOM = 1.2
 import { drawNodes, drawEdges } from './node-renderer'
 import { drawParticles } from './particle-renderer'
 import type { Effect } from './effects'
@@ -81,12 +81,12 @@ export interface Renderer {
 }
 
 export function createSketch(getState: () => SimulationState): Renderer {
-  let camX = 1000 // Current camera X
-  let camY = 700 // Current camera Y
+  let camX = 600 // Current camera X
+  let camY = 450 // Current camera Y
   let zoom = DEFAULT_ZOOM // Current zoom
 
-  let targetCamX = 1000
-  let targetCamY = 700
+  let targetCamX = 600
+  let targetCamY = 450
   let targetZoom = DEFAULT_ZOOM
   let focusEndTime = 0
   
@@ -154,8 +154,8 @@ export function createSketch(getState: () => SimulationState): Renderer {
 
       // Auto-return to default view
       if (focusEndTime > 0 && nowMs > focusEndTime) {
-        targetCamX = 1000
-        targetCamY = 700
+        targetCamX = 600
+        targetCamY = 450
         targetZoom = DEFAULT_ZOOM
         focusEndTime = 0
       }

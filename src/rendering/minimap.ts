@@ -18,7 +18,7 @@ export function drawMinimap(
 
   const colors = config.darkMode ? COLORS_DARK : COLORS_LIGHT
   const virtualWidth = 1200
-  const virtualHeight = 800
+  const virtualHeight = 900
 
   // 1. Draw Background
   p.push()

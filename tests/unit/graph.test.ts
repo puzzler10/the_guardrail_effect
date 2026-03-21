@@ -9,7 +9,7 @@ describe('Graph Module', () => {
     it('should return 65 nodes for global layout', () => {
       layouts.forEach(layout => {
         const nodes = buildGraph(layout, 'global')
-        expect(nodes.length).toBe(65)
+        expect(nodes.length).toBe(130)
       })
     })
 

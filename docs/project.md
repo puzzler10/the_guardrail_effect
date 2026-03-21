@@ -1,4 +1,4 @@
-# Project: Particle Swarm City (Agent Swarm)
+# Project: The Guardrail Effect
 
 ## Overview
 
