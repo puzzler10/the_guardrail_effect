@@ -4,7 +4,7 @@ import { buildScenarioGraph } from './scenarios'
 
 export function buildGraph(layout: LayoutPreset, scenarioId: string = 'global'): GraphNode[] {
   if (scenarioId !== 'global') {
-    return buildScenarioGraph(scenarioId)
+    return buildScenarioGraph(scenarioId, layout)
   }
 
   // Global Nexus (All Connectors)
