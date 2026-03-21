@@ -23,7 +23,7 @@ export function drawMinimap(
   // 1. Draw Background
   p.push()
   p.noStroke()
-  p.fill(config.darkMode ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.6)')
+  p.fill(config.darkMode ? 'rgba(0, 0, 0, 0.15)' : 'rgba(255, 255, 255, 0.3)')
   p.rect(x, y, width, height, 8)
   p.stroke(config.darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)')
   p.noFill()
