@@ -75,23 +75,9 @@ export function drawParticles(p: p5, particles: Particle[], _nodes: GraphNode[],
       }
     }
 
-    // 3. Comet body — elongated ellipse rotated along direction of travel
-    let angle = 0
-    if (trail.length >= 1) {
-      const last = trail[trail.length - 1]
-      const ddx = pos.x - last.x
-      const ddy = pos.y - last.y
-      if (Math.abs(ddx) > 0.01 || Math.abs(ddy) > 0.01) {
-        angle = Math.atan2(ddy, ddx)
-      }
-    }
-
-    p.push()
-    p.translate(pos.x, pos.y)
-    p.rotate(angle)
+    // 3. Orb body — simple circle (no rotation)
     p.fill(hue, sat, bri, alpha255 * 0.85)
-    p.ellipse(0, 0, baseSize * PARTICLE_VISUALS.cometElongation, baseSize)
-    p.pop()
+    p.ellipse(pos.x, pos.y, baseSize)
 
     // 4. White-hot core — small bright center ensures visibility on ALL backgrounds
     // (critical for rainbow mode where cool-spectrum hues could blend in)
