@@ -70,10 +70,11 @@ tests/
 6. **Contextual Node Visuals** — Labels only appear on hover; nodes feature "breathing" halos and larger icons for a cleaner, high-scale feel.
 7. **Custom UI suite** — replaced lil-gui with custom HTML/CSS for better non-technical audience appeal and branding.
 8. **Fixed timestep** — 60Hz simulation, rendering interpolates.
-9. **Atmospheric FX** — Vignette, scanlines, and camera shake enhance the "high-tech" simulation aesthetic.
-10. **Performance Optimization** — Batched trail drawing and O(1) node lookups enable 1000+ particles at 60fps on 2D canvas.
-11. **Guardrails are perfect** — tier 4 = 0%, tier 3 ≈ 0% when on. Clear message.
-12. **Simulation Reliability** — verified by Monte Carlo integration tests in `tests/integration/` ensuring correct failure distributions across model presets.
+9. **Atmospheric FX & Persistent Trails** — Vignette, scanlines, camera shake, and a world-space SCREEN-blended trail buffer enhance the "high-tech" simulation aesthetic.
+10. **Cinematic Camera Easing** — Responsive camera LERP with snap-to-focus on catastrophic events.
+11. **Performance Optimization** — Batched trail drawing and O(1) node lookups enable 1000+ particles at 60fps on 2D canvas.
+12. **Guardrails are perfect** — tier 4 = 0%, tier 3 ≈ 0% when on. Clear message.
+13. **Simulation Reliability** — verified by Monte Carlo integration tests in `tests/integration/` ensuring correct failure distributions across model presets.
 
 ## Key Specs
 

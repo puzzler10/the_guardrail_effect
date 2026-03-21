@@ -2,6 +2,13 @@
 
 *(Note: Tasks from Phase 0 to Phase 9 have been completed and archived. See [docs/archive/completed-tasks.md](archive/completed-tasks.md) for history.)*
 
+## Phase 12: Luminous Agent Particles ✅ DONE
+- [x] Individual hue identity per particle (cool spectrum cyan→magenta, golden-angle distribution)
+- [x] Directional comet shape (elongated ellipse rotated along travel direction)
+- [x] Tapered explicit trails from particle.trail[] array
+- [x] White-hot core for visibility on dark + rainbow backgrounds
+- [x] Journey-progress size variation, reduced node-boundary fade zone
+
 ## Phase 11: UI/UX Polish ✅ DONE
 - [x] Fix GitLab "foxes" icon bug → 🦊
 - [x] Reduce failure rate to 1/100th (failureMultiplier default 0.01)

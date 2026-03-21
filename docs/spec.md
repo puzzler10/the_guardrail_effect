@@ -262,7 +262,10 @@ Behavior:
 - **Zoom:** mouse wheel, 0.5x to 4x range
 - **Pan:** click and drag on empty space
 - **Auto-zoom on catastrophe:** brief zoom-in on catastrophic events (0.3s ease-in, hold 0.8s, 0.3s ease-out)
+- **Cinematic Camera Easing (Phase 9):** Responsive camera LERP with snap-to-focus on catastrophic events.
 - **Minimap** in corner when zoomed in (small rectangle showing full view with viewport indicator)
+- **Persistent Trails Buffer (Phase 9):** Ghostly, world-space persistent trails with SCREEN blending for a luminous effect.
+- **Background Atmosphere (Phase 9):** Noise-based undulating color field, decorative dust particles, and screen-space vignette.
 
 ---
 
@@ -454,6 +457,12 @@ src/
 6. **Configuration-driven** — every magic number lives in `config.ts`. Runtime sliders modify config values. Tests can override config to create specific scenarios.
 
 7. **Graph allows cycles** — adjacency list representation supports loops natively. Particle lifecycle has a max-step limit (20) to prevent infinite traversal.
+
+8. **Mega-Scenario Topologies (Phase 8):** Handcrafted branching workflows for RevOps, DevOps, and HR onboarding, selectable via UI.
+
+9. **Scenic Route Routing (Phase 7-8):** Particles follow deterministic, curved paths to simulate "deliberate" agent behavior.
+
+10. **Non-Repetition Engine (Phase 8):** Session-level failure message tracking ensures high-variety error reporting without immediate repetition.
 
 ---
 

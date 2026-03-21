@@ -41,7 +41,8 @@
       "Skill(update-config)",
       "WebFetch",
       "WebSearch",
-      "Bash(command gemini:*)"
+      "Bash(command gemini:*)",
+      "Bash(./scripts/agent-merge.sh worktree-agent-ad8a7db2:*)"
     ],
     "deny": [
       "Bash(rm -rf /:*)",

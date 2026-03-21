@@ -139,7 +139,7 @@ function init() {
 
   // 3. Rendering Initialization
   const { sketch } = createSketch(() => currentState)
-  new p5(sketch)
+  new p5(sketch, document.getElementById('app') as HTMLElement)
 
   // 4. Main Update Loop
   requestAnimationFrame(update)

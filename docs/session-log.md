@@ -1,5 +1,23 @@
 # Session Log
 
+## 2026-03-21 — Session 23: Luminous Agent Particle Overhaul
+
+**What was done:**
+- Redesigned particles as directional luminous comets with individual color identity
+- Each particle gets unique hue (cyan→magenta) via golden-angle hashing on `particle.id`
+- Comet body: elongated ellipse rotated along direction of travel (2:1 aspect ratio)
+- Tapered explicit trail drawn from `particle.trail[]` (previously populated but unused by renderer)
+- Soft colored glow aura per particle; white-hot core for visibility on both dark + rainbow backgrounds
+- Journey-progress-based size variation (4–8px)
+- Alpha fade zone at node boundaries narrowed 15%→8% (less mid-path vanishing)
+- `PARTICLE.trailLength` increased 15→20 for smoother tails
+- Persistence buffer intensity reduced (atmospheric role only, fast fade alpha 25→40)
+- Added `PARTICLE_VISUALS` config block in `src/config.ts`
+- All changes in worktree `luminous-agents`, merged to main. 105 tests passing.
+
+**What's next:**
+- Visual refinement (trail length, glow intensity, hue range tuning) in next session
+
 ## 2026-03-21 — Session 22: UI/UX Polish
 
 **What was done:**
