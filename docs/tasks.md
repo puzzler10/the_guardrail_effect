@@ -61,7 +61,14 @@
 - [ ] Minimal Playwright tests (page loads, no errors, buttons work)
 - [ ] Deploy to Netlify
 - [ ] Test on different screens
-- [ ] URL query params
 
-## Phase 7: Visual Enhancements (OpenProcessing Grade)
-- [x] Enhanced Particle Trails (alpha gradient, width taper, smooth curves, state-based colors)
+## Phase 7: Voice Note Feedback Implementation
+- [ ] **Nodes Visuals**: Remove lines between nodes. Nodes should be just big icons, very visible, without the enclosing circle.
+- [ ] **Simulation Speed**: Slow down the particles traveling between nodes. The current effect is too frantic.
+- [ ] **Scale and Layout**: Make the entire map much bigger and increase the total number of nodes to give the impression of a complex system too large for a human to easily understand.
+- [ ] **Node Events**: Lower the probability of any particular node failing/going off. This reduces visual clutter and chaotic popping, compensating for the higher number of nodes.
+- [ ] **Camera Behavior**: Add a UI toggle to enable/disable the dramatic auto-zoom on catastrophic events, as it can be jarring.
+- [ ] **Particle Routing**: Make particle paths curved/randomized ("scenic route") instead of straight lines, and vary speeds to show non-linear agent behavior.
+- [ ] **Typography & Design**: Improve the overall design, typography, and fonts used. Reduce overall text clutter.
+- [ ] **Node Hover**: Remove static text under nodes. Display node labels/descriptions (e.g., "restart service") only on hover, relying on clear icons by default.
+- [ ] **Theming (Stretch/Future)**: Consider themed options (e.g., cars driving on a map, ships between ports) instead of just particles.

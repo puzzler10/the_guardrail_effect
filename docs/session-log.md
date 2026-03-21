@@ -340,32 +340,30 @@ Key decisions made during spec review:
 **What's next:**
 - Phase 6: E2E & Deploy.
 
-## 2026-03-21 — Session 17: Enhanced Particle Trails
+## 2026-03-20 — Session 16: Polish & Aesthetic Improvements
 
 **What was done:**
-- Upgraded particle trail rendering from flat polylines to gallery-quality gradient trails.
-- Implemented **Alpha Gradient Trails**:
-  - Replaced single `beginShape()` with individual segment drawing.
-  - Added exponential alpha fade from tail (~10) to head (~180) using `Math.pow(progress, 1.5)`.
-- Implemented **Width Tapering**:
-  - Trail width now scales from 1px at the tail to 3.5px at the head.
-- Implemented **Smooth Curves**:
-  - Used `p.spline()` (the p5 v2 Catmull-Rom equivalent of `curve()`) for each segment to create organic, flowing paths.
-  - Added `TRAIL.smoothing` toggle in config.
-- Implemented **State-Based Trail Colors**:
-  - **Healthy**: Cyan gradient.
-  - **Recovering**: Pulsing yellow (Tier 1).
-  - **Failed**: Orange (Tier 2) or Red (Tier 3).
-  - **Exploded**: White fading to nothing.
-- Optimized performance by pre-caching `p5.Color` objects and using `p.stroke(r, g, b, alpha)` to minimize object creation in hot loops.
-- Added `TRAIL` configuration object to `src/config.ts` for easy tuning.
-- Verified implementation with `npm run check` (92 tests passed, clean build).
+- Implemented **Slower Particles** for better visibility and "deliberate" feel.
+  - Reduced `baseSpeed` from 0.008 to 0.005 in `src/config.ts`.
+- **Simplified Visuals** by removing lines between nodes (edges).
+  - Cleaned up `src/rendering/renderer.ts` and `src/rendering/node-renderer.ts` to remove edge drawing logic.
+- Enhanced **Contrast & Legibility**:
+  - Updated color palettes in `src/config.ts` with more vibrant particle colors and muted node colors.
+  - Added dark halos/shadows to floating text and node labels for readability on complex backgrounds.
+  - Implemented contextual node labels: only visible when zoomed in or for high-risk nodes.
+- Expanded **Simulation Scale**:
+  - Increased node count from 35 to 45 in `src/simulation/graph.ts`.
+  - Refined all 45 node templates with unique icons for better distinction.
+- Verified all changes with `npm run check` (92 tests passed, build successful).
 
 **Key decisions:**
-- Switched to drawing individual segments to enable per-segment stroke and alpha changes, which is not possible with `beginShape()` in p5.js 2D mode.
-- Used `p.spline()` for segments to maintain the "smooth" requirement while allowing for the gradient.
-- Chose an exponential exponent of 1.5 for the alpha fade to create a more "glowing head" effect.
+- Removing edges significantly reduced visual noise, letting the particle swarm "define" the network structure.
+- Tied label visibility to camera zoom to keep the wide view clean while providing detail when focused.
+- Added a "shiver" jitter effect to Tier 4 floating text to emphasize catastrophic failure.
 
 **What's next:**
 - Phase 6: E2E & Deploy.
-- URL query params (Phase 6).
+
+## Session 2026-03-21
+- Decomposed voice note feedback into actionable tasks.
+- Appended new tasks to Phase 7 in docs/tasks.md.
