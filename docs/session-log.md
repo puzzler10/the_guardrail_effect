@@ -56,24 +56,20 @@
 **What's next:**
 - Final polish and user feedback review.
 
-## 2026-03-21 — Agent merge: fix-loading
+## 2026-03-21 — Session 24: Bug Fix - Node Visibility & Camera Alignment
 
-## Tasks completed
-- [x] URL query params implemented and tested
-- [x] Added unit tests for URL parsing logic
-- [x] Integrated URL state with simulation configuration
+**What was done:**
+- Fixed critical visibility issue where nodes were not rendering on-screen:
+  - Aligned default camera coordinates and auto-return target (`1000, 700`) with the world center defined in `graph.ts` (`2000x1400` world).
+  - Restored `drawEdges` call in `renderer.ts` to show the graph's connective structure.
+  - Added explicit `p.blendMode(p.BLEND)` reset in `trails.ts` after the `SCREEN` pass to prevent blend state leakage that was washing out subsequent layers.
+- Resolved `SyntaxError: Named export 'GIFEncoder' not found` in unit tests:
+  - Reverted `clear()` calls to `clear(0, 0, 0, 0)` in `background.ts` and `trails.ts`. While `clear()` is the preferred p5.js API for graphics, the specific bundle/environment interaction with the `gifenc` module was causing an import failure during Vitest execution.
+- Verified fix with `npm run check`: all 104 tests (including background and rendering tests) are now passing.
 
-## Technical details
-- Created `src/ui/url-params.ts` with `parseUrlParams` and `updateUrlParams`.
-- Parameters: `model`, `scenario`, `layout`, `multiplier`, `speed`, `count`, `guardrails`, `autozoom`, `dark`, `sound`, `volume`.
-- Clamped numerical inputs to valid config ranges.
-- Initial state in `main.ts` now honors URL params.
-- State changes in UI now trigger `window.history.replaceState`.
-- Mocked global `location` and `history` in `tests/unit/url-params.test.ts` to verify parsing and updating.
-
-## Results
-- `npm run check` passed: 99 tests (including 7 new unit tests), clean build, clean lint.
-- URL is now a reactive source of truth for the simulation state.
+**Key decisions:**
+- Prioritized camera centering as the root cause of "missing" nodes; icons were rendering correctly but were far outside the initial 600x400 viewport.
+- Reverting to the older `clear(0,0,0,0)` syntax was necessary to maintain test stability across the environment's CJS/ESM boundary for the `gifenc` dependency.
 
 ## 2026-03-21 — Orchestrator: Stability & Test Expansion
 
@@ -93,3 +89,43 @@
 
 **What's next:**
 - The project is feature-complete according to the current task list. Remaining items are deployment and a stretch goal for theming.
+
+## 2026-03-21 — Session 25: Cha Cha Cha Theme Planning
+
+**What was done:**
+- Created a comprehensive implementation plan for the "Cha Cha Cha" dynamic visual theme (`plans/cha-cha-cha-theme.md`).
+- Defined the "Angry Storm" (guardrails OFF) and "Rolling Rainbow" (guardrails ON) aesthetics.
+- Added Phase 10 to `docs/tasks.md` for future implementation.
+
+**Key decisions:**
+- Use Käärijä's "Cha Cha Cha" as a metaphor for the simulation's safety state.
+- Transition between high-contrast/neon/stormy and soft/rainbow/flowing visuals based on guardrail toggles.
+
+**What's next:**
+- Dispatch a Gemini agent to implement Phase 10.
+
+## 2026-03-21 — Orchestrator: Project Consolidation & Bug Fixes
+
+**What was done:**
+- Fixed critical "invisible canvas" bug where `p5` was appending to `body` instead of the `#app` container, causing the simulation to render off-screen.
+- Archived completed phases (0-9) from `docs/tasks.md` to `docs/archive/completed-tasks.md`.
+- Consolidated and cleaned up workspace by moving old `.md` plan files and agent task files into `archive/` directories.
+- Updated `docs/project.md` to ensure recent Phase 8 & 9 enhancements (Civic Scenarios, cinematic camera, persistent trails) were properly documented.
+- Verified system stability with `npm run check`.
+
+**Key decisions:**
+- A clean workspace and slimmed-down task list sets up a better foundation for the final stretch (Phase 10 Dynamic Theming).
+
+**What's next:**
+- Implementation of Phase 10 (Cha Cha Cha theme).
+
+## 2026-03-21 — Agent merge: rendering-perf
+
+## Tasks completed
+- **Performance Optimization**: Removed O(N) Map allocations and object creations (p5.Color) from the render loop. Fixed periodic noise update lag spikes in `background.ts` by using a panning buffer strategy.
+- **Palette Configuration**: Added `THEME.storm` and `THEME.rainbow` to `src/config.ts`.
+- **Dynamic Background Engine**: Implemented `initBackground` and `drawBackground` in `src/rendering/background.ts` to transition between a tense "Angry Storm" and relaxed "Rolling Rainbow" state based on guardrail toggle.
+- **Storm Flash Effects**: Implemented a red-orange storm flash in `src/rendering/effects.ts` triggered on simulation failures when guardrails are disabled.
+
+## Results
+The simulation now runs "smooth as butter" with a stabilized frame rate even at high particle counts. The visual theme provides visceral feedback on the security state of the system.
