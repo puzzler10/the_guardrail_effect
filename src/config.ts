@@ -38,7 +38,7 @@ export const SCENARIOS = [
 export const DEFAULT_CONFIG: SimulationConfig = {
   modelPreset: 'frontier',
   scenario: 'global',
-  failureMultiplier: 1,
+  failureMultiplier: 0.01,
   agentSpeed: 1,
   particleCount: 300,
   guardrailsEnabled: false,
@@ -54,9 +54,9 @@ export const DEFAULT_CONFIG: SimulationConfig = {
 export const PARTICLE = {
   minSteps: 8,
   maxSteps: 20,
-  spawnRate: 15,          // particles per second
+  spawnRate: 8,           // particles per second
   trailLength: 15,        // frames to keep in trail
-  baseSpeed: 0.0035,       // progress units per ms at 1x speed
+  baseSpeed: 0.0012,       // progress units per ms at 1x speed
 }
 
 // ─── Trail rendering ─────────────────────────────────────────────────────────
@@ -348,7 +348,7 @@ export const NODE_GLOW = {
   layersCritical: 5,
   glowSpread: 0.4,     // Multiplier for glow radius per layer
   breatheSpeed: 0.002,  // Radians per ms
-  breatheAmount: 0.08,  // Max size variation (8%)
+  breatheAmount: 0,  // Max size variation (0% - disabled)
 }
 
 export const BACKGROUND = {
