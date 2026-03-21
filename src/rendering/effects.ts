@@ -1,7 +1,7 @@
 import p5 from 'p5'
 
 export interface Effect {
-  type: 'shockwave' | 'shake'
+  type: 'shockwave' | 'shake' | 'stormFlash'
   x?: number
   y?: number
   startMs: number
@@ -26,8 +26,30 @@ export function createScreenShake(nowMs: number): Effect {
   }
 }
 
+
+export function createStormFlash(nowMs: number): Effect {
+  return {
+    type: 'stormFlash',
+    startMs: nowMs,
+    durationMs: 400, // Quick flash
+  }
+}
+
 export function drawEffects(p: p5, effects: Effect[], nowMs: number): void {
   for (const effect of effects) {
+    if (effect.type === 'stormFlash') {
+      const elapsed = nowMs - effect.startMs
+      const progress = Math.min(elapsed / effect.durationMs, 1)
+      const alpha = Math.pow(1 - progress, 3) * 120 // exponential fade-out
+      
+      p.push()
+      p.resetMatrix() // Screen space flash
+      p.noStroke()
+      p.fill(255, 50, 0, alpha) // Red-orange flash
+      p.rect(0, 0, p.width, p.height)
+      p.pop()
+    }
+
     if (effect.type === 'shockwave' && effect.x !== undefined && effect.y !== undefined) {
       const elapsed = nowMs - effect.startMs
       const progress = Math.min(elapsed / effect.durationMs, 1)

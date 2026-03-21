@@ -3,11 +3,7 @@ import type { Particle, GraphNode } from '../types'
 import { COLORS_DARK } from '../config'
 import { getParticlePosition } from '../simulation/particle'
 
-export function drawParticles(p: p5, particles: Particle[], nodes: GraphNode[], colors: typeof COLORS_DARK): void {
-  const nodeMap = new Map<string, GraphNode>()
-  for (const node of nodes) {
-    nodeMap.set(node.id, node)
-  }
+export function drawParticles(p: p5, particles: Particle[], _nodes: GraphNode[], colors: typeof COLORS_DARK, nodeMap: Map<string, GraphNode>): void {
 
   // Pre-cache colors for performance
   const healthyColor = p.color(colors.particleHealthy)

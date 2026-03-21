@@ -2,6 +2,8 @@ import p5 from 'p5'
 import type { GraphNode, RiskLevel } from '../types'
 import { COLORS_DARK, NODE_GLOW } from '../config'
 
+const phaseOffsetCache = new Map<string, number>();
+
 const NODE_SIZES: Record<RiskLevel, number> = {
   safe: 16,
   low: 18,
@@ -36,7 +38,11 @@ export function drawNode(
 
   // 1. Breathing Animation
   // Use id as seed for desynchronized phase
-  const phaseOffset = node.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) * 0.7
+  let phaseOffset = phaseOffsetCache.get(node.id);
+  if (phaseOffset === undefined) {
+    phaseOffset = node.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) * 0.7;
+    phaseOffsetCache.set(node.id, phaseOffset);
+  }
   const breathe = 1 + Math.sin(p.millis() * NODE_GLOW.breatheSpeed + phaseOffset) * NODE_GLOW.breatheAmount
   const size = baseSize * breathe
 
@@ -117,11 +123,7 @@ export function drawNodes(
   }
 }
 
-export function drawEdges(p: p5, nodes: GraphNode[], colors: typeof COLORS_DARK): void {
-  const nodeMap = new Map<string, GraphNode>()
-  for (const node of nodes) {
-    nodeMap.set(node.id, node)
-  }
+export function drawEdges(p: p5, nodes: GraphNode[], colors: typeof COLORS_DARK, nodeMap: Map<string, GraphNode>): void {
 
   for (const from of nodes) {
     for (const neighborId of from.neighbors) {

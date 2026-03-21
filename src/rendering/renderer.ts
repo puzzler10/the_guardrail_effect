@@ -9,7 +9,8 @@ import {
   pruneEffects, 
   getCameraShakeOffset, 
   createShockwave, 
-  createScreenShake 
+  createScreenShake, 
+  createStormFlash 
 } from './effects'
 import type { FloatingText } from './text-overlay'
 import { 
@@ -52,9 +53,7 @@ export function createSketch(getState: () => SimulationState): Renderer {
       p.createCanvas(p.windowWidth, p.windowHeight)
       p.pixelDensity(1) // performance
       
-      const state = getState()
-      const colors = state.config.darkMode ? COLORS_DARK : COLORS_LIGHT
-      initBackground(p, colors)
+      initBackground(p)
       initTrails(p)
     }
 
@@ -70,6 +69,11 @@ export function createSketch(getState: () => SimulationState): Renderer {
         if (!processedEventIds.has(id)) {
           processedEventIds.add(id)
           floatingTexts.push(createFloatingText(event, nowMs))
+          
+          // Storm flash for "Angry Storm" mode (guardrails OFF)
+          if (!state.config.guardrailsEnabled) {
+            effects.push(createStormFlash(nowMs));
+          }
           
           if (event.tier === 4) {
             effects.push(createShockwave(event.x, event.y, nowMs))
@@ -121,7 +125,7 @@ export function createSketch(getState: () => SimulationState): Renderer {
       floatingTexts = pruneFloatingTexts(floatingTexts, nowMs)
 
       // 3. Draw Background (Screen space)
-      drawBackground(p, colors, state.config.darkMode)
+      drawBackground(p, state.config.guardrailsEnabled)
       
       const shake = getCameraShakeOffset(effects, nowMs)
 
@@ -147,10 +151,11 @@ export function createSketch(getState: () => SimulationState): Renderer {
       p.translate(-camX, -camY)
 
       // 4. Draw Layers (World space)
-      drawTrails(p, state.particles, state.nodes, colors)
-      drawEdges(p, state.nodes, colors)
+      const nodeMap = new Map(state.nodes.map(n => [n.id, n]));
+      drawTrails(p, state.particles, state.nodes, colors, nodeMap)
+      drawEdges(p, state.nodes, colors, nodeMap)
       drawNodes(p, state.nodes, colors, state.config.guardrailsEnabled, hoveredNodeId)
-      drawParticles(p, state.particles, state.nodes, colors)
+      drawParticles(p, state.particles, state.nodes, colors, nodeMap)
       drawEffects(p, effects, nowMs)
       drawFloatingTexts(p, floatingTexts, nowMs, colors)
 
@@ -160,14 +165,12 @@ export function createSketch(getState: () => SimulationState): Renderer {
       drawMinimap(p, state.nodes, state.config, camX, camY, zoom)
 
       // Vignette effect (Phase 9)
-      drawVignette(p, state.config.darkMode)
+      drawVignette(p, state.config.guardrailsEnabled)
     }
 
     p.windowResized = () => {
       p.resizeCanvas(p.windowWidth, p.windowHeight)
-      const state = getState()
-      const colors = state.config.darkMode ? COLORS_DARK : COLORS_LIGHT
-      handleResize(p, colors)
+      handleResize(p)
     }
 
     p.mouseDragged = () => {
