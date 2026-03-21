@@ -16,7 +16,6 @@ interface DustParticle {
 }
 
 export function initBackground(p: p5) {
-  // 1. Create buffers
   stormBuffer = p.createGraphics(p.width, p.height)
   stormBuffer.pixelDensity(1)
   
@@ -29,11 +28,10 @@ export function initBackground(p: p5) {
   vignetteBuffer = p.createGraphics(p.width, p.height)
   vignetteBuffer.pixelDensity(1)
 
-  updateStormBuffer(p)
+  updateStormBuffers(p)
   updateRainbowBuffer(p)
   updateVignetteBuffer(p)
 
-  // 2. Initialize dust particles
   dustParticles = []
   for (let i = 0; i < BACKGROUND.dustCount; i++) {
     dustParticles.push({
@@ -45,32 +43,36 @@ export function initBackground(p: p5) {
   }
 }
 
-function updateStormBuffer(p: p5) {
+function updateStormBuffers(p: p5) {
   if (!stormBuffer || !cloudLayer2) return
   
-  const step = 10
+  const step = 8
   
-  // Layer 1: Dark base clouds
+  // Layer 1: Sharp, high-contrast dark clouds
   stormBuffer.clear(0, 0, 0, 0)
   stormBuffer.noStroke()
   for (let x = 0; x < p.width; x += step) {
     for (let y = 0; y < p.height; y += step) {
-      const n = p.noise(x * 0.003, y * 0.003)
-      const brightness = n * 40
-      stormBuffer.fill(brightness, brightness * 0.8, brightness * 1.2, 255)
-      stormBuffer.rect(x, y, step, step)
+      const n = p.noise(x * 0.002, y * 0.002)
+      if (n > 0.45) {
+        // High contrast thresholding for "clumpy" storm clouds
+        const brightness = p.map(n, 0.45, 1, 10, 80)
+        stormBuffer.fill(brightness * 0.8, brightness * 0.9, brightness * 1.2, 255)
+        stormBuffer.rect(x, y, step, step)
+      }
     }
   }
 
-  // Layer 2: Wispy upper clouds (red-tinted for intensity)
+  // Layer 2: Luminous "Angry" Red wisps
   cloudLayer2.clear(0, 0, 0, 0)
   cloudLayer2.noStroke()
   for (let x = 0; x < p.width; x += step) {
     for (let y = 0; y < p.height; y += step) {
-      const n = p.noise(x * 0.005 + 100, y * 0.005 + 100)
-      if (n > 0.6) {
-        const alpha = (n - 0.6) * 400
-        cloudLayer2.fill(60, 10, 20, alpha)
+      const n = p.noise(x * 0.004 + 500, y * 0.004 + 500)
+      if (n > 0.65) {
+        // Luminous red "static" or lightning-esque energy
+        const alpha = p.map(n, 0.65, 1, 0, 180)
+        cloudLayer2.fill(180, 20, 40, alpha)
         cloudLayer2.rect(x, y, step, step)
       }
     }
@@ -86,7 +88,6 @@ function updateRainbowBuffer(p: p5) {
   for (let x = 0; x < p.width; x += step) {
     for (let y = 0; y < p.height; y += step) {
       const n = p.noise(x * BACKGROUND.noiseScale * 0.5, y * BACKGROUND.noiseScale * 0.5, 100)
-      // Soft rainbow hues
       const hue = (n * 360) % 360
       rainbowBuffer.fill(hue, 85, 45, 1)
       rainbowBuffer.rect(x, y, step, step)
@@ -101,34 +102,35 @@ function updateVignetteBuffer(p: p5) {
   const ctx = (vignetteBuffer as any).drawingContext as CanvasRenderingContext2D
   const centerX = p.width / 2
   const centerY = p.height / 2
-  const gradient = ctx.createRadialGradient(centerX, centerY, p.width * 0.2, centerX, centerY, p.width * 0.8)
+  const gradient = ctx.createRadialGradient(centerX, centerY, p.width * 0.1, centerX, centerY, p.width * 0.9)
   gradient.addColorStop(0, 'rgba(0,0,0,0)')
+  gradient.addColorStop(0.5, 'rgba(0,0,0,0.2)')
   gradient.addColorStop(1, 'rgba(0,0,0,1)')
   ctx.fillStyle = gradient
   ctx.fillRect(0, 0, p.width, p.height)
 }
 
 export function drawBackground(p: p5, guardrailsEnabled: boolean) {
-  // Lerp transition factor
   const target = guardrailsEnabled ? 1 : 0
-  transitionFactor = p.lerp(transitionFactor, target, 0.05)
+  transitionFactor = p.lerp(transitionFactor, target, 0.04)
 
-  // 1. Draw Buffers
   p.push()
   if (transitionFactor < 0.99) {
     const stormAlpha = (1 - transitionFactor) * 255
     p.tint(255, stormAlpha)
     
-    // Animate layers at different speeds for depth
-    const offset1 = (p.frameCount * 0.5) % p.width
-    const offset2 = (p.frameCount * 1.2) % p.width
+    const offset1 = (p.frameCount * 0.4) % p.width
+    const offset2 = (p.frameCount * 1.5) % p.width
     
-    // Layer 1: Base clouds
+    // Storm base
     p.image(stormBuffer, -offset1, 0)
     p.image(stormBuffer, p.width - offset1, 0)
     
-    // Layer 2: Faster wispy red clouds
-    p.blendMode(p.ADD)
+    // Storm lightning/static wisps
+    // Subtle flicker
+    const flicker = p.noise(p.frameCount * 0.1) > 0.7 ? 1.5 : 1.0
+    p.tint(255, stormAlpha * flicker)
+    p.blendMode(p.SCREEN)
     p.image(cloudLayer2, -offset2, 0)
     p.image(cloudLayer2, p.width - offset2, 0)
     p.blendMode(p.BLEND)
@@ -136,19 +138,16 @@ export function drawBackground(p: p5, guardrailsEnabled: boolean) {
   
   if (transitionFactor > 0.01) {
     p.tint(255, transitionFactor * 255)
-    // Rainbow buffer rolls slightly differently
     const rOffset = (p.frameCount * BACKGROUND.noiseSpeed * 40) % p.width
-    
-    p.blendMode(p.SCREEN);
-    p.image(rainbowBuffer, -rOffset, 0);
-    p.image(rainbowBuffer, p.width - rOffset, 0);
-    p.blendMode(p.BLEND);
+    p.blendMode(p.SCREEN)
+    p.image(rainbowBuffer, -rOffset, 0)
+    p.image(rainbowBuffer, p.width - rOffset, 0)
+    p.blendMode(p.BLEND)
   }
   p.pop()
 
-  // 2. Dust Particles
   p.noStroke()
-  const dustAlpha = BACKGROUND.dustAlpha * (1 - transitionFactor * 0.5) // Less dust in rainbow mode
+  const dustAlpha = BACKGROUND.dustAlpha * (1 - transitionFactor * 0.5)
   p.fill(255, dustAlpha)
   for (const dp of dustParticles) {
     const driftX = (p.noise(dp.noiseOffset + p.frameCount * 0.005) - 0.5) * BACKGROUND.dustSpeed * 2
@@ -173,7 +172,7 @@ export function handleResize(p: p5) {
   cloudLayer2 = p.createGraphics(p.width, p.height)
   rainbowBuffer = p.createGraphics(p.width, p.height)
   vignetteBuffer = p.createGraphics(p.width, p.height)
-  updateStormBuffer(p)
+  updateStormBuffers(p)
   updateRainbowBuffer(p)
   updateVignetteBuffer(p)
 }
