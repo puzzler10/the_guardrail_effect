@@ -2,7 +2,15 @@
 
 *(Note: Tasks from Phase 0 to Phase 9 have been completed and archived. See [docs/archive/completed-tasks.md](archive/completed-tasks.md) for history.)*
 
+## Phase 15: Serpentine Flow Aesthetic ✅ DONE
+- [x] Horizontal serpentine grid layout (4x15) for global graph
+- [x] Left-to-Right, Right-to-Left "S-curve" motion
+- [x] Uniform particle spread (spawn at all safe/low risk nodes + serpentine start)
+- [x] Reduced layout jitter (35px) for cleaner, "tidier" appearance
+- [x] Verified continuous motion and space utilization
+
 ## Phase 14: Visual Polish & Layout Fixes ✅ DONE
+- [x] Add boundary validation regression tests (prevent out-of-bounds nodes)
 - [x] Fix minimap and layout bounds (constrained to canvas dimensions)
 - [x] Fix vertical seam in scrolling backgrounds (seamless noise)
 - [x] Reduce minimap background opacity (transparency for background visibility)

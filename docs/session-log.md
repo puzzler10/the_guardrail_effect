@@ -1,5 +1,19 @@
 # Session Log
 
+## 2026-03-21 — Session 26: Serpentine Layout Refinement
+
+**What was done:**
+- Replaced the staged-staggered layout with a **horizontal serpentine grid (4x15)** for the global graph.
+- Implemented an "S-curve" mapping: nodes flow Left-to-Right in Row 1, Right-to-Left in Row 2, etc., using the full horizontal space of the 3000px canvas.
+- Reduced coordinate jitter (90px -> 35px) for a "tidier" look while maintaining some organic variation.
+- Updated `getEntryNodes` and `getExitNodes` to include the start and end of the serpentine path respectively, in addition to safe/low risk nodes. This ensures both "long-haul" journeys and uniform agent spread across the screen.
+- Removed coordinate jitter from predefined scenarios in `scenarios.ts` to improve visual cleanliness.
+- Updated unit tests in `tests/unit/graph.test.ts` to reflect the new entry/exit node selection criteria.
+- Verified all 106 tests are passing and the build is stable.
+
+**What's next:**
+- Final visual check of the serpentine flow's "continuous motion" in the browser.
+
 ## 2026-03-21 — Session 25: Visual Polish & Layout Fixes
 
 **What was done:**
@@ -279,3 +293,14 @@ The UI is now much more informative and accessible. Users can easily understand 
 
 ## Results
 The node interaction is now much more professional and informative. The separation between "glanceable" hover info and "deep-dive" click info removes redundancy and provides a much better user experience.
+
+## 2026-03-21 — Session 26: Layout Boundary Regression Testing
+
+**What was done:**
+- **Added Boundary Regression Test**: Implemented a new unit test in `tests/unit/graph.test.ts` that iterates through all combinations of layout presets and scenarios to ensure all node coordinates strictly fall within the `[0, CANVAS_WIDTH]` and `[0, CANVAS_HEIGHT]` range.
+- **Fixed Scenario Layouts**: Discovered and resolved an issue in `src/simulation/scenarios.ts` where hardcoded, smaller canvas constants were causing negative Y-coordinates for the "ring" layout in specific scenarios (e.g., devops).
+- **Synchronized Constants**: Replaced local hardcoded dimensions in `scenarios.ts` with the global `CANVAS_WIDTH` and `CANVAS_HEIGHT` from `config.ts` for consistency.
+- **Validated Results**: All 12 unit tests in the graph suite are now passing, ensuring the minimap and particle trails will never clip due to layout generation.
+
+**What's next:**
+- Monitor for any other out-of-bounds issues in future scenarios or custom layouts.
