@@ -1,16 +1,8 @@
 import p5 from 'p5'
 import type { GraphNode, RiskLevel } from '../types'
-import { COLORS_DARK, NODE_GLOW } from '../config'
+import { COLORS_DARK, NODE_GLOW, NODE_SIZES } from '../config'
 
 const phaseOffsetCache = new Map<string, number>();
-
-const NODE_SIZES: Record<RiskLevel, number> = {
-  safe: 16,
-  low: 18,
-  medium: 22,
-  high: 28,
-  critical: 36,
-}
 
 function drawGlow(p: p5, x: number, y: number, size: number, color: string, risk: RiskLevel) {
   const layers = risk === 'critical' ? NODE_GLOW.layersCritical : 

@@ -2,17 +2,18 @@ import p5 from 'p5'
 import type { SimulationState } from '../types'
 import { COLORS_DARK, COLORS_LIGHT, UI, CANVAS_WIDTH, CANVAS_HEIGHT } from '../config'
 
-const DEFAULT_ZOOM = 0.6
+const DEFAULT_ZOOM = 0.8
 import { drawNodes, drawEdges } from './node-renderer'
 import { drawParticles } from './particle-renderer'
 import type { Effect } from './effects'
-import { 
-  drawEffects, 
-  pruneEffects, 
-  getCameraShakeOffset, 
-  createShockwave, 
-  createScreenShake, 
-  createStormFlash 
+import {
+  drawWorldEffects,
+  drawScreenEffects,
+  pruneEffects,
+  getCameraShakeOffset,
+  createShockwave,
+  createScreenShake,
+  createStormFlash
 } from './effects'
 import type { FloatingText } from './text-overlay'
 import { 
@@ -23,6 +24,56 @@ import {
 import { drawMinimap } from './minimap'
 import { initBackground, drawBackground, drawVignette, handleResize } from './background'
 import { initTrails, drawTrails } from './trails'
+
+import type { GraphNode } from '../types'
+
+const RISK_LABELS: Record<string, string> = {
+  safe: 'Safe Tool',
+  low: 'Low Risk',
+  medium: 'Medium Risk',
+  high: 'High Risk',
+  critical: 'Critical Risk',
+}
+
+function drawNodeTooltip(p: p5, node: GraphNode, sx: number, sy: number, colors: typeof COLORS_DARK) {
+  const padding = 12
+  const lines = [node.name, RISK_LABELS[node.risk] || node.risk]
+  p.textSize(13)
+  const textW = Math.max(...lines.map(l => p.textWidth(l)))
+  const boxW = textW + padding * 2
+  const boxH = lines.length * 20 + padding * 2
+  // Position above the node, clamped to screen
+  const tx = p.constrain(sx - boxW / 2, 8, p.width - boxW - 8)
+  const tyRaw = sy - boxH - 12
+  const ty = tyRaw < 8 ? sy + 20 : tyRaw
+
+  p.push()
+  p.noStroke()
+  // Background
+  p.fill(10, 10, 20, 220)
+  p.rect(tx, ty, boxW, boxH, 6)
+  // Accent border
+  const nodeColor = p.color(colors.nodeByRisk[node.risk] || '#ffffff')
+  nodeColor.setAlpha(180)
+  p.stroke(nodeColor)
+  p.strokeWeight(1)
+  p.noFill()
+  p.rect(tx, ty, boxW, boxH, 6)
+  // Text
+  p.noStroke()
+  p.fill(255)
+  p.textAlign(p.LEFT, p.TOP)
+  p.textStyle(p.BOLD)
+  p.textSize(13)
+  p.text(lines[0], tx + padding, ty + padding)
+  p.textStyle(p.NORMAL)
+  p.textSize(11)
+  const riskColor = p.color(colors.nodeByRisk[node.risk] || '#ffffff')
+  riskColor.setAlpha(200)
+  p.fill(riskColor)
+  p.text(lines[1], tx + padding, ty + padding + 18)
+  p.pop()
+}
 
 export interface Renderer {
   sketch: (p: p5) => void
@@ -42,6 +93,7 @@ export function createSketch(getState: () => SimulationState): Renderer {
   let effects: Effect[] = []
   let floatingTexts: FloatingText[] = []
   const processedEventIds = new Set<string>()
+  let clickedNodeId: string | undefined = undefined
 
   const setCameraTarget = (x: number, y: number, z?: number) => {
     targetCamX = x
@@ -126,7 +178,8 @@ export function createSketch(getState: () => SimulationState): Renderer {
       effects = pruneEffects(effects, nowMs)
       floatingTexts = pruneFloatingTexts(floatingTexts, nowMs)
 
-      // 3. Draw Background (Screen space)
+      // 3. Clear canvas then draw background (Screen space)
+      p.background(colors.background)
       drawBackground(p, state.config.guardrailsEnabled)
       
       const shake = getCameraShakeOffset(effects, nowMs)
@@ -158,13 +211,27 @@ export function createSketch(getState: () => SimulationState): Renderer {
       drawEdges(p, state.nodes, colors, nodeMap)
       drawNodes(p, state.nodes, colors, state.config.guardrailsEnabled, hoveredNodeId)
       drawParticles(p, state.particles, state.nodes, colors, nodeMap)
-      drawEffects(p, effects, nowMs)
+      drawWorldEffects(p, effects, nowMs)
       drawFloatingTexts(p, floatingTexts, nowMs, colors)
 
       p.pop()
 
-      // 5. Draw UI Elements (Unscaled)
+      // 5. Draw screen-space effects (outside camera transform)
+      drawScreenEffects(p, effects, nowMs)
+
+      // 6. Draw UI Elements (Unscaled)
       drawMinimap(p, state.nodes, state.config, camX, camY, zoom)
+
+      // Node tooltip for clicked node
+      if (clickedNodeId) {
+        const clickedNode = state.nodes.find(n => n.id === clickedNodeId)
+        if (clickedNode) {
+          // Convert world position to screen position
+          const sx = (clickedNode.x - camX) * zoom + p.width / 2 + shake.dx
+          const sy = (clickedNode.y - camY) * zoom + p.height / 2 + shake.dy
+          drawNodeTooltip(p, clickedNode, sx, sy, colors)
+        }
+      }
 
       // Vignette effect (Phase 9)
       drawVignette(p, state.config.guardrailsEnabled)
@@ -183,6 +250,20 @@ export function createSketch(getState: () => SimulationState): Renderer {
       // We set camX/camY immediately to feel responsive during drag
       camX = targetCamX
       camY = targetCamY
+    }
+
+    p.mouseClicked = () => {
+      const shake = getCameraShakeOffset(effects, p.millis())
+      const worldMouseX = (p.mouseX - p.width / 2 - shake.dx) / zoom + camX
+      const worldMouseY = (p.mouseY - p.height / 2 - shake.dy) / zoom + camY
+      const state = getState()
+      let hit: string | undefined
+      let minDist = 40
+      for (const node of state.nodes) {
+        const d = p.dist(worldMouseX, worldMouseY, node.x, node.y)
+        if (d < minDist) { minDist = d; hit = node.id }
+      }
+      clickedNodeId = hit === clickedNodeId ? undefined : hit
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

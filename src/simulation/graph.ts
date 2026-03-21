@@ -4,7 +4,7 @@ import { buildScenarioGraph } from './scenarios'
 
 export function buildGraph(layout: LayoutPreset, scenarioId: string = 'global'): GraphNode[] {
   if (scenarioId !== 'global') {
-    return buildScenarioGraph(scenarioId)
+    return buildScenarioGraph(scenarioId, layout)
   }
 
   // Global Nexus (All Connectors)
@@ -84,8 +84,8 @@ function calculateCoordinates(
       y: clusterCenterY + Math.sin(localAngle) * localDist + jitter(20),
     }
   } else if (layout === 'flow') {
-    const xBase = 300 + (riskIndex * 600)
-    const yPadding = 200
+    const xBase = 150 + (riskIndex * 400)
+    const yPadding = 150
     const availableHeight = CANVAS_HEIGHT - (yPadding * 2)
     const yStep = count > 1 ? availableHeight / (count - 1) : 0
     const yBase = yPadding + (index * yStep)

@@ -1,5 +1,5 @@
 import type { SimulationConfig, LayoutPreset } from '../types';
-import { UI, MODEL_PRESETS, SCENARIOS } from '../config';
+import { UI, SCENARIOS } from '../config';
 import './styles.css';
 
 export interface ControlsCallbacks {
@@ -30,14 +30,6 @@ export function initControls(callbacks: ControlsCallbacks): void {
   title.style.marginTop = '0';
   panel.appendChild(title);
 
-  // Model Preset
-  createDropdown(
-    'Model Preset',
-    Object.keys(MODEL_PRESETS).map(id => ({ id, name: MODEL_PRESETS[id].name })),
-    (val) => callbacks.onConfigChange({ modelPreset: val }),
-    'model-preset'
-  );
-
   // Scenario Selector (Phase 8)
   createDropdown(
     'Workflow Scenario',
@@ -51,9 +43,9 @@ export function initControls(callbacks: ControlsCallbacks): void {
     'Failure Rate',
     UI.failureMultiplierMin,
     UI.failureMultiplierMax,
-    0.1,
+    0.01,
     (val) => callbacks.onConfigChange({ failureMultiplier: val }),
-    (val) => `${val.toFixed(1)}x`,
+    (val) => `${val.toFixed(2)}x`,
     'failure-multiplier'
   );
 
@@ -106,16 +98,6 @@ export function initControls(callbacks: ControlsCallbacks): void {
     'layout-preset'
   );
 
-  // Dark Mode Toggle
-  createToggle(
-    'Dark Mode',
-    (val) => {
-      callbacks.onConfigChange({ darkMode: val });
-      document.body.classList.toggle('light-mode', !val);
-    },
-    'dark-mode'
-  );
-
   // Sound Volume
   createSlider(
     'Sound Volume',
@@ -155,7 +137,6 @@ export function initControls(callbacks: ControlsCallbacks): void {
 }
 
 export function syncControls(config: SimulationConfig): void {
-  updateElementValue('model-preset', config.modelPreset);
   updateElementValue('scenario-select', config.scenario);
   updateElementValue('failure-multiplier', config.failureMultiplier);
   updateElementValue('agent-speed', config.agentSpeed);
@@ -163,9 +144,8 @@ export function syncControls(config: SimulationConfig): void {
   updateElementValue('guardrails-enabled', config.guardrailsEnabled);
   updateElementValue('auto-zoom-enabled', config.autoZoomEnabled);
   updateElementValue('layout-preset', config.layout);
-  updateElementValue('dark-mode', config.darkMode);
   updateElementValue('sound-volume', config.soundVolume);
-  
+
   document.body.classList.toggle('light-mode', !config.darkMode);
 }
 
@@ -288,7 +268,7 @@ function updateElementValue(id: string, value: string | number | boolean) {
     if (valDisplay) {
       const numValue = typeof value === 'number' ? value : parseFloat(value.toString());
       // Re-format if needed based on the slider logic
-      if (id === 'failure-multiplier') valDisplay.textContent = `${numValue.toFixed(1)}x`;
+      if (id === 'failure-multiplier') valDisplay.textContent = `${numValue.toFixed(2)}x`;
       else if (id === 'agent-speed') valDisplay.textContent = `${numValue.toFixed(2)}x`;
       else if (id === 'particle-count') valDisplay.textContent = Math.round(numValue).toString();
       else if (id === 'sound-volume') valDisplay.textContent = `${Math.round(numValue * 100)}%`;

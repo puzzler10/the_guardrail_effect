@@ -1,5 +1,6 @@
 import { CONNECTOR_LIBRARY } from '../config'
 import type { GraphNode } from '../types'
+import type { LayoutPreset } from '../types'
 
 export interface ScenarioDefinition {
   id: string
@@ -94,22 +95,68 @@ export const SCENARIO_DEFINITIONS: Record<string, ScenarioDefinition> = {
   }
 }
 
-export function buildScenarioGraph(scenarioId: string): GraphNode[] {
+export function buildScenarioGraph(scenarioId: string, layout: LayoutPreset = 'flow'): GraphNode[] {
   const def = SCENARIO_DEFINITIONS[scenarioId]
   if (!def) return []
 
-  const nodes: GraphNode[] = def.nodes.map(n => {
+  // Build initial nodes with template data
+  const rawNodes = def.nodes.map(n => {
     const template = CONNECTOR_LIBRARY.find(t => t.id === n.id)
     return {
       id: n.id,
       name: template?.name || n.id,
       icon: template?.icon || '❓',
-      risk: template?.risk || 'medium',
-      x: n.x,
-      y: n.y,
+      risk: template?.risk || ('medium' as const),
+      flowX: n.x,
+      flowY: n.y,
       neighbors: def.connections[n.id] || []
     }
   })
 
-  return nodes
+  if (layout === 'flow') {
+    // Use hardcoded positions — they're already designed as flow layouts
+    return rawNodes.map(n => ({ ...n, x: n.flowX, y: n.flowY }))
+  }
+
+  // For clustered/ring: reposition by risk level
+  const CANVAS_WIDTH = 2000
+  const CANVAS_HEIGHT = 1400
+  const CENTER_X = CANVAS_WIDTH / 2
+  const CENTER_Y = CANVAS_HEIGHT / 2
+  const riskOrder = ['safe', 'low', 'medium', 'high', 'critical'] as const
+
+  // Group by risk
+  const byRisk: Record<string, typeof rawNodes> = {}
+  for (const r of riskOrder) byRisk[r] = []
+  for (const n of rawNodes) byRisk[n.risk].push(n)
+
+  return rawNodes.map(n => {
+    const riskIndex = riskOrder.indexOf(n.risk)
+    const group = byRisk[n.risk]
+    const index = group.indexOf(n)
+    const count = group.length
+
+    const seed = n.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
+    const jitter = (amount: number) => Math.sin(seed) * amount
+
+    let x: number, y: number
+    if (layout === 'clustered') {
+      const angles = [0, Math.PI * 0.4, Math.PI * 0.8, Math.PI * 1.2, Math.PI * 1.6]
+      const dist = 450
+      const cx = CENTER_X + Math.cos(angles[riskIndex]) * dist
+      const cy = CENTER_Y + Math.sin(angles[riskIndex]) * dist
+      const localAngle = (index / Math.max(count, 1)) * Math.PI * 2
+      const localDist = 60 + index * 15
+      x = cx + Math.cos(localAngle) * localDist + jitter(20)
+      y = cy + Math.sin(localAngle) * localDist + jitter(20)
+    } else { // ring
+      const radius = 200 + riskIndex * 150
+      const angleOffset = riskIndex * 0.5
+      const angle = angleOffset + (index / Math.max(count, 1)) * Math.PI * 2
+      x = CENTER_X + Math.cos(angle) * radius + jitter(10)
+      y = CENTER_Y + Math.sin(angle) * radius + jitter(10)
+    }
+
+    return { ...n, x, y }
+  })
 }

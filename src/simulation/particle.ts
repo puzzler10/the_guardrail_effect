@@ -56,9 +56,12 @@ export function getParticlePosition(
   const nx = -dy / edgeLength
   const ny = dx / edgeLength
 
-  // Stable offset based on particle ID
+  // Stable offset based on particle ID — multi-frequency wobble for varied paths
   const offsetScale = (Math.sin(particle.id * 1.5) * 40) + (Math.cos(particle.id * 0.7) * 20)
-  const offset = Math.sin(particle.progress * Math.PI) * offsetScale
+  const wave1 = Math.sin(particle.progress * Math.PI * 2) * offsetScale * 0.6
+  const wave2 = Math.sin(particle.progress * Math.PI * 3 + particle.id * 0.3) * offsetScale * 0.3
+  const envelope = Math.sin(particle.progress * Math.PI) // fade at endpoints
+  const offset = (wave1 + wave2) * envelope
 
   // Alpha: fade in over first 8%, full for middle 84%, fade out over last 8%
   // (narrower fade zone so particles don't vanish mid-path between nodes)

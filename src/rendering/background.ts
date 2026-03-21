@@ -89,7 +89,7 @@ function updateRainbowBuffer(p: p5) {
     for (let y = 0; y < p.height; y += step) {
       const n = p.noise(x * BACKGROUND.noiseScale * 0.5, y * BACKGROUND.noiseScale * 0.5, 100)
       const hue = (n * 360) % 360
-      rainbowBuffer.fill(hue, 85, 45, 1)
+      rainbowBuffer.fill(hue, 50, 25, 1)
       rainbowBuffer.rect(x, y, step, step)
     }
   }

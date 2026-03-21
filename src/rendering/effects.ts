@@ -35,21 +35,9 @@ export function createStormFlash(nowMs: number): Effect {
   }
 }
 
-export function drawEffects(p: p5, effects: Effect[], nowMs: number): void {
+// World-space effects (call inside camera push/pop): shockwaves, debris
+export function drawWorldEffects(p: p5, effects: Effect[], nowMs: number): void {
   for (const effect of effects) {
-    if (effect.type === 'stormFlash') {
-      const elapsed = nowMs - effect.startMs
-      const progress = Math.min(elapsed / effect.durationMs, 1)
-      const alpha = Math.pow(1 - progress, 2) * 160 // Slower fade-out for more impact
-      
-      p.push()
-      p.resetMatrix() // Screen space flash
-      p.noStroke()
-      p.fill(220, 0, 0, alpha) // Intense deep red
-      p.rect(0, 0, p.width, p.height)
-      p.pop()
-    }
-
     if (effect.type === 'shockwave' && effect.x !== undefined && effect.y !== undefined) {
       const elapsed = nowMs - effect.startMs
       const progress = Math.min(elapsed / effect.durationMs, 1)
@@ -87,6 +75,23 @@ export function drawEffects(p: p5, effects: Effect[], nowMs: number): void {
         p.fill(255, particleAlpha)
         p.ellipse(effect.x + dx, effect.y + dy, size)
       }
+    }
+  }
+}
+
+// Screen-space effects (call outside camera push/pop): full-screen flashes
+export function drawScreenEffects(p: p5, effects: Effect[], nowMs: number): void {
+  for (const effect of effects) {
+    if (effect.type === 'stormFlash') {
+      const elapsed = nowMs - effect.startMs
+      const progress = Math.min(elapsed / effect.durationMs, 1)
+      const alpha = Math.pow(1 - progress, 2) * 160
+
+      p.push()
+      p.noStroke()
+      p.fill(220, 0, 0, alpha)
+      p.rect(0, 0, p.width, p.height)
+      p.pop()
     }
   }
 }
