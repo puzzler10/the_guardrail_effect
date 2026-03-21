@@ -31,6 +31,7 @@ export interface Particle {
   stepsCompleted: number
   maxSteps: number
   trail: { x: number; y: number }[]
+  speedMultiplier: number // 0.8 - 1.2 variation
   failureTier?: FailureTier
   failureText?: string
 }
@@ -72,10 +73,12 @@ export interface GuardrailEvent {
 // Config (runtime-modifiable via UI)
 export interface SimulationConfig {
   modelPreset: string
+  scenario: string
   failureMultiplier: number  // 0.1 – 10
   agentSpeed: number         // 0.25 – 4
   particleCount: number      // 50 – 1000
   guardrailsEnabled: boolean
+  autoZoomEnabled: boolean
   darkMode: boolean
   soundEnabled: boolean
   soundVolume: number        // 0 – 1
@@ -90,6 +93,7 @@ export interface SimulationState {
   config: SimulationConfig
   recentFailures: FailureEvent[]
   recentGuardrails: GuardrailEvent[]
+  usedFailureTexts: string[] // Non-repetition engine (Phase 8)
   nextParticleId: number
   lastSpawnMs: number
 }

@@ -57,18 +57,49 @@
 - [x] Layout presets (clustered, flow, ring) - Improved structured distribution
 - [x] UI/UX Polish (glassmorphism, animations, label visibility, particle contrast, node count)
 
+## Orchestration Infrastructure ✅ DONE
+- [x] `scripts/agent-dispatch.sh` — worktree + Gemini launcher
+- [x] `scripts/agent-monitor.sh` — progress reader
+- [x] `scripts/agent-merge.sh` — validate + merge + cleanup + auto-update docs
+- [x] `scripts/agent-cleanup.sh` — remove without merge
+- [x] `scripts/agent-review.sh` — pre-merge visual quality screenshot
+- [x] `scripts/quality-screenshot.py` — Playwright screenshot
+- [x] `agents/base-context.md` — shared Gemini context (includes .agent-summary.md requirement)
+- [x] `agents/quality-rubric.md` — visual quality scoring
+- [x] `agents/skills/p5-visual-quality.md` — p5.js art techniques
+- [x] `agents/skills/aesthetic-criteria.md` — anti-AI-slop criteria
+- [x] Task prompts: particle-trails, node-glow, background-field
+- [x] Pipeline test: particle-trails dispatched, completed, merged
+- [x] Doc auto-update on merge (agent-summary.md → session-log.md + tasks.md)
+- [x] Autonomous operation config (CLAUDE.md workflow routing, task pickup, checkpoints)
+- [x] Full permissions + OS sandbox for Claude
+- [x] Performance fix: disabled trail smoothing, reduced trail length
+
+## Visual Upgrades (via Gemini agents)
+- [x] Enhanced particle trails (alpha gradient, taper, curves)
+- [x] Node glow & atmosphere (radial halos, breathing)
+- [x] Background atmosphere (noise field, vignette, dust)
+
 ## Phase 6: E2E & Deploy
-- [ ] Minimal Playwright tests (page loads, no errors, buttons work)
+- [x] Minimal Playwright tests (page loads, no errors, buttons work)
 - [ ] Deploy to Netlify
 - [ ] Test on different screens
 
-## Phase 7: Voice Note Feedback Implementation
-- [ ] **Nodes Visuals**: Remove lines between nodes. Nodes should be just big icons, very visible, without the enclosing circle.
-- [ ] **Simulation Speed**: Slow down the particles traveling between nodes. The current effect is too frantic.
-- [ ] **Scale and Layout**: Make the entire map much bigger and increase the total number of nodes to give the impression of a complex system too large for a human to easily understand.
-- [ ] **Node Events**: Lower the probability of any particular node failing/going off. This reduces visual clutter and chaotic popping, compensating for the higher number of nodes.
-- [ ] **Camera Behavior**: Add a UI toggle to enable/disable the dramatic auto-zoom on catastrophic events, as it can be jarring.
-- [ ] **Particle Routing**: Make particle paths curved/randomized ("scenic route") instead of straight lines, and vary speeds to show non-linear agent behavior.
-- [ ] **Typography & Design**: Improve the overall design, typography, and fonts used. Reduce overall text clutter.
-- [ ] **Node Hover**: Remove static text under nodes. Display node labels/descriptions (e.g., "restart service") only on hover, relying on clear icons by default.
+## Phase 7: Voice Note Feedback Implementation ✅ DONE
+- [x] **Nodes Visuals**: Remove lines between nodes. Nodes should be just big icons, very visible, without the enclosing circle.
+- [x] **Simulation Speed**: Slow down the particles traveling between nodes. The current effect is too frantic.
+- [x] **Scale and Layout**: Make the entire map much bigger and increase the total number of nodes to give the impression of a complex system too large for a human to easily understand.
+- [x] **Node Events**: Lower the probability of any particular node failing/going off. This reduces visual clutter and chaotic popping, compensating for the higher number of nodes.
+- [x] **Camera Behavior**: Add a UI toggle to enable/disable the dramatic auto-zoom on catastrophic events, as it can be jarring.
+- [x] **Particle Routing**: Make particle paths curved/randomized ("scenic route") instead of straight lines, and vary speeds to show non-linear agent behavior.
+- [x] **Typography & Design**: Improve the overall design, typography, and fonts used. Reduce overall text clutter.
+- [x] **Node Hover**: Remove static text under nodes. Display node labels/descriptions (e.g., "restart service") only on hover, relying on clear icons by default.
 - [ ] **Theming (Stretch/Future)**: Consider themed options (e.g., cars driving on a map, ships between ports) instead of just particles.
+
+## Phase 8: Civic Scenario Integration (Mega-Scenarios) ✅ DONE
+- [x] **Connector Library**: Populate `config.ts` with 40+ Civic connectors (CRM, Dev, Finance, etc.) and metadata.
+- [x] **Mega-Scenario Definitions**: Define topology and node lists for RevOps, DevOps, and HR scenarios.
+- [x] **Personalized Failures**: Implement `NODE_FAILURES` mapping for 40+ nodes across 4 tiers.
+- [x] **Scenario Logic**: Update `buildGraph` and simulation `tick` to support scenario-based filtering and custom connections.
+- [x] **Non-Repetition Engine**: Implement `usedMessages` persistence to ensure unique errors per session.
+- [x] **UI Integration**: Add Scenario Selector and Complexity Slider to the controls panel.

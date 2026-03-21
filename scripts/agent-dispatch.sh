@@ -13,8 +13,8 @@ BRANCH="$1"; shift
 TASK_FILE="$1"; shift
 SKILL_FILES=("$@")
 
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-WORKTREE_DIR="${REPO_ROOT}/../worktrees/${BRANCH##*/}"
+REPO_ROOT="$(git rev-parse --path-format=absolute --git-common-dir | sed 's|/\.git$||')"
+WORKTREE_DIR="${REPO_ROOT}/.worktrees/${BRANCH##*/}"
 
 # Validate task file exists
 if [ ! -f "$REPO_ROOT/$TASK_FILE" ]; then
@@ -39,7 +39,7 @@ npm install --silent 2>/dev/null
 # Assemble prompt: base context + skills + task
 PROMPT="$(cat "$REPO_ROOT/agents/base-context.md")"
 
-for skill in "${SKILL_FILES[@]}"; do
+for skill in "${SKILL_FILES[@]+"${SKILL_FILES[@]}"}"; do
   if [ -f "$REPO_ROOT/$skill" ]; then
     PROMPT="$PROMPT
 
@@ -60,7 +60,7 @@ $(cat "$REPO_ROOT/$TASK_FILE")"
 # Launch Gemini headless in the worktree directory
 echo "Launching Gemini agent..."
 cd "$WORKTREE_DIR"
-gemini -p "$PROMPT" --approval-mode yolo --output-format text \
+gemini -p "$PROMPT" -y --sandbox --output-format text \
   > "${WORKTREE_DIR}/.agent-output.log" 2>&1 &
 
 GEMINI_PID=$!

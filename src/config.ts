@@ -6,34 +6,43 @@ import type { ModelPreset, SimulationConfig, RiskLevel } from './types'
 export const MODEL_PRESETS: Record<string, ModelPreset> = {
   frontier: {
     name: 'Frontier (Claude Opus / GPT-4.5)',
-    rates: { safe: 0.001, low: 0.005, medium: 0.015, high: 0.03, critical: 0.05 },
+    rates: { safe: 0.0005, low: 0.002, medium: 0.008, high: 0.015, critical: 0.025 },
   },
   strong: {
     name: 'Strong (Claude Sonnet / GPT-4o)',
-    rates: { safe: 0.002, low: 0.01, medium: 0.03, high: 0.06, critical: 0.10 },
+    rates: { safe: 0.001, low: 0.005, medium: 0.015, high: 0.03, critical: 0.05 },
   },
   midtier: {
     name: 'Mid-tier (Claude Haiku / GPT-4o-mini)',
-    rates: { safe: 0.005, low: 0.02, medium: 0.05, high: 0.10, critical: 0.18 },
+    rates: { safe: 0.002, low: 0.01, medium: 0.03, high: 0.05, critical: 0.10 },
   },
   opensource: {
     name: 'Open-source (Llama 3 / Mistral)',
-    rates: { safe: 0.008, low: 0.04, medium: 0.08, high: 0.15, critical: 0.25 },
+    rates: { safe: 0.004, low: 0.02, medium: 0.04, high: 0.08, critical: 0.15 },
   },
   small: {
     name: 'Small / Local (Phi-3 / Gemma 2B)',
-    rates: { safe: 0.015, low: 0.06, medium: 0.12, high: 0.22, critical: 0.35 },
+    rates: { safe: 0.008, low: 0.03, medium: 0.06, high: 0.12, critical: 0.20 },
   },
 }
+
+export const SCENARIOS = [
+  { id: 'global', name: 'Global Nexus (All Connectors)' },
+  { id: 'revops', name: 'RevOps & Financial Settlement' },
+  { id: 'devops', name: 'Engineering & SecOps' },
+  { id: 'hr', name: 'Global HR Onboarding' },
+]
 
 // ─── Default simulation config ────────────────────────────────────────────────
 
 export const DEFAULT_CONFIG: SimulationConfig = {
   modelPreset: 'frontier',
+  scenario: 'global',
   failureMultiplier: 1,
   agentSpeed: 1,
   particleCount: 300,
   guardrailsEnabled: false,
+  autoZoomEnabled: true,
   darkMode: true,
   soundEnabled: false,
   soundVolume: 0.5,
@@ -46,8 +55,8 @@ export const PARTICLE = {
   minSteps: 8,
   maxSteps: 20,
   spawnRate: 15,          // particles per second
-  trailLength: 30,        // frames to keep in trail
-  baseSpeed: 0.005,       // progress units per ms at 1x speed
+  trailLength: 15,        // frames to keep in trail
+  baseSpeed: 0.0035,       // progress units per ms at 1x speed
 }
 
 // ─── Trail rendering ─────────────────────────────────────────────────────────
@@ -57,7 +66,7 @@ export const TRAIL = {
   alphaExponent: 1.5,     // Exponential curve for fade
   widthMin: 1,
   widthMax: 3.5,
-  smoothing: true,        // Use curveVertex vs vertex
+  smoothing: false,       // Disabled for performance (splines are expensive)
 }
 
 // ─── Failure messages by tier ─────────────────────────────────────────────────
@@ -136,6 +145,128 @@ export const FAILURE_MESSAGES: Record<1 | 2 | 3 | 4, string[]> = {
   ],
 }
 
+// ─── Connector Library & Scenarios (Phase 8) ─────────────────────────────────
+
+export interface ConnectorTemplate {
+  id: string
+  name: string
+  icon: string
+  risk: RiskLevel
+  scenario: string[]
+}
+
+export const CONNECTOR_LIBRARY: ConnectorTemplate[] = [
+  // CRM / Sales
+  { id: 'salesforce', name: 'Salesforce CRM', icon: '☁️', risk: 'high', scenario: ['revops', 'global'] },
+  { id: 'hubspot', name: 'HubSpot', icon: '🧡', risk: 'medium', scenario: ['revops', 'global'] },
+  { id: 'pipedrive', name: 'Pipedrive', icon: '🚜', risk: 'medium', scenario: ['revops', 'global'] },
+  { id: 'intercom', name: 'Intercom', icon: '💬', risk: 'low', scenario: ['revops', 'global'] },
+  { id: 'copper', name: 'Copper CRM', icon: '🥉', risk: 'low', scenario: ['global'] },
+  { id: 'freshsales', name: 'Freshsales', icon: '🥗', risk: 'medium', scenario: ['global'] },
+  { id: 'zoho', name: 'Zoho CRM', icon: '🦓', risk: 'medium', scenario: ['global'] },
+  { id: 'microsoft-dynamics', name: 'Dynamics 365', icon: '🏢', risk: 'high', scenario: ['global'] },
+
+  // Engineering / Dev
+  { id: 'github', name: 'GitHub', icon: '🐙', risk: 'high', scenario: ['devops', 'global'] },
+  { id: 'gitlab', name: 'GitLab', icon: ' foxes', risk: 'high', scenario: ['devops', 'global'] },
+  { id: 'bitbucket', name: 'Bitbucket', icon: '🪣', risk: 'high', scenario: ['global'] },
+  { id: 'aws-s3', name: 'AWS S3 Storage', icon: '📦', risk: 'medium', scenario: ['devops', 'global'] },
+  { id: 'aws-iam', name: 'AWS IAM Permissions', icon: '🔑', risk: 'critical', scenario: ['devops', 'global'] },
+  { id: 'aws-ec2', name: 'AWS EC2 Compute', icon: '🖥️', risk: 'high', scenario: ['global'] },
+  { id: 'aws-rds', name: 'AWS RDS Database', icon: '🗄️', risk: 'critical', scenario: ['global'] },
+  { id: 'vercel', name: 'Vercel Deployment', icon: '▲', risk: 'high', scenario: ['devops', 'global'] },
+  { id: 'sentry', name: 'Sentry Error Monitoring', icon: '🛡️', risk: 'low', scenario: ['devops', 'global'] },
+  { id: 'pagerduty', name: 'PagerDuty', icon: '📟', risk: 'medium', scenario: ['devops', 'global'] },
+  { id: 'linear', name: 'Linear Tracking', icon: '📐', risk: 'low', scenario: ['devops', 'global'] },
+  { id: 'datadog', name: 'DataDog', icon: '🐶', risk: 'low', scenario: ['global'] },
+  { id: 'grafana', name: 'Grafana', icon: '📉', risk: 'low', scenario: ['global'] },
+  { id: 'kubernetes', name: 'Kubernetes', icon: '☸️', risk: 'critical', scenario: ['global'] },
+
+  // Finance / Payments
+  { id: 'quickbooks', name: 'QuickBooks Online', icon: '📗', risk: 'high', scenario: ['revops', 'global'] },
+  { id: 'stripe', name: 'Stripe Payments', icon: '💳', risk: 'critical', scenario: ['revops', 'global'] },
+  { id: 'xero', name: 'Xero Accounting', icon: '🔵', risk: 'high', scenario: ['revops', 'global'] },
+  { id: 'bill-com', name: 'Bill.com', icon: '💸', risk: 'high', scenario: ['revops', 'global'] },
+  { id: 'paypal', name: 'PayPal', icon: '🅿️', risk: 'high', scenario: ['global'] },
+  { id: 'plaid', name: 'Plaid', icon: '🏦', risk: 'high', scenario: ['global'] },
+  { id: 'brex', name: 'Plaid', icon: '💳', risk: 'medium', scenario: ['global'] },
+  { id: 'expensify', name: 'Expensify', icon: '🧾', risk: 'low', scenario: ['global'] },
+
+  // Productivity / Ops
+  { id: 'gmail', name: 'Gmail', icon: '✉️', risk: 'medium', scenario: ['revops', 'hr', 'global'] },
+  { id: 'outlook', name: 'Outlook', icon: '📧', risk: 'medium', scenario: ['hr', 'global'] },
+  { id: 'google-sheets', name: 'Google Sheets', icon: '📊', risk: 'low', scenario: ['revops', 'global'] },
+  { id: 'google-docs', name: 'Google Docs', icon: '📄', risk: 'safe', scenario: ['global'] },
+  { id: 'google-drive', name: 'Google Drive', icon: '📂', risk: 'medium', scenario: ['global'] },
+  { id: 'notion', name: 'Notion Workspace', icon: '📓', risk: 'low', scenario: ['hr', 'global'] },
+  { id: 'airtable', name: 'Airtable DB', icon: '🍱', risk: 'medium', scenario: ['revops', 'global'] },
+  { id: 'docusign', name: 'DocuSign', icon: '✍️', risk: 'high', scenario: ['revops', 'hr', 'global'] },
+  { id: 'dropbox', name: 'Dropbox', icon: '📦', risk: 'medium', scenario: ['global'] },
+  { id: 'trello', name: 'Trello', icon: '📋', risk: 'low', scenario: ['global'] },
+  { id: 'asana', name: 'Asana', icon: '🔴', risk: 'low', scenario: ['global'] },
+  { id: 'monday-com', name: 'Monday.com', icon: '📅', risk: 'low', scenario: ['global'] },
+
+  // HR / Security
+  { id: 'workday', name: 'Workday HR', icon: '💼', risk: 'high', scenario: ['hr', 'global'] },
+  { id: 'greenhouse', name: 'Greenhouse Recruiting', icon: '🪴', risk: 'medium', scenario: ['hr', 'global'] },
+  { id: 'lever', name: 'Lever', icon: '🕹️', risk: 'medium', scenario: ['global'] },
+  { id: 'adp', name: 'ADP Payroll', icon: '💰', risk: 'critical', scenario: ['hr', 'global'] },
+  { id: 'gusto', name: 'Gusto', icon: '🎈', risk: 'high', scenario: ['global'] },
+  { id: 'bamboohr', name: 'BambooHR', icon: '🎋', risk: 'medium', scenario: ['global'] },
+  { id: 'sharepoint', name: 'SharePoint', icon: '📁', risk: 'medium', scenario: ['hr', 'global'] },
+  { id: 'okta', name: 'Okta Identity', icon: '🔵', risk: 'critical', scenario: ['hr', 'global'] },
+  { id: 'auth0', name: 'Auth0', icon: '🛡️', risk: 'critical', scenario: ['global'] },
+  { id: 'onepassword', name: '1Password Vault', icon: '🔐', risk: 'critical', scenario: ['hr', 'global'] },
+  { id: 'bitwarden', name: 'Bitwarden', icon: '🛡️', risk: 'critical', scenario: ['global'] },
+
+  // Infrastructure / Tools
+  { id: 'nexus-auth', name: 'Nexus Auth Proxy', icon: '⚡', risk: 'critical', scenario: ['global'] },
+  { id: 'nexus-pii-scrub', name: 'Nexus PII Scrub', icon: '🧹', risk: 'high', scenario: ['revops', 'hr', 'global'] },
+  { id: 'slack', name: 'Slack', icon: '🌈', risk: 'low', scenario: ['revops', 'devops', 'hr', 'global'] },
+  { id: 'discord', name: 'Discord', icon: '👾', risk: 'low', scenario: ['global'] },
+  { id: 'microsoft-teams', name: 'Teams', icon: '👥', risk: 'low', scenario: ['global'] },
+  { id: 'zoom', name: 'Zoom Video', icon: '📹', risk: 'low', scenario: ['hr', 'global'] },
+  { id: 'jira', name: 'Jira Software', icon: '🦕', risk: 'medium', scenario: ['devops', 'global'] },
+  { id: 'confluence', name: 'Confluence', icon: '📄', risk: 'medium', scenario: ['global'] },
+  { id: 'calc-tool', name: 'Calculation Tool', icon: '🧮', risk: 'safe', scenario: ['global'] },
+  { id: 'date-tool', name: 'Date Tool', icon: '🗓️', risk: 'safe', scenario: ['global'] },
+  { id: 'web-search', name: 'Web Search', icon: '🌐', risk: 'safe', scenario: ['global'] },
+  { id: 'summarize-tool', name: 'Summarizer', icon: '📑', risk: 'safe', scenario: ['global'] },
+]
+
+export const NODE_FAILURES: Record<string, Partial<Record<1 | 2 | 3 | 4, string[]>>> = {
+  'salesforce': {
+    2: ['created duplicate contact record', 'mapped lead to wrong account'],
+    3: ['exposed internal deal margin to customer', 'modified production price book'],
+    4: ['DELETED ALL LEADS IN SALES PIPELINE', 'WIPED CUSTOMER CONTRACT HISTORY']
+  },
+  'quickbooks': {
+    2: ['applied incorrect tax jurisdiction', 'mismatched invoice line item'],
+    3: ['synced PII to unencrypted ledger', 'ran duplicate reconciliation'],
+    4: ['CORRUPTED TAX FILING DATA', 'TRANSFERRED $50K TO WRONG GL ACCOUNT']
+  },
+  'stripe': {
+    2: ['payment marked as failed due to webhook lag', 'incorrect currency conversion'],
+    3: ['shared cardholder data in debug logs', 'disabled fraud detection toggle'],
+    4: ['RECURSIVE BILLING: 10,000 CHARGES SENT', 'EXPOSED SECRET STRIPE API KEYS']
+  },
+  'aws-iam': {
+    2: ['overly broad policy assigned to temp role'],
+    3: ['granted admin access to anonymous user', 'deleted active MFA device'],
+    4: ['WIPED ALL ROOT ACCESS CREDENTIALS', 'SET ENTIRE AWS ORGANIZATION TO PUBLIC']
+  },
+  'github': {
+    2: ['pushed commit directly to main', 'auto-approved stale PR'],
+    3: ['exposed secret in commit history', 'granted write access to external bot'],
+    4: ['DELETED PRODUCTION BRANCH', 'LEAKED PRIVATE REPO TO PUBLIC']
+  },
+  'adp': {
+    2: ['wrong tax withholding for employee'],
+    3: ['sent salary data to wrong email', 'exposed employee SSN in plaintext'],
+    4: ['STOPPED PAYROLL FOR ENTIRE COMPANY', 'LEAKED ALL EMPLOYEE DIRECT DEPOSIT INFO']
+  }
+}
+
 // ─── Guardrail intercept messages ────────────────────────────────────────────
 
 export const GUARDRAIL_MESSAGES: string[] = [
@@ -203,7 +334,7 @@ export const UI = {
   agentSpeedMin: 0.25,
   agentSpeedMax: 4,
   particleCountMin: 50,
-  particleCountMax: 1000,
+  particleCountMax: 2000,
   zoomMin: 0.5,
   zoomMax: 4,
   eventLogMax: 50,

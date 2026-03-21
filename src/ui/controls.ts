@@ -1,5 +1,5 @@
 import type { SimulationConfig, LayoutPreset } from '../types';
-import { UI, MODEL_PRESETS } from '../config';
+import { UI, MODEL_PRESETS, SCENARIOS } from '../config';
 import './styles.css';
 
 export interface ControlsCallbacks {
@@ -36,6 +36,14 @@ export function initControls(callbacks: ControlsCallbacks): void {
     Object.keys(MODEL_PRESETS).map(id => ({ id, name: MODEL_PRESETS[id].name })),
     (val) => callbacks.onConfigChange({ modelPreset: val }),
     'model-preset'
+  );
+
+  // Scenario Selector (Phase 8)
+  createDropdown(
+    'Workflow Scenario',
+    SCENARIOS.map(s => ({ id: s.id, name: s.name })),
+    (val) => callbacks.onConfigChange({ scenario: val }),
+    'scenario-select'
   );
 
   // Failure Multiplier
@@ -77,6 +85,13 @@ export function initControls(callbacks: ControlsCallbacks): void {
     (val) => callbacks.onConfigChange({ guardrailsEnabled: val }),
     'guardrails-enabled',
     true // isGuardrail
+  );
+
+  // Auto-zoom Toggle
+  createToggle(
+    'Auto-zoom on Catastrophe',
+    (val) => callbacks.onConfigChange({ autoZoomEnabled: val }),
+    'auto-zoom-enabled'
   );
 
   // Layout Preset
@@ -141,10 +156,12 @@ export function initControls(callbacks: ControlsCallbacks): void {
 
 export function syncControls(config: SimulationConfig): void {
   updateElementValue('model-preset', config.modelPreset);
+  updateElementValue('scenario-select', config.scenario);
   updateElementValue('failure-multiplier', config.failureMultiplier);
   updateElementValue('agent-speed', config.agentSpeed);
   updateElementValue('particle-count', config.particleCount);
   updateElementValue('guardrails-enabled', config.guardrailsEnabled);
+  updateElementValue('auto-zoom-enabled', config.autoZoomEnabled);
   updateElementValue('layout-preset', config.layout);
   updateElementValue('dark-mode', config.darkMode);
   updateElementValue('sound-volume', config.soundVolume);

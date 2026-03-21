@@ -84,8 +84,26 @@ function init() {
     onLogToggle: () => {
       toggleEventLog()
     },
+    onControlsToggle: () => {
+      const toggleBtn = document.querySelector('.controls-toggle') as HTMLButtonElement
+      if (toggleBtn) toggleBtn.click()
+    },
     onHelpToggle: () => {
       toggleHelp()
+    },
+    onEscape: () => {
+      // Close help modal
+      const helpModal = document.querySelector('.help-overlay')
+      if (helpModal?.classList.contains('open')) {
+        toggleHelp()
+      }
+      
+      // Close onboarding if it has a way to close it
+      const onboarding = document.querySelector('.onboarding-overlay')
+      if (onboarding) {
+        const closeBtn = onboarding.querySelector('#onboarding-close') as HTMLButtonElement
+        if (closeBtn) closeBtn.click()
+      }
     },
     onReset: () => {
       currentState = createSimulation(currentState.config)
@@ -109,15 +127,15 @@ function init() {
       currentState = applyConfig(currentState, { soundEnabled: true })
       soundEngine.setEnabled(true)
       syncControls(currentState.config)
+      initOnboarding()
     },
     onSkip: () => {
       currentState = applyConfig(currentState, { soundEnabled: false })
       soundEngine.setEnabled(false)
       syncControls(currentState.config)
+      initOnboarding()
     }
   })
-
-  initOnboarding()
 
   // 3. Rendering Initialization
   const { sketch } = createSketch(() => currentState)

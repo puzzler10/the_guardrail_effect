@@ -2,8 +2,8 @@
 # Usage: ./scripts/agent-monitor.sh [branch-name]
 # Without args: shows all agents. With arg: shows specific agent.
 
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-WORKTREE_BASE="${REPO_ROOT}/../worktrees"
+REPO_ROOT="$(git rev-parse --path-format=absolute --git-common-dir | sed 's|/\.git$||')"
+WORKTREE_BASE="${REPO_ROOT}/.worktrees"
 
 if [ ! -d "$WORKTREE_BASE" ]; then
   echo "No worktrees found at $WORKTREE_BASE"

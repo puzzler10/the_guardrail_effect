@@ -1,17 +1,7 @@
 import p5 from 'p5'
 import type { Particle, GraphNode } from '../types'
 import { COLORS_DARK, TRAIL } from '../config'
-
-export function getParticlePosition(particle: Particle, nodeMap: Map<string, GraphNode>): { x: number; y: number } | null {
-  const from = nodeMap.get(particle.currentNodeId)
-  const to = nodeMap.get(particle.targetNodeId)
-  if (!from || !to) return null
-
-  return {
-    x: from.x + (to.x - from.x) * particle.progress,
-    y: from.y + (to.y - from.y) * particle.progress,
-  }
-}
+import { getParticlePosition } from '../simulation/particle'
 
 export function drawParticles(p: p5, particles: Particle[], nodes: GraphNode[], colors: typeof COLORS_DARK): void {
   const nodeMap = new Map<string, GraphNode>()

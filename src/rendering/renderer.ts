@@ -68,11 +68,13 @@ export function createSketch(getState: () => SimulationState): Renderer {
             effects.push(createShockwave(event.x, event.y, nowMs))
             effects.push(createScreenShake(nowMs))
             
-            // Auto-zoom on catastrophe
-            targetCamX = event.x
-            targetCamY = event.y
-            targetZoom = 2.0
-            focusEndTime = nowMs + 2500 // Hold for 2.5s
+            // Auto-zoom on catastrophe (only if enabled)
+            if (state.config.autoZoomEnabled) {
+              targetCamX = event.x
+              targetCamY = event.y
+              targetZoom = 2.0
+              focusEndTime = nowMs + 2500 // Hold for 2.5s
+            }
           }
         }
       })
@@ -110,7 +112,32 @@ export function createSketch(getState: () => SimulationState): Renderer {
       // 3. Clear and apply Camera
       p.background(colors.background)
       
+      // Subtle background grain/scanlines (Phase 7)
+      if (state.config.darkMode) {
+        p.stroke(255, 3)
+        p.noFill()
+        for (let i = 0; i < p.height; i += 4) {
+          p.line(0, i, p.width, i)
+        }
+      }
+      
       const shake = getCameraShakeOffset(effects, nowMs)
+
+      // Calculate hovered node
+      // Convert screen mouse coordinates back to world coordinates
+      const worldMouseX = (p.mouseX - p.width / 2 - shake.dx) / zoom + camX
+      const worldMouseY = (p.mouseY - p.height / 2 - shake.dy) / zoom + camY
+      
+      let hoveredNodeId: string | undefined = undefined
+      let minDistance = 30 // Threshold for hover
+      
+      for (const node of state.nodes) {
+        const dist = p.dist(worldMouseX, worldMouseY, node.x, node.y)
+        if (dist < minDistance) {
+          minDistance = dist
+          hoveredNodeId = node.id
+        }
+      }
       
       p.push()
       p.translate(p.width / 2 + shake.dx, p.height / 2 + shake.dy)
@@ -118,7 +145,7 @@ export function createSketch(getState: () => SimulationState): Renderer {
       p.translate(-camX, -camY)
 
       // 4. Draw Layers
-      drawNodes(p, state.nodes, colors, state.config.guardrailsEnabled, zoom)
+      drawNodes(p, state.nodes, colors, state.config.guardrailsEnabled, hoveredNodeId)
       drawParticles(p, state.particles, state.nodes, colors)
       drawEffects(p, effects, nowMs)
       drawFloatingTexts(p, floatingTexts, nowMs, colors)
@@ -127,6 +154,14 @@ export function createSketch(getState: () => SimulationState): Renderer {
 
       // 5. Draw UI Elements (Unscaled)
       drawMinimap(p, state.nodes, state.config, camX, camY, zoom)
+
+      // Vignette effect (Phase 7)
+      p.noFill()
+      for (let i = 0; i < 3; i++) {
+        p.stroke(0, (i + 1) * 30)
+        p.strokeWeight(p.width * 0.1 * (i + 1))
+        p.rect(0, 0, p.width, p.height)
+      }
     }
 
     p.windowResized = () => {

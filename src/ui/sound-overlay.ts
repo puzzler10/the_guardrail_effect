@@ -18,7 +18,7 @@ export function initSoundOverlay(options: SoundOverlayOptions) {
     </div>
   `
   
-  document.getElementById('app')?.appendChild(overlay)
+  document.body.appendChild(overlay)
   
   const enableBtn = overlay.querySelector('#enable-sound-btn')
   const skipLink = overlay.querySelector('#skip-sound-link')

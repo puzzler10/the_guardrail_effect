@@ -364,6 +364,128 @@ Key decisions made during spec review:
 **What's next:**
 - Phase 6: E2E & Deploy.
 
-## Session 2026-03-21
+## Session 2026-03-21a
 - Decomposed voice note feedback into actionable tasks.
 - Appended new tasks to Phase 7 in docs/tasks.md.
+
+## 2026-03-21 — Session 18: Claude+Gemini Orchestration Setup
+
+**What was done:**
+- Designed and implemented Claude+Gemini parallel development workflow
+- Created orchestration scripts in `scripts/`:
+  - `agent-dispatch.sh` — creates worktree, installs deps, launches Gemini headless
+  - `agent-monitor.sh` — reads progress files from all active agents
+  - `agent-merge.sh` — validates checks, merges to main, cleans up
+  - `agent-cleanup.sh` — removes worktree without merging
+  - `quality-screenshot.py` — Playwright screenshot for visual review
+- Created agent context in `agents/`:
+  - `base-context.md` — shared project context for all Gemini agents
+  - `quality-rubric.md` — 6-dimension visual quality scoring (30pt scale)
+  - `skills/p5-visual-quality.md` — p5.js generative art techniques
+  - `skills/aesthetic-criteria.md` — anti-AI-slop design criteria
+  - `tasks/particle-trails.md`, `node-glow.md`, `background-field.md` — visual upgrade tasks
+- **Tested full pipeline**: dispatched Gemini to `feat/particle-trails`, agent autonomously implemented gradient trails (alpha fade, width taper, Catmull-Rom curves, state-based colors), ran `npm run check`, committed. Merged back to main successfully.
+- Researched Anthropic skills repo: adapted algorithmic-art and frontend-design skills for agent prompts
+
+**Key decisions:**
+- Gemini gets `--approval-mode yolo` for autonomous operation
+- Worktrees in `../worktrees/<name>/` (sibling dir)
+- Agents write `.agent-progress.md` for cheap status monitoring
+- Auto-merge by default when checks pass
+- 2-3 agents max in parallel
+
+**What's next:**
+- Dispatch remaining visual tasks (node-glow, background-field)
+- Phase 6: E2E tests + deploy
+- Phase 7: Voice note feedback items
+
+## 2026-03-21 — Session 19: Autonomous Operation Setup
+
+**What was done:**
+- **Performance fix**: Disabled trail smoothing (`TRAIL.smoothing = false`) and reduced trail length from 30 to 15 in `config.ts`. Spline rendering was causing ~9,000 `p.spline()` calls per frame with 300 particles. Particle count kept at 300 per user request.
+- **Doc auto-update on merge**: Updated `agents/base-context.md` to require Gemini agents write `.agent-summary.md` before committing. Updated `scripts/agent-merge.sh` to auto-append summary to `docs/session-log.md` and mark completed tasks in `docs/tasks.md`.
+- **Quality gate**: Created `scripts/agent-review.sh` for pre-merge visual screenshots evaluated against `agents/quality-rubric.md`. Evaluation runs in batches, not per-task.
+- **Workflow routing in CLAUDE.md**: Added orchestration instructions so Claude sessions default to the Claude+Gemini pattern — delegate visual/rendering/sound to Gemini, implement simulation/logic directly. Added automated task pickup and checkpoint system (pause every 3-5 tasks for user review).
+- **Full autonomous permissions**: Configured `.claude/settings.local.json` with broad allow-list for all tools + OS-level sandbox (`sandbox.enabled: true`) to restrict filesystem writes to project directory only. Claude can't touch anything outside the project.
+
+**Key decisions:**
+- Quality evaluation runs in batches after groups of visual tasks, not per-task. Results create new improvement tasks. User also periodically adds their own taste feedback as tasks.
+- Checkpoint system: stop every 3-5 tasks (or at phase boundaries) for user review. User works at task level, not implementation level.
+- User has no JS experience — all implementation decisions are autonomous.
+- OS sandbox is the real security boundary, not behavioral guardrails.
+
+**What's next:**
+- Restart Claude for new settings to take effect
+- Next session auto-picks up pending tasks: Visual Upgrades (node-glow, background-field), Phase 6 (E2E + deploy), Phase 7 (voice note feedback items)
+
+## 2026-03-21 — Session 20: Civic Mega-Scenarios Planning
+
+**What was done:**
+- Researched Civic.com's 80+ connectors and agentic workflow patterns.
+- Drafted a comprehensive integration plan in `plans/civic-integration.md`.
+- Designed three "Mega-Scenarios" with 10-15 nodes each:
+  - **RevOps & Financial Settlement**: Salesforce -> Gmail -> DocuSign -> QuickBooks -> Stripe.
+  - **Engineering & SecOps**: Sentry -> Jira -> GitHub -> AWS -> Vercel.
+  - **Global HR Onboarding**: Workday -> Greenhouse -> ADP -> SharePoint -> 1Password.
+- Proposed a 40+ node "Connector Library" with personalized, non-repeating failure messages.
+- Designed a "Scenario Selector" and "Complexity Slider" for the UI.
+- Updated `docs/tasks.md` with Phase 8 tasks.
+
+**Key decisions:**
+- Move from generic nodes to branded Civic connectors for "semi-realistic" scenarios.
+- Use complex, branching topologies to simulate high-scale agentic systems.
+- Implement a session-level `usedMessages` set to ensure zero repetition in error reporting.
+- Failures will be context-aware (e.g., QuickBooks-specific errors when the sync node fails).
+
+**What's next:**
+- Implementation of Phase 8: starting with the connector library and scenario definitions.
+
+## 2026-03-21 — Session 21: Voice Note Feedback & Visual Upgrades
+
+**What was done:**
+- Implemented full suite of Phase 7 (Voice Note Feedback) items:
+  - **Nodes Visuals**: Removed background circles, increased icon sizes, and made icons primary visual elements.
+  - **Simulation Speed**: Reduced baseSpeed (0.005 -> 0.0035) and added per-particle speedMultiplier (0.8-1.2) for non-linear movement.
+  - **Scale and Layout**: Increased node count to 60, expanded canvas to 2000x1400, and adjusted layout distances.
+  - **Node Events**: Halved failure rates across all model presets to reduce visual noise.
+  - **Camera Behavior**: Added UI toggle for "Auto-zoom on Catastrophe" in the controls panel.
+  - **Particle Routing**: Implemented "scenic route" curved paths using perpendicular sine offsets based on particle ID.
+  - **Typography & Design**: Added Google Fonts (Inter, JetBrains Mono) and improved UI styling.
+  - **Node Hover**: Labels now only appear when hovering over a node.
+- Implemented remaining **Visual Upgrades**:
+  - **Node Glow**: Radial halos and breathing effects for high-risk/hovered nodes.
+  - **Background Atmosphere**: Added subtle scanlines and vignette effect.
+- Fixed several lint and type errors in tests/e2e/app.spec.ts.
+- Updated all unit tests to account for new simulation parameters and 60-node count.
+- Verified everything with npm run check (92 tests passing, clean build).
+
+**Key decisions:**
+- Moved getParticlePosition to src/simulation/particle.ts so that trails in the simulation match the "scenic route" rendered position.
+- Halving failure rates was necessary to prevent constant "popping" of events with 60 nodes.
+- Used particle.id as a stable seed for curves to ensure consistent paths for each agent journey.
+
+**What's next:**
+- Phase 6: Deploy to Netlify.
+- Phase 8: Civic Scenario Integration (Mega-Scenarios).
+
+## 2026-03-21 — Session 22: Civic Mega-Scenarios Integration
+
+**What was done:**
+- Implemented Phase 8 (Civic Mega-Scenarios):
+  - **Connector Library**: Created a library of 65 branded Civic connectors (Salesforce, Stripe, AWS, etc.) with unique icons and risk profiles.
+  - **Mega-Scenarios**: Defined 3 high-complexity topologies (RevOps, DevOps, HR Onboarding) in a new src/simulation/scenarios.ts.
+  - **Personalized Failures**: Added 40+ node-specific failure messages that prioritize branded errors (e.g., QuickBooks tax errors) over generic ones.
+  - **Scenario Logic**: Updated the graph builder and simulation tick to support dynamic scenario switching and custom routing.
+  - **Non-Repetition Engine**: Implemented a session-level usedMessages tracker to ensure failure messages don't repeat until the pool is exhausted.
+  - **UI Integration**: Added a "Workflow Scenario" dropdown to the controls panel.
+- Updated and expanded unit tests to cover 65 connectors and scenario-based graph building.
+- Fixed several lint errors and unused imports.
+- Verified everything with npm run check (92 tests passing, clean build).
+
+**Key decisions:**
+- Used a hardcoded topology for scenarios to ensure high-quality "nexus" points and logical workflow flow.
+- Maintained the "Global Nexus" mode as a default that includes all 65 connectors with auto-generated cyclic connections.
+- Implemented the non-repetition engine at the simulation state level to make it reactive and testable.
+
+**What's next:**
+- Phase 6: Final deployment checks.

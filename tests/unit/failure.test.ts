@@ -10,13 +10,13 @@ import { MODEL_PRESETS, FAILURE_MESSAGES } from '../../src/config'
 
 describe('computeFailureRate', () => {
   it('returns correct rate for known presets', () => {
-    expect(computeFailureRate('safe', 'frontier', 1)).toBeCloseTo(0.001)
-    expect(computeFailureRate('critical', 'strong', 1)).toBeCloseTo(0.10)
+    expect(computeFailureRate('safe', 'frontier', 1)).toBeCloseTo(0.0005)
+    expect(computeFailureRate('critical', 'strong', 1)).toBeCloseTo(0.05)
   })
 
   it('applies multiplier correctly', () => {
-    expect(computeFailureRate('medium', 'frontier', 2)).toBeCloseTo(0.03)
-    expect(computeFailureRate('medium', 'frontier', 0.5)).toBeCloseTo(0.0075)
+    expect(computeFailureRate('medium', 'frontier', 2)).toBeCloseTo(0.016)
+    expect(computeFailureRate('medium', 'frontier', 0.5)).toBeCloseTo(0.004)
   })
 
   it('clamps to [0, 1]', () => {

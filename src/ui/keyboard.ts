@@ -4,7 +4,9 @@ export interface KeyboardCallbacks {
   onDarkModeToggle(): void;
   onMuteToggle(): void;
   onLogToggle(): void;
+  onControlsToggle(): void;
   onHelpToggle(): void;
+  onEscape(): void;
   onReset(): void;
 }
 
@@ -15,35 +17,36 @@ export function initKeyboard(callbacks: KeyboardCallbacks): void {
       return;
     }
 
-    switch (e.code) {
-      case 'Space':
+    const key = e.key.toLowerCase();
+
+    switch (key) {
+      case ' ':
         e.preventDefault();
         callbacks.onPauseToggle();
         break;
-      case 'KeyG':
+      case 'g':
         callbacks.onGuardrailsToggle();
         break;
-      case 'KeyD':
+      case 'd':
         callbacks.onDarkModeToggle();
         break;
-      case 'KeyM':
+      case 'm':
         callbacks.onMuteToggle();
         break;
-      case 'KeyL':
+      case 'l':
         callbacks.onLogToggle();
         break;
-      case 'Slash':
-        if (e.shiftKey) { // '?' is Shift + '/'
-          callbacks.onHelpToggle();
-        }
+      case 'c':
+        callbacks.onControlsToggle();
         break;
-      case 'KeyR':
+      case '?':
+        callbacks.onHelpToggle();
+        break;
+      case 'r':
         callbacks.onReset();
         break;
-      case 'Escape':
-        // Only trigger help toggle if modal is open (handled by specific UI logic usually, but here we can just call it)
-        // For simplicity, we just trigger the callback
-        // callbacks.onHelpToggle();
+      case 'escape':
+        callbacks.onEscape();
         break;
     }
   });

@@ -15,6 +15,8 @@ describe('Particle Simulation', () => {
       expect(p.state).toBe('spawning')
       expect(p.trail).toEqual([])
       expect(p.stepsCompleted).toBe(0)
+      expect(p.speedMultiplier).toBeGreaterThanOrEqual(0.8)
+      expect(p.speedMultiplier).toBeLessThanOrEqual(1.2)
     })
 
     it('maxSteps is always within [minSteps, maxSteps] range', () => {
@@ -33,7 +35,7 @@ describe('Particle Simulation', () => {
       const speed = 1.0
       const p2 = advanceParticle(p, deltaMs, speed)
       
-      const expectedProgress = PARTICLE.baseSpeed * speed * deltaMs
+      const expectedProgress = PARTICLE.baseSpeed * speed * p.speedMultiplier * deltaMs
       expect(p2.progress).toBeCloseTo(expectedProgress)
     })
 

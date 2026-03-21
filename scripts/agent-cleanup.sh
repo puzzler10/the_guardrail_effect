@@ -9,8 +9,8 @@ if [ $# -lt 1 ]; then
 fi
 
 BRANCH="$1"
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-WORKTREE_DIR="${REPO_ROOT}/../worktrees/${BRANCH##*/}"
+REPO_ROOT="$(git rev-parse --path-format=absolute --git-common-dir | sed 's|/\.git$||')"
+WORKTREE_DIR="${REPO_ROOT}/.worktrees/${BRANCH##*/}"
 
 if [ ! -d "$WORKTREE_DIR" ]; then
   echo "No worktree found at $WORKTREE_DIR"

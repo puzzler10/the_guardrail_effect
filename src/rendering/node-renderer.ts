@@ -15,7 +15,7 @@ export function drawNode(
   node: GraphNode, 
   colors: typeof COLORS_DARK, 
   guardrailsEnabled: boolean = false,
-  zoom: number = 1.0
+  isHovered: boolean = false
 ): void {
   const size = NODE_SIZES[node.risk] || 16
   const nodeColor = colors.nodeByRisk[node.risk] || '#ffffff'
@@ -33,29 +33,53 @@ export function drawNode(
     p.ellipse(node.x, node.y, ringSize)
   }
 
-  // Node circle
-  p.fill(nodeColor)
-  p.noStroke()
-  p.ellipse(node.x, node.y, size)
+  // Node atmosphere (halo)
+  const isHighRisk = node.risk === 'high' || node.risk === 'critical'
+  if (isHighRisk || isHovered) {
+    const breathing = (Math.sin(p.millis() * 0.003) + 1) * 0.5
+    const haloSize = size * (2.0 + (isHovered ? 0.5 : 0) + breathing * 0.5)
+    const haloAlpha = isHovered ? 40 : (20 + breathing * 10)
+    
+    const haloColor = p.color(nodeColor)
+    haloColor.setAlpha(haloAlpha)
+    
+    p.noStroke()
+    p.fill(haloColor)
+    p.ellipse(node.x, node.y, haloSize)
+    
+    // Core glow
+    haloColor.setAlpha(haloAlpha * 2)
+    p.ellipse(node.x, node.y, haloSize * 0.6)
+  }
 
-  // Icon
+  // Node Icon (No background circle anymore, as per Phase 7)
   p.textAlign(p.CENTER, p.CENTER)
-  p.textSize(size * 0.6)
-  p.fill(0, 150) // dark overlay for icon visibility on bright colors
+  
+  // Larger icons
+  const iconSize = size * 1.5
+  p.textSize(iconSize)
+  
+  // Icon shadow for depth
+  p.fill(0, 100)
+  p.text(node.icon, node.x + 2, node.y + 2)
+  
+  // Main icon
+  p.fill(nodeColor)
   p.text(node.icon, node.x, node.y)
 
-  // Label - only show if zoomed in or if it's a high-risk node
-  const showLabel = zoom > 1.2 || node.risk === 'high' || node.risk === 'critical'
-  if (showLabel) {
+  // Label - only show on hover (as per Phase 7)
+  if (isHovered) {
     p.textAlign(p.CENTER, p.TOP)
-    p.textSize(10)
+    p.textSize(12)
+    p.textStyle(p.BOLD)
 
     // Shadow for readability
-    p.fill(0, 180)
-    p.text(node.name, node.x + 1, node.y + size / 2 + 5)
+    p.fill(0, 200)
+    p.text(node.name, node.x + 1, node.y + iconSize / 2 + 6)
 
-    p.fill(200)
-    p.text(node.name, node.x, node.y + size / 2 + 4)
+    p.fill(255)
+    p.text(node.name, node.x, node.y + iconSize / 2 + 5)
+    p.textStyle(p.NORMAL)
   }
 }
 
@@ -73,10 +97,10 @@ export function drawNodes(
   nodes: GraphNode[], 
   colors: typeof COLORS_DARK, 
   guardrailsEnabled: boolean = false,
-  zoom: number = 1.0
+  hoveredNodeId?: string
 ): void {
   for (const node of nodes) {
-    drawNode(p, node, colors, guardrailsEnabled, zoom)
+    drawNode(p, node, colors, guardrailsEnabled, node.id === hoveredNodeId)
   }
 }
 

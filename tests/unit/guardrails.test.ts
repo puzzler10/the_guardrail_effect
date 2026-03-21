@@ -24,6 +24,7 @@ function makeParticle(overrides: Partial<Particle> = {}): Particle {
     progress: 0.5,
     stepsCompleted: 3,
     maxSteps: 10,
+    speedMultiplier: 1,
     trail: [],
     ...overrides,
   }

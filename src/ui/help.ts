@@ -2,7 +2,7 @@ let backdrop: HTMLElement;
 
 export function initHelp(): void {
   backdrop = document.createElement('div');
-  backdrop.className = 'modal-backdrop';
+  backdrop.className = 'modal-backdrop help-overlay';
   
   const card = document.createElement('div');
   card.className = 'modal-card';

@@ -83,6 +83,21 @@ Any blockers or questions.
 
 1. Run `npm run check` — fix ALL errors until it passes
 2. Set Status to `done` in `.agent-progress.md`
-3. `git add` all changed files
-4. Commit with a descriptive message: `feat: <what you accomplished>`
-5. Ensure `.agent-progress.md` is included in the commit
+3. Write `.agent-summary.md` in the worktree root with this exact format:
+
+```markdown
+## What was done
+- <bullet point summary of changes>
+
+## Key decisions
+- <any non-obvious choices made>
+
+## Files modified
+- path/to/file.ts — what changed
+
+## Tasks completed
+- <task name from docs/tasks.md that this work completes, if any>
+```
+
+4. `git add` all changed files (including `.agent-summary.md`)
+5. Commit with a descriptive message: `feat: <what you accomplished>`

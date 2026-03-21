@@ -1,5 +1,5 @@
 import type { RiskLevel, FailureTier, FailureEvent } from '../types'
-import { MODEL_PRESETS, FAILURE_MESSAGES } from '../config'
+import { MODEL_PRESETS, FAILURE_MESSAGES, NODE_FAILURES } from '../config'
 
 // ─── Tier weight tables ─────────────────────────────────────────────────────
 
@@ -57,9 +57,29 @@ export function pickTier(risk: RiskLevel, guardrailsEnabled: boolean): FailureTi
   return 1 // fallback (shouldn't reach here)
 }
 
-export function pickFailureText(tier: FailureTier): string {
-  const messages = FAILURE_MESSAGES[tier]
-  return messages[Math.floor(Math.random() * messages.length)]
+/**
+ * Picks a random failure message for the given tier and node, ensuring non-repetition if possible.
+ */
+export function pickFailureText(tier: FailureTier, nodeId?: string, usedTexts: Set<string> = new Set()): string {
+  let candidates: string[]
+
+  // Try node-specific candidates first
+  const nodeSpecific = nodeId ? NODE_FAILURES[nodeId] : undefined
+  if (nodeSpecific && nodeSpecific[tier]) {
+    candidates = nodeSpecific[tier]!
+  } else {
+    candidates = FAILURE_MESSAGES[tier]
+  }
+
+  // Filter out used messages
+  const unused = candidates.filter(msg => !usedTexts.has(msg))
+  
+  if (unused.length > 0) {
+    return unused[Math.floor(Math.random() * unused.length)]
+  }
+
+  // If all used, fallback to random from full list
+  return candidates[Math.floor(Math.random() * candidates.length)]
 }
 
 export function createFailureEvent(
@@ -68,9 +88,10 @@ export function createFailureEvent(
   x: number,
   y: number,
   timestamp: number,
+  usedTexts: Set<string> = new Set()
 ): FailureEvent {
   return {
-    text: pickFailureText(tier),
+    text: pickFailureText(tier, nodeId, usedTexts),
     tier,
     nodeId,
     x,

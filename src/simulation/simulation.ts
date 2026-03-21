@@ -12,6 +12,7 @@ import {
   arriveAtNode,
   applyFailure,
   updateTrail,
+  getParticlePosition,
 } from './particle'
 import {
   computeFailureRate,
@@ -28,7 +29,7 @@ import {
 
 export function createSimulation(config?: Partial<SimulationConfig>): SimulationState {
   const finalConfig = { ...DEFAULT_CONFIG, ...config }
-  const nodes = buildGraph(finalConfig.layout)
+  const nodes = buildGraph(finalConfig.layout, finalConfig.scenario)
 
   return {
     nodes,
@@ -43,6 +44,7 @@ export function createSimulation(config?: Partial<SimulationConfig>): Simulation
     config: finalConfig,
     recentFailures: [],
     recentGuardrails: [],
+    usedFailureTexts: [],
     nextParticleId: 1,
     lastSpawnMs: 0,
   }
@@ -55,9 +57,10 @@ export function applyConfig(
   const newConfig = { ...state.config, ...patch }
   let nodes = state.nodes
 
-  // Rebuild graph if layout changed
-  if (patch.layout && patch.layout !== state.config.layout) {
-    nodes = buildGraph(patch.layout)
+  // Rebuild graph if layout or scenario changed
+  if ((patch.layout && patch.layout !== state.config.layout) || 
+      (patch.scenario && patch.scenario !== state.config.scenario)) {
+    nodes = buildGraph(newConfig.layout, newConfig.scenario)
   }
 
   return {
@@ -69,9 +72,10 @@ export function applyConfig(
 
 export function tick(state: SimulationState, deltaMs: number, nowMs: number): SimulationState {
   let { particles, nextParticleId, lastSpawnMs } = state
-  const { config, nodes, recentFailures, recentGuardrails } = state
+  const { config, nodes, recentFailures, recentGuardrails, usedFailureTexts } = state
 
   const nodeMap = new Map(nodes.map(n => [n.id, n]))
+  const usedTextsSet = new Set(usedFailureTexts)
 
   // 1. Spawn new particles
   const spawnInterval = 1000 / PARTICLE.spawnRate
@@ -116,14 +120,10 @@ export function tick(state: SimulationState, deltaMs: number, nowMs: number): Si
       continue
     }
 
-    // Update trail based on current position
-    const currentNode = nodeMap.get(p.currentNodeId)
-    const targetNode = nodeMap.get(p.targetNodeId)
-    
-    if (currentNode && targetNode) {
-      const x = currentNode.x + (targetNode.x - currentNode.x) * p.progress
-      const y = currentNode.y + (targetNode.y - currentNode.y) * p.progress
-      p = updateTrail(p, x, y)
+    // Update trail based on current position (including scenic routes)
+    const pos = getParticlePosition(p, nodeMap)
+    if (pos) {
+      p = updateTrail(p, pos.x, pos.y)
     }
 
     // Advance progress
@@ -156,9 +156,12 @@ export function tick(state: SimulationState, deltaMs: number, nowMs: number): Si
             }
           } else {
             // Failure applies
-            const event = createFailureEvent(tier, nodeReached.id, nodeReached.x, nodeReached.y, nowMs)
+            const event = createFailureEvent(tier, nodeReached.id, nodeReached.x, nodeReached.y, nowMs, usedTextsSet)
             p = applyFailure(p, tier, event.text, 2) // arbitrary stepBack 2 for tier 1
             nextFailures.push(event)
+            
+            // Record used text for non-repetition
+            usedTextsSet.add(event.text)
           }
         } else {
           // Success arrival
@@ -206,12 +209,19 @@ export function tick(state: SimulationState, deltaMs: number, nowMs: number): Si
   const finalFailures = nextFailures.slice(-50)
   const finalGuardrails = nextGuardrails.slice(-50)
 
+  // 6. Cap used texts to prevent memory leak (though failure messages are finite)
+  let finalUsedTexts = Array.from(usedTextsSet)
+  if (finalUsedTexts.length > 500) {
+    finalUsedTexts = finalUsedTexts.slice(-500)
+  }
+
   return {
     ...state,
     particles: finalParticles,
     stats,
     recentFailures: finalFailures,
     recentGuardrails: finalGuardrails,
+    usedFailureTexts: finalUsedTexts,
     nextParticleId,
     lastSpawnMs,
   }
