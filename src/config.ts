@@ -362,3 +362,22 @@ export const BACKGROUND = {
   dustSpeed: 0.2,              // Pixels per frame
   noiseUpdateInterval: 30,     // Frames between noise buffer updates
 }
+
+// ─── Cha Cha Cha Theme Palettes ─────────────────────────────────────────────
+
+export const THEME = {
+  storm: {
+    background: '#020205',
+    primary: '#00ff88', // Neon green
+    accent: '#ff3300',  // Harsh red/orange
+    vignette: 0.6,
+    noiseIntensity: 0.12,
+  },
+  rainbow: {
+    // Rainbow uses HSB, so these are base saturation/brightness
+    background: '#050510',
+    vignette: 0.2,
+    noiseIntensity: 0.03,
+    speedMultiplier: 0.4,
+  }
+}

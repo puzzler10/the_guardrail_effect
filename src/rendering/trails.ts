@@ -13,7 +13,7 @@ export function initTrails(p: p5) {
   trailBuffer.clear()
 }
 
-export function drawTrails(p: p5, particles: Particle[], nodes: GraphNode[], colors: typeof COLORS_DARK) {
+export function drawTrails(p: p5, particles: Particle[], _nodes: GraphNode[], colors: typeof COLORS_DARK, nodeMap: Map<string, GraphNode>) {
   if (!trailBuffer) return
 
   // 1. Slow fade of the buffer
@@ -25,10 +25,6 @@ export function drawTrails(p: p5, particles: Particle[], nodes: GraphNode[], col
   trailBuffer.rect(0, 0, trailBuffer.width, trailBuffer.height)
   trailBuffer.pop()
 
-  const nodeMap = new Map<string, GraphNode>()
-  for (const node of nodes) {
-    nodeMap.set(node.id, node)
-  }
 
   // Pre-cache colors
   const healthyColor = p.color(colors.particleHealthy)
