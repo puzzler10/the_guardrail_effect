@@ -1,5 +1,16 @@
 # Session Log
 
+## 2026-03-21 — Session 25: Visual Polish & Layout Fixes
+
+**What was done:**
+- Fixed vertical seam in scrolling backgrounds: implemented `getSeamlessNoise` function that cross-fades noise values at the right edge back to the left edge, making the background perfectly tileable.
+- Reduced minimap background opacity: changed fill opacity (0.6 -> 0.15 in dark mode, 0.6 -> 0.3 in light mode) so the animated background is visible through the minimap.
+- Reoriented 'flow' layout: modified `calculateCoordinates` to swap X and Y axes, arranging risk tiers as horizontal rows and spreading nodes horizontally to utilize the full 3000px canvas width.
+- 105 tests passing, `npm run check` successful.
+
+**What's next:**
+- Final visual check of the re-oriented layout and seamless backgrounds in the browser.
+
 ## 2026-03-21 — Session 24: Visual Bug Fix Pass + Merge
 
 **What was done:**
@@ -228,3 +239,16 @@ The "Angry Storm" state is now much more atmospheric and visceral. The layered c
 
 ## Results
 The simulation is now noticeably smoother, especially during transitions. The "Angry Storm" aesthetic remains atmospheric but much cleaner, ensuring the foreground simulation always takes priority.
+
+## 2026-03-21 — Agent merge: ui-descriptions-log
+
+## Tasks completed
+- **Node Descriptions**: Added short, descriptive text to every app/connector in the simulation to provide context on their function and associated risks. These descriptions are now rendered in the node tooltip when hovered or clicked, utilizing a custom text-wrapping function to ensure the tooltip remains compact and readable.
+- **Terminal Event Log**: 
+    - Transformed the existing hidden event log into a sleek, continuous, terminal-style feed.
+    - Added a visible "Terminal >_" toggle button to the main control panel for easy discoverability.
+    - Removed the individual severity filters to create a single, continuous stream of events.
+    - Updated the styling (`styles.css`) to use a monospace font, tight padding, and a dark translucent background that visually anchors it to the bottom right of the screen like a real developer console.
+
+## Results
+The UI is now much more informative and accessible. Users can easily understand what each node represents via the enhanced tooltips, and they have direct access to a stylish, scrolling terminal that logs all simulation events in real-time.

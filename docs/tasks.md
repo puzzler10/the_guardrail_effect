@@ -2,6 +2,11 @@
 
 *(Note: Tasks from Phase 0 to Phase 9 have been completed and archived. See [docs/archive/completed-tasks.md](archive/completed-tasks.md) for history.)*
 
+## Phase 14: Visual Polish & Layout Fixes ✅ DONE
+- [x] Fix vertical seam in scrolling backgrounds (seamless noise)
+- [x] Reduce minimap background opacity (transparency for background visibility)
+- [x] Horizontal flow layout (utilize full 3000px canvas width)
+
 ## Phase 13: Visual Bug Fix Pass ✅ DONE
 - [x] Fix ghosting/after-images (missing `p.background()` call)
 - [x] Fix red stripe artifacts (stormFlash moved to screen-space)
@@ -39,4 +44,3 @@
 - [x] **Dynamic Background Engine**: Implement state-aware background rendering in `src/rendering/background.ts`.
 - [x] **Storm Flash Effects**: Implement event-triggered red/orange flashes in `src/rendering/effects.ts`.
 - [x] **Verification**: Ensure smooth transitions between "Storm" and "Rainbow" states based on guardrail toggle.
-
