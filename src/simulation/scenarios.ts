@@ -114,8 +114,16 @@ export function buildScenarioGraph(scenarioId: string, layout: LayoutPreset = 'f
   })
 
   if (layout === 'flow') {
-    // Use hardcoded positions — they're already designed as flow layouts
-    return rawNodes.map(n => ({ ...n, x: n.flowX, y: n.flowY }))
+    // Use hardcoded positions but add a small amount of jitter to break perfectly straight lines
+    return rawNodes.map(n => {
+      const seed = n.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
+      const jitter = (amount: number) => Math.sin(seed) * amount
+      return { 
+        ...n, 
+        x: n.flowX + jitter(30), 
+        y: n.flowY + jitter(30) 
+      }
+    })
   }
 
   // For clustered/ring: reposition by risk level

@@ -140,9 +140,13 @@ describe('Simulation', () => {
     vi.mocked(failure.pickTier).mockReturnValue(4) // Tier 4 always intercepted
 
     let state = createSimulation({ guardrailsEnabled: true })
-    // Find a node that is reachable from somewhere AND has neighbors (to avoid 'completed' state)
-    // Actually, interceptParticle handles empty safe neighbors by just staying at current node.
-    const target = state.nodes.find(n => n.neighbors.length > 0)!
+    // Find a node that is reachable from somewhere AND has at least one safe neighbor
+    const target = state.nodes.find(n => {
+      const safeNeighbors = n.neighbors
+        .map(nid => state.nodes.find(x => x.id === nid))
+        .filter(x => x && x.risk !== 'high' && x.risk !== 'critical')
+      return safeNeighbors.length > 0
+    })!
     const source = state.nodes.find(n => n.neighbors.includes(target.id)) || state.nodes[0]
     
     state.particles = [{
