@@ -57,36 +57,44 @@ export function drawParticles(p: p5, particles: Particle[], _nodes: GraphNode[],
     const journeyT = particle.maxSteps > 0 ? particle.stepsCompleted / particle.maxSteps : 0
     const baseSize = PARTICLE_VISUALS.baseSizeMin + journeyT * (PARTICLE_VISUALS.baseSizeMax - PARTICLE_VISUALS.baseSizeMin)
 
-    // Trail: includes current pos as final point for symmetric taper
+    // 1. Outer glow aura at current position
+    p.fill(hue, sat, bri, PARTICLE_VISUALS.glowAlpha * pos.alpha)
+    p.ellipse(pos.x, pos.y, baseSize * PARTICLE_VISUALS.glowMultiplier)
+
+    // 2. Motion-blur trail — short, sharp taper (smear not a tail)
     const trail = particle.trail
-    const fullTrail = [...trail, { x: pos.x, y: pos.y }]
-
-    // 1. Glow aura centered at trail midpoint (visual mass in center of streak, not at tip)
-    if (fullTrail.length >= 1) {
-      const mid = fullTrail[Math.floor(fullTrail.length / 2)]
-      p.fill(hue, sat, bri, PARTICLE_VISUALS.glowAlpha * pos.alpha)
-      p.ellipse(mid.x, mid.y, baseSize * PARTICLE_VISUALS.glowMultiplier)
-    }
-
-    // 2. Symmetric trail — fattest at center, thin at both ends (lens/streak shape, not tail)
-    if (fullTrail.length >= 2) {
-      for (let i = 0; i < fullTrail.length; i++) {
-        const t = i / (fullTrail.length - 1) // 0=oldest end, 1=newest end
-        const tt = 1 - Math.abs(2 * t - 1)   // triangle: 0 at both ends, 1 at center
-        const trailSize = baseSize * tt + 0.5
-        const trailAlpha = (tt * 0.85 + 0.1) * 200 * pos.alpha
+    if (trail.length >= 2) {
+      for (let i = 0; i < trail.length; i++) {
+        const t = i / (trail.length - 1) // 0=oldest, 1=newest
+        const tt = Math.pow(t, PARTICLE_VISUALS.trailTaperPower)
+        const trailSize = baseSize * 0.8 * tt + 0.3
+        const trailAlpha = tt * 140 * pos.alpha
         if (trailAlpha < 2) continue
         p.fill(hue, sat, bri, trailAlpha)
-        p.ellipse(fullTrail[i].x, fullTrail[i].y, trailSize)
+        p.ellipse(trail[i].x, trail[i].y, trailSize)
       }
     }
 
-    // 3. White-hot core at trail midpoint (not tip — avoids "head" appearance)
-    if (fullTrail.length >= 1) {
-      const mid = fullTrail[Math.floor(fullTrail.length / 2)]
-      p.fill(0, 0, 100, alpha255 * 0.8)
-      p.ellipse(mid.x, mid.y, PARTICLE_VISUALS.coreSize)
+    // 3. Comet body — elongated ellipse rotated along direction of travel
+    let angle = 0
+    if (trail.length >= 1) {
+      const last = trail[trail.length - 1]
+      const ddx = pos.x - last.x
+      const ddy = pos.y - last.y
+      if (Math.abs(ddx) > 0.01 || Math.abs(ddy) > 0.01) {
+        angle = Math.atan2(ddy, ddx)
+      }
     }
+    p.push()
+    p.translate(pos.x, pos.y)
+    p.rotate(angle)
+    p.fill(hue, sat, bri, alpha255 * 0.9)
+    p.ellipse(0, 0, baseSize * PARTICLE_VISUALS.cometElongation, baseSize)
+    p.pop()
+
+    // 4. White-hot core
+    p.fill(0, 0, 100, alpha255)
+    p.ellipse(pos.x, pos.y, PARTICLE_VISUALS.coreSize)
   }
 
   // Restore RGB color mode so other renderers are unaffected
