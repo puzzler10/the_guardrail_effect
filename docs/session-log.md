@@ -191,3 +191,18 @@ The "Angry Storm" state is now much more atmospheric and visceral. The layered c
 
 ## Results
 The "Angry Storm" state is now much more atmospheric and visceral. The layered clouds provide a sense of scale and motion, while the pure red flashes clearly distinguish the high-risk state from the safer rainbow mode.
+
+## 2026-03-21 — Agent merge: storm-polish-perf
+
+## Tasks completed
+- **Performance Optimization**: 
+    - Reduced background buffer resolution by 50% (scaling up during render), significantly reducing GPU fill rate and memory usage.
+    - Consolidated multi-layered storm clouds into a single pre-rendered `stormBuffer`, eliminating multiple full-screen `p.image` calls and expensive blending operations per frame.
+    - Increased noise step size (8 -> 12) for faster buffer initialization and resize handling.
+- **Visual Intensity Polish**:
+    - Dialed back the storm cloud brightness and alpha to ensure background patterns don't distract from or "blur" the simulation nodes.
+    - Simplified storm motion to a single panning speed for better visual clarity and performance.
+    - Adjusted rainbow translucency for a more subtle, balanced feel.
+
+## Results
+The simulation is now noticeably smoother, especially during transitions. The "Angry Storm" aesthetic remains atmospheric but much cleaner, ensuring the foreground simulation always takes priority.
