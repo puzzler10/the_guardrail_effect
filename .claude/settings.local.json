@@ -1,23 +1,74 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git init:*)",
-      "Bash(git add:*)",
-      "Bash(git commit -m \"chore: initial project setup with spec, project docs, and task roadmap:*)",
-      "Bash(git commit:*)",
-      "Bash(npm create:*)",
-      "Bash(cp /Users/tomroth/Documents/encode_hackathon/tmp/vite-scaffold/tsconfig.json /Users/tomroth/Documents/encode_hackathon/tsconfig.json)",
-      "Bash(cp /Users/tomroth/Documents/encode_hackathon/tmp/vite-scaffold/package.json /Users/tomroth/Documents/encode_hackathon/package.json)",
-      "Bash(mkdir -p /Users/tomroth/Documents/encode_hackathon/public /Users/tomroth/Documents/encode_hackathon/src)",
-      "Bash(rm -rf /Users/tomroth/Documents/encode_hackathon/tmp)",
-      "Bash(npm install:*)",
-      "Bash(npm run:*)",
-      "Bash(/Users/tomroth/Documents/encode_hackathon/docs/session-log.md:*)",
-      "Bash(git worktree:*)",
-      "Read(//Users/tomroth/Documents/encode_hackathon-failure/**)",
-      "Bash(npx vitest:*)",
-      "Bash(git checkout:*)",
-      "Bash(git merge:*)"
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Agent",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(git:*)",
+      "Bash(./scripts/:*)",
+      "Bash(python3:*)",
+      "Bash(gemini:*)",
+      "Bash(kill:*)",
+      "Bash(mkdir:*)",
+      "Bash(chmod:*)",
+      "Bash(cat:*)",
+      "Bash(tail:*)",
+      "Bash(head:*)",
+      "Bash(sleep:*)",
+      "Bash(curl:*)",
+      "Bash(which:*)",
+      "Bash(type:*)",
+      "Bash(ls:*)",
+      "Bash(cd:*)",
+      "Bash(wc:*)",
+      "Bash(diff:*)",
+      "Bash(echo:*)",
+      "Bash(sed:*)",
+      "Bash(date:*)",
+      "Bash(pwd:*)",
+      "Bash(test:*)",
+      "Bash(true:*)",
+      "Bash(false:*)",
+      "Bash(ps:*)",
+      "Bash(pkill:*)",
+      "Bash(rm:*)",
+      "Skill(update-config)",
+      "WebFetch",
+      "WebSearch",
+      "Bash(command gemini:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf /:*)",
+      "Bash(rm -rf ~:*)",
+      "Bash(rm -rf /*:*)"
     ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "allowUnsandboxedCommands": true,
+    "network": {
+      "allowedDomains": [
+        "registry.npmjs.org",
+        "fonts.googleapis.com",
+        "fonts.gstatic.com",
+        "cdn.jsdelivr.net",
+        "generativelanguage.googleapis.com",
+        "aistudio.google.com",
+        "oauth2.googleapis.com",
+        "accounts.google.com"
+      ]
+    },
+    "filesystem": {
+      "allowWrite": [
+        "/Users/tomroth/Documents/encode_hackathon/.worktrees"
+      ]
+    }
   }
 }

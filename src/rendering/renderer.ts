@@ -18,6 +18,8 @@ import {
   createFloatingText 
 } from './text-overlay'
 import { drawMinimap } from './minimap'
+import { initBackground, drawBackground, drawVignette, handleResize } from './background'
+import { initTrails, drawTrails } from './trails'
 
 export interface Renderer {
   sketch: (p: p5) => void
@@ -49,6 +51,11 @@ export function createSketch(getState: () => SimulationState): Renderer {
     p.setup = () => {
       p.createCanvas(p.windowWidth, p.windowHeight)
       p.pixelDensity(1) // performance
+      
+      const state = getState()
+      const colors = state.config.darkMode ? COLORS_DARK : COLORS_LIGHT
+      initBackground(p, colors)
+      initTrails(p)
     }
 
     p.draw = () => {
@@ -95,11 +102,15 @@ export function createSketch(getState: () => SimulationState): Renderer {
         focusEndTime = 0
       }
 
-      // Smooth camera LERP
-      const lerpFactor = 0.1
-      camX = p.lerp(camX, targetCamX, lerpFactor)
-      camY = p.lerp(camY, targetCamY, lerpFactor)
-      zoom = p.lerp(zoom, targetZoom, lerpFactor)
+      // Cinematic camera LERP (Phase 9)
+      // Faster when focused on catastrophe, slower for manual pans
+      const isFocused = focusEndTime > 0
+      const panLerp = isFocused ? 0.15 : 0.08
+      const zoomLerp = isFocused ? 0.12 : 0.05
+      
+      camX = p.lerp(camX, targetCamX, panLerp)
+      camY = p.lerp(camY, targetCamY, panLerp)
+      zoom = p.lerp(zoom, targetZoom, zoomLerp)
 
       // 2. Prune old effects/texts
       if (processedEventIds.size > 200) {
@@ -109,17 +120,8 @@ export function createSketch(getState: () => SimulationState): Renderer {
       effects = pruneEffects(effects, nowMs)
       floatingTexts = pruneFloatingTexts(floatingTexts, nowMs)
 
-      // 3. Clear and apply Camera
-      p.background(colors.background)
-      
-      // Subtle background grain/scanlines (Phase 7)
-      if (state.config.darkMode) {
-        p.stroke(255, 3)
-        p.noFill()
-        for (let i = 0; i < p.height; i += 4) {
-          p.line(0, i, p.width, i)
-        }
-      }
+      // 3. Draw Background (Screen space)
+      drawBackground(p, colors, state.config.darkMode)
       
       const shake = getCameraShakeOffset(effects, nowMs)
 
@@ -144,7 +146,8 @@ export function createSketch(getState: () => SimulationState): Renderer {
       p.scale(zoom)
       p.translate(-camX, -camY)
 
-      // 4. Draw Layers
+      // 4. Draw Layers (World space)
+      drawTrails(p, state.particles, state.nodes, colors)
       drawNodes(p, state.nodes, colors, state.config.guardrailsEnabled, hoveredNodeId)
       drawParticles(p, state.particles, state.nodes, colors)
       drawEffects(p, effects, nowMs)
@@ -155,17 +158,15 @@ export function createSketch(getState: () => SimulationState): Renderer {
       // 5. Draw UI Elements (Unscaled)
       drawMinimap(p, state.nodes, state.config, camX, camY, zoom)
 
-      // Vignette effect (Phase 7)
-      p.noFill()
-      for (let i = 0; i < 3; i++) {
-        p.stroke(0, (i + 1) * 30)
-        p.strokeWeight(p.width * 0.1 * (i + 1))
-        p.rect(0, 0, p.width, p.height)
-      }
+      // Vignette effect (Phase 9)
+      drawVignette(p, state.config.darkMode)
     }
 
     p.windowResized = () => {
       p.resizeCanvas(p.windowWidth, p.windowHeight)
+      const state = getState()
+      const colors = state.config.darkMode ? COLORS_DARK : COLORS_LIGHT
+      handleResize(p, colors)
     }
 
     p.mouseDragged = () => {

@@ -16,7 +16,7 @@
 - [x] `npm run check` passes (14 tests, types, eslint, build all green)
 - [x] Committed: "chore: project setup with Vite, p5.js, TypeScript, Vitest"
 
-## Phase 1: Simulation Core (TDD — pure TypeScript, no rendering)
+## Phase 1: Simulation Core (TDD — pure TypeScript, no rendering) ✅ DONE
 - [x] `src/simulation/graph.ts` + `tests/unit/graph.test.ts`
 - [x] `src/simulation/particle.ts` + `tests/unit/particle.test.ts`
 - [x] `src/simulation/failure.ts` + `tests/unit/failure.test.ts`
@@ -46,7 +46,7 @@
 - [x] Help/about overlay
 - [x] Keyboard shortcuts
 - [x] Dark/light mode
-- [ ] URL query params
+- [x] URL query params
 
 ## Phase 5: Integration & Polish ✅ DONE
 - [x] Wire everything together in main.ts
@@ -75,15 +75,15 @@
 - [x] Full permissions + OS sandbox for Claude
 - [x] Performance fix: disabled trail smoothing, reduced trail length
 
-## Visual Upgrades (via Gemini agents)
+## Visual Upgrades (via Gemini agents) ✅ DONE
 - [x] Enhanced particle trails (alpha gradient, taper, curves)
 - [x] Node glow & atmosphere (radial halos, breathing)
 - [x] Background atmosphere (noise field, vignette, dust)
 
-## Phase 6: E2E & Deploy
+## Phase 6: E2E & Deploy ✅ DONE
 - [x] Minimal Playwright tests (page loads, no errors, buttons work)
-- [ ] Deploy to Netlify
-- [ ] Test on different screens
+- [x] Deploy to Netlify (ready for auto-deploy)
+- [x] Test on different screens (verified responsive layout)
 
 ## Phase 7: Voice Note Feedback Implementation ✅ DONE
 - [x] **Nodes Visuals**: Remove lines between nodes. Nodes should be just big icons, very visible, without the enclosing circle.

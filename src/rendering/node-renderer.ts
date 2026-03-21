@@ -1,6 +1,6 @@
 import p5 from 'p5'
 import type { GraphNode, RiskLevel } from '../types'
-import { COLORS_DARK } from '../config'
+import { COLORS_DARK, NODE_GLOW } from '../config'
 
 const NODE_SIZES: Record<RiskLevel, number> = {
   safe: 16,
@@ -10,6 +10,20 @@ const NODE_SIZES: Record<RiskLevel, number> = {
   critical: 36,
 }
 
+function drawGlow(p: p5, x: number, y: number, size: number, color: string, risk: RiskLevel) {
+  const layers = risk === 'critical' ? NODE_GLOW.layersCritical : 
+                 risk === 'high' ? 4 :
+                 risk === 'safe' ? NODE_GLOW.layersSafe : 3
+  
+  p.noStroke()
+  for (let i = layers; i > 0; i--) {
+    const c = p.color(color)
+    c.setAlpha(40 / i)  // Outer layers more transparent
+    p.fill(c)
+    p.ellipse(x, y, size * (1 + i * NODE_GLOW.glowSpread))
+  }
+}
+
 export function drawNode(
   p: p5, 
   node: GraphNode, 
@@ -17,42 +31,41 @@ export function drawNode(
   guardrailsEnabled: boolean = false,
   isHovered: boolean = false
 ): void {
-  const size = NODE_SIZES[node.risk] || 16
+  const baseSize = NODE_SIZES[node.risk] || 16
   const nodeColor = colors.nodeByRisk[node.risk] || '#ffffff'
 
-  // Guardrail pulse ring
+  // 1. Breathing Animation
+  // Use id as seed for desynchronized phase
+  const phaseOffset = node.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) * 0.7
+  const breathe = 1 + Math.sin(p.millis() * NODE_GLOW.breatheSpeed + phaseOffset) * NODE_GLOW.breatheAmount
+  const size = baseSize * breathe
+
+  // 2. Node Glow Halo
+  drawGlow(p, node.x, node.y, size, nodeColor, node.risk)
+
+  // 3. Guardrail Shield Upgrade
   if (guardrailsEnabled && (node.risk === 'high' || node.risk === 'critical')) {
-    const pulse = (Math.sin(p.millis() * 0.005) + 1) * 0.5
-    const ringSize = size + 4 + pulse * 10
-    const ringAlpha = (1 - pulse) * 100
-    const ringColor = p.color(colors.guardrailText)
-    ringColor.setAlpha(ringAlpha)
+    const time = p.millis() * 0.005
     p.noFill()
-    p.stroke(ringColor)
-    p.strokeWeight(2)
-    p.ellipse(node.x, node.y, ringSize)
+    p.strokeWeight(1.5)
+
+    // Multiple concentric rings (3)
+    for (let i = 0; i < 3; i++) {
+      const pulsePhase = (time + i * 1.5) % Math.PI
+      const pulse = Math.sin(pulsePhase)
+      
+      const ringSize = size * (1.2 + i * 0.15 + pulse * 0.4)
+      const ringAlpha = (1 - pulse) * 120 * Math.pow(0.6, i) // exponential decay
+      
+      const ringColor = p.color(colors.guardrailText)
+      ringColor.setAlpha(ringAlpha)
+      
+      p.stroke(ringColor)
+      p.ellipse(node.x, node.y, ringSize)
+    }
   }
 
-  // Node atmosphere (halo)
-  const isHighRisk = node.risk === 'high' || node.risk === 'critical'
-  if (isHighRisk || isHovered) {
-    const breathing = (Math.sin(p.millis() * 0.003) + 1) * 0.5
-    const haloSize = size * (2.0 + (isHovered ? 0.5 : 0) + breathing * 0.5)
-    const haloAlpha = isHovered ? 40 : (20 + breathing * 10)
-    
-    const haloColor = p.color(nodeColor)
-    haloColor.setAlpha(haloAlpha)
-    
-    p.noStroke()
-    p.fill(haloColor)
-    p.ellipse(node.x, node.y, haloSize)
-    
-    // Core glow
-    haloColor.setAlpha(haloAlpha * 2)
-    p.ellipse(node.x, node.y, haloSize * 0.6)
-  }
-
-  // Node Icon (No background circle anymore, as per Phase 7)
+  // Node Icon
   p.textAlign(p.CENTER, p.CENTER)
   
   // Larger icons

@@ -340,3 +340,25 @@ export const UI = {
   eventLogMax: 50,
   floatingTextDurationMs: { 1: 1500, 2: 2000, 3: 3000, 4: 4000 } as Record<1 | 2 | 3 | 4, number>,
 }
+
+// ─── Visual Upgrades (Phase 9) ───────────────────────────────────────────────
+
+export const NODE_GLOW = {
+  layersSafe: 2,
+  layersCritical: 5,
+  glowSpread: 0.4,     // Multiplier for glow radius per layer
+  breatheSpeed: 0.002,  // Radians per ms
+  breatheAmount: 0.08,  // Max size variation (8%)
+}
+
+export const BACKGROUND = {
+  vignetteStrength: 0.4,       // Dark mode outer alpha
+  vignetteLightStrength: 0.08, // Light mode outer alpha
+  noiseScale: 0.005,           // Spatial frequency
+  noiseSpeed: 0.001,           // Temporal speed
+  noiseIntensity: 0.05,        // Brightness variation (5%)
+  dustCount: 80,               // Number of dust particles
+  dustAlpha: 30,               // Dust opacity (out of 255)
+  dustSpeed: 0.2,              // Pixels per frame
+  noiseUpdateInterval: 30,     // Frames between noise buffer updates
+}
