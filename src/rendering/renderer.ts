@@ -2,7 +2,7 @@ import p5 from 'p5'
 import type { SimulationState } from '../types'
 import { COLORS_DARK, COLORS_LIGHT, UI } from '../config'
 
-const DEFAULT_ZOOM = 0.6
+const DEFAULT_ZOOM = 0.8
 import { drawNodes, drawEdges } from './node-renderer'
 import { drawParticles } from './particle-renderer'
 import type { Effect } from './effects'

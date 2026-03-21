@@ -62,11 +62,11 @@ export const PARTICLE = {
 // ─── Node sizes (used for particle fade at boundaries) ───────────────────────
 
 export const NODE_SIZES: Record<string, number> = {
-  safe: 16,
-  low: 18,
-  medium: 22,
-  high: 28,
-  critical: 36,
+  safe: 20,
+  low: 24,
+  medium: 28,
+  high: 34,
+  critical: 44,
 }
 
 // ─── Trail rendering ─────────────────────────────────────────────────────────
