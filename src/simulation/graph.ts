@@ -1,4 +1,4 @@
-import { CONNECTOR_LIBRARY } from '../config'
+import { CONNECTOR_LIBRARY, CANVAS_WIDTH, CANVAS_HEIGHT } from '../config'
 import type { GraphNode, LayoutPreset, RiskLevel } from '../types'
 import { buildScenarioGraph } from './scenarios'
 
@@ -65,8 +65,6 @@ function calculateCoordinates(
   count: number, 
   layout: LayoutPreset
 ): { x: number; y: number } {
-  const CANVAS_WIDTH = 2000
-  const CANVAS_HEIGHT = 1400
   const CENTER_X = CANVAS_WIDTH / 2
   const CENTER_Y = CANVAS_HEIGHT / 2
 
@@ -75,19 +73,19 @@ function calculateCoordinates(
 
   if (layout === 'clustered') {
     const angles = [0, Math.PI * 0.4, Math.PI * 0.8, Math.PI * 1.2, Math.PI * 1.6]
-    const distance = 450
+    const distance = 800
     const clusterCenterX = CENTER_X + Math.cos(angles[riskIndex]) * distance
     const clusterCenterY = CENTER_Y + Math.sin(angles[riskIndex]) * distance
     const localAngle = (index / count) * Math.PI * 2
-    const localDist = 60 + (index * 15)
+    const localDist = 100 + (index * 15)
     
     return {
       x: clusterCenterX + Math.cos(localAngle) * localDist + jitter(20),
       y: clusterCenterY + Math.sin(localAngle) * localDist + jitter(20),
     }
   } else if (layout === 'flow') {
-    const xBase = 200 + (riskIndex * 350)
-    const yPadding = 150
+    const xBase = 300 + (riskIndex * 600)
+    const yPadding = 200
     const availableHeight = CANVAS_HEIGHT - (yPadding * 2)
     const yStep = count > 1 ? availableHeight / (count - 1) : 0
     const yBase = yPadding + (index * yStep)
@@ -97,7 +95,7 @@ function calculateCoordinates(
       y: yBase + jitter(40),
     }
   } else if (layout === 'ring') {
-    const radius = 200 + (riskIndex * 150)
+    const radius = 300 + (riskIndex * 250)
     const angleOffset = riskIndex * 0.5
     const angle = angleOffset + (index / count) * Math.PI * 2
     
