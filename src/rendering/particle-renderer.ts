@@ -57,31 +57,32 @@ export function drawParticles(p: p5, particles: Particle[], _nodes: GraphNode[],
     const journeyT = particle.maxSteps > 0 ? particle.stepsCompleted / particle.maxSteps : 0
     const baseSize = PARTICLE_VISUALS.baseSizeMin + journeyT * (PARTICLE_VISUALS.baseSizeMax - PARTICLE_VISUALS.baseSizeMin)
 
-    // 1. Outer glow aura (large soft halo in particle's color)
-    p.fill(hue, sat, bri, PARTICLE_VISUALS.glowAlpha * pos.alpha)
-    p.ellipse(pos.x, pos.y, baseSize * PARTICLE_VISUALS.glowMultiplier)
-
-    // 2. Tapered trail from trail array (thick+bright at head, thin+dim at tail)
+    // Trail: includes current pos as final point for symmetric taper
     const trail = particle.trail
-    if (trail.length >= 2) {
-      for (let i = 0; i < trail.length; i++) {
-        const t = i / (trail.length - 1) // 0 = oldest tail, 1 = newest near-head
-        const tt = Math.pow(t, PARTICLE_VISUALS.trailTaperPower)
-        const trailSize = baseSize * 0.85 * tt + 0.4
-        const trailAlpha = tt * 160 * pos.alpha
+    const fullTrail = [...trail, { x: pos.x, y: pos.y }]
+
+    // 1. Glow aura centered at trail midpoint (visual mass in center of streak, not at tip)
+    if (fullTrail.length >= 1) {
+      const mid = fullTrail[Math.floor(fullTrail.length / 2)]
+      p.fill(hue, sat, bri, PARTICLE_VISUALS.glowAlpha * pos.alpha)
+      p.ellipse(mid.x, mid.y, baseSize * PARTICLE_VISUALS.glowMultiplier)
+    }
+
+    // 2. Symmetric trail — fattest at center, thin at both ends (lens/streak shape, not tail)
+    if (fullTrail.length >= 2) {
+      for (let i = 0; i < fullTrail.length; i++) {
+        const t = i / (fullTrail.length - 1) // 0=oldest end, 1=newest end
+        const tt = 1 - Math.abs(2 * t - 1)   // triangle: 0 at both ends, 1 at center
+        const trailSize = baseSize * tt + 0.5
+        const trailAlpha = (tt * 0.85 + 0.1) * 200 * pos.alpha
         if (trailAlpha < 2) continue
         p.fill(hue, sat, bri, trailAlpha)
-        p.ellipse(trail[i].x, trail[i].y, trailSize)
+        p.ellipse(fullTrail[i].x, fullTrail[i].y, trailSize)
       }
     }
 
-    // 3. Orb body — simple circle (no rotation)
-    p.fill(hue, sat, bri, alpha255 * 0.85)
-    p.ellipse(pos.x, pos.y, baseSize)
-
-    // 4. White-hot core — small bright center ensures visibility on ALL backgrounds
-    // (critical for rainbow mode where cool-spectrum hues could blend in)
-    p.fill(0, 0, 100, alpha255)
+    // 3. White-hot core at current position
+    p.fill(0, 0, 100, alpha255 * 0.8)
     p.ellipse(pos.x, pos.y, PARTICLE_VISUALS.coreSize)
   }
 
