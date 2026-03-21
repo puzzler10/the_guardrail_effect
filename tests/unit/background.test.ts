@@ -65,8 +65,8 @@ describe('Background Rendering', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     initBackground(mockP5 as any);
 
-    // Should create three graphics buffers (storm, rainbow, vignette)
-    expect(mockP5.createGraphics).toHaveBeenCalledTimes(3);
+    // Should create four graphics buffers (storm base, cloud2, rainbow, vignette)
+    expect(mockP5.createGraphics).toHaveBeenCalledTimes(4);
     expect(mockP5.createGraphics).toHaveBeenCalledWith(800, 600);
     
     // Should immediately update the buffers

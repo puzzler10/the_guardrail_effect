@@ -377,11 +377,11 @@ export const BACKGROUND = {
 
 export const THEME = {
   storm: {
-    background: '#020205',
+    background: '#010103',
     primary: '#00ff88', // Neon green
-    accent: '#ff3300',  // Harsh red/orange
-    vignette: 0.6,
-    noiseIntensity: 0.12,
+    accent: '#ee0000',  // Pure intense red
+    vignette: 0.75,     // More closed-in
+    noiseIntensity: 0.2, // More variance
   },
   rainbow: {
     // Rainbow uses HSB, so these are base saturation/brightness
