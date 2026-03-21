@@ -168,7 +168,7 @@ export const CONNECTOR_LIBRARY: ConnectorTemplate[] = [
 
   // Engineering / Dev
   { id: 'github', name: 'GitHub', icon: '🐙', risk: 'high', scenario: ['devops', 'global'] },
-  { id: 'gitlab', name: 'GitLab', icon: ' foxes', risk: 'high', scenario: ['devops', 'global'] },
+  { id: 'gitlab', name: 'GitLab', icon: '🦊', risk: 'high', scenario: ['devops', 'global'] },
   { id: 'bitbucket', name: 'Bitbucket', icon: '🪣', risk: 'high', scenario: ['global'] },
   { id: 'aws-s3', name: 'AWS S3 Storage', icon: '📦', risk: 'medium', scenario: ['devops', 'global'] },
   { id: 'aws-iam', name: 'AWS IAM Permissions', icon: '🔑', risk: 'critical', scenario: ['devops', 'global'] },
