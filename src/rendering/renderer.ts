@@ -270,7 +270,7 @@ export function createSketch(getState: () => SimulationState): Renderer {
     p.mouseWheel = (event?: any) => {
       if (!event) return
       focusEndTime = 0
-      const delta = event.delta > 0 ? 0.9 : 1.1
+      const delta = event.delta > 0 ? 0.96 : 1.04
       targetZoom = p.constrain(targetZoom * delta, UI.zoomMin, UI.zoomMax)
       return false // Prevent page scroll
     }
