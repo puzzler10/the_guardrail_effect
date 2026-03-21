@@ -81,9 +81,12 @@ export function drawParticles(p: p5, particles: Particle[], _nodes: GraphNode[],
       }
     }
 
-    // 3. White-hot core at current position
-    p.fill(0, 0, 100, alpha255 * 0.8)
-    p.ellipse(pos.x, pos.y, PARTICLE_VISUALS.coreSize)
+    // 3. White-hot core at trail midpoint (not tip — avoids "head" appearance)
+    if (fullTrail.length >= 1) {
+      const mid = fullTrail[Math.floor(fullTrail.length / 2)]
+      p.fill(0, 0, 100, alpha255 * 0.8)
+      p.ellipse(mid.x, mid.y, PARTICLE_VISUALS.coreSize)
+    }
   }
 
   // Restore RGB color mode so other renderers are unaffected
