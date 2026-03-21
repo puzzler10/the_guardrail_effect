@@ -46,13 +46,16 @@ const mockP5 = {
   push: vi.fn(),
   pop: vi.fn(),
   lerp: vi.fn((a, b, t) => a + (b - a) * t),
+  map: vi.fn((n, start1, stop1, start2, stop2) => {
+    return ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
+  }),
   blendMode: vi.fn(),
-  SCREEN: "screen",
-  BLEND: "blend",
   frameCount: 0,
   width: 800,
   height: 600,
   HSB: 'hsb',
+  SCREEN: 'screen',
+  BLEND: 'blend',
 };
 
 describe('Background Rendering', () => {
