@@ -84,11 +84,19 @@ function calculateCoordinates(
       y: clusterCenterY + Math.sin(localAngle) * localDist + jitter(20),
     }
   } else if (layout === 'flow') {
-    const xBase = 150 + (riskIndex * 400)
-    const yPadding = 150
+    const xPadding = 300
+    const availableWidth = CANVAS_WIDTH - (xPadding * 2)
+    let xBase = CANVAS_WIDTH / 2
+    if (count > 1) {
+      const xStep = availableWidth / (count - 1)
+      xBase = xPadding + (index * xStep)
+    }
+
+    const yPadding = 300
     const availableHeight = CANVAS_HEIGHT - (yPadding * 2)
-    const yStep = count > 1 ? availableHeight / (count - 1) : 0
-    const yBase = yPadding + (index * yStep)
+    // 5 risk tiers total, so max riskIndex is 4
+    const yStep = availableHeight / 4
+    const yBase = yPadding + (riskIndex * yStep)
 
     return {
       x: xBase + jitter(40),

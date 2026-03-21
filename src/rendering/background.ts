@@ -43,6 +43,31 @@ export function initBackground(p: p5) {
   }
 }
 
+function getSeamlessNoise(p: p5, x: number, y: number, w: number, scale: number, xOffset: number = 0) {
+  const nx = x + xOffset
+  const n1 = p.noise(nx * scale, y * scale)
+  const blendZone = w * 0.2
+  if (x > w - blendZone) {
+    const n2 = p.noise((nx - w) * scale, y * scale)
+    const t = (x - (w - blendZone)) / blendZone
+    const smoothT = t * t * (3 - 2 * t)
+    return p.lerp(n1, n2, smoothT)
+  }
+  return n1
+}
+
+function getSeamlessNoise3D(p: p5, x: number, y: number, z: number, w: number, scale: number) {
+  const n1 = p.noise(x * scale, y * scale, z)
+  const blendZone = w * 0.2
+  if (x > w - blendZone) {
+    const n2 = p.noise((x - w) * scale, y * scale, z)
+    const t = (x - (w - blendZone)) / blendZone
+    const smoothT = t * t * (3 - 2 * t)
+    return p.lerp(n1, n2, smoothT)
+  }
+  return n1
+}
+
 function updateStormBuffers(p: p5) {
   if (!stormBuffer || !cloudLayer2) return
   
@@ -53,7 +78,7 @@ function updateStormBuffers(p: p5) {
   stormBuffer.noStroke()
   for (let x = 0; x < p.width; x += step) {
     for (let y = 0; y < p.height; y += step) {
-      const n = p.noise(x * 0.002, y * 0.002)
+      const n = getSeamlessNoise(p, x, y, p.width, 0.002)
       if (n > 0.45) {
         // High contrast thresholding for "clumpy" storm clouds
         const brightness = p.map(n, 0.45, 1, 10, 80)
@@ -68,7 +93,7 @@ function updateStormBuffers(p: p5) {
   cloudLayer2.noStroke()
   for (let x = 0; x < p.width; x += step) {
     for (let y = 0; y < p.height; y += step) {
-      const n = p.noise(x * 0.004 + 500, y * 0.004 + 500)
+      const n = getSeamlessNoise(p, x, y, p.width, 0.004, 500 / 0.004)
       if (n > 0.65) {
         // Luminous red "static" or lightning-esque energy
         const alpha = p.map(n, 0.65, 1, 0, 180)
@@ -87,7 +112,7 @@ function updateRainbowBuffer(p: p5) {
   rainbowBuffer.noStroke()
   for (let x = 0; x < p.width; x += step) {
     for (let y = 0; y < p.height; y += step) {
-      const n = p.noise(x * BACKGROUND.noiseScale * 0.5, y * BACKGROUND.noiseScale * 0.5, 100)
+      const n = getSeamlessNoise3D(p, x, y, 100, p.width, BACKGROUND.noiseScale * 0.5)
       const hue = (n * 360) % 360
       rainbowBuffer.fill(hue, 50, 25, 1)
       rainbowBuffer.rect(x, y, step, step)
