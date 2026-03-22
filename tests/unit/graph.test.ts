@@ -4,7 +4,7 @@ import type { LayoutPreset } from '../../src/types'
 import { CANVAS_WIDTH, CANVAS_HEIGHT, SCENARIOS } from '../../src/config'
 
 describe('Graph Module', () => {
-  const layouts: LayoutPreset[] = ['clustered', 'flow', 'ring']
+  const layouts: LayoutPreset[] = ['spiral', 'flow', 'ring']
   const scenarioIds = SCENARIOS.map(s => s.id)
 
   describe('buildGraph', () => {
@@ -32,13 +32,13 @@ describe('Graph Module', () => {
     })
 
     it('should return correct node counts for scenarios', () => {
-      expect(buildGraph('clustered', 'revops').length).toBe(10)
-      expect(buildGraph('clustered', 'devops').length).toBe(10)
-      expect(buildGraph('clustered', 'hr').length).toBe(11)
+      expect(buildGraph('spiral', 'revops').length).toBe(10)
+      expect(buildGraph('spiral', 'devops').length).toBe(10)
+      expect(buildGraph('spiral', 'hr').length).toBe(11)
     })
 
     it('should have all required fields for every node', () => {
-      const nodes = buildGraph('clustered', 'global')
+      const nodes = buildGraph('spiral', 'global')
       nodes.forEach(node => {
         expect(node.id).toBeDefined()
         expect(typeof node.id).toBe('string')
@@ -58,7 +58,7 @@ describe('Graph Module', () => {
     })
 
     it('should be a connected graph (every node reachable from entry nodes)', () => {
-      const nodes = buildGraph('clustered', 'global')
+      const nodes = buildGraph('spiral', 'global')
       const entryNodes = getEntryNodes(nodes)
       expect(entryNodes.length).toBeGreaterThan(0)
 
@@ -84,7 +84,7 @@ describe('Graph Module', () => {
     })
 
     it('should have all neighbor references pointing to valid node IDs', () => {
-      const nodes = buildGraph('clustered', 'global')
+      const nodes = buildGraph('spiral', 'global')
       const nodeIds = new Set(nodes.map(n => n.id))
       
       nodes.forEach(node => {
@@ -95,7 +95,7 @@ describe('Graph Module', () => {
     })
 
     it('should span all 5 risk levels in global mode', () => {
-      const nodes = buildGraph('clustered', 'global')
+      const nodes = buildGraph('spiral', 'global')
       const risks = new Set(nodes.map(n => n.risk))
       expect(risks.has('safe')).toBe(true)
       expect(risks.has('low')).toBe(true)
@@ -105,7 +105,7 @@ describe('Graph Module', () => {
     })
 
     it('should have different coordinates for same node in different layouts', () => {
-      const clusteredNodes = buildGraph('clustered', 'global')
+      const clusteredNodes = buildGraph('spiral', 'global')
       const ringNodes = buildGraph('ring', 'global')
       
       const node1 = clusteredNodes[0]
@@ -117,7 +117,7 @@ describe('Graph Module', () => {
   })
 
   describe('helpers', () => {
-    const nodes = buildGraph('clustered', 'global')
+    const nodes = buildGraph('spiral', 'global')
 
     it('getNeighbors should return correct nodes', () => {
       const node = nodes[0]

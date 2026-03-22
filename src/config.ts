@@ -41,7 +41,7 @@ export const CANVAS_HEIGHT = 1000
 export const DEFAULT_CONFIG: SimulationConfig = {
   modelPreset: 'frontier',
   scenario: 'global',
-  failureMultiplier: 0.01,
+  failureMultiplier: 0.15,
   agentSpeed: 0.5,
   particleCount: 400,
   guardrailsEnabled: false,

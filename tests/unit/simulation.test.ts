@@ -169,7 +169,7 @@ describe('Simulation', () => {
   })
 
   it('applyConfig() rebuilds graph on layout change', () => {
-    const state = createSimulation({ layout: 'clustered' })
+    const state = createSimulation({ layout: 'spiral' })
     const oldNodes = state.nodes
     
     const newState = applyConfig(state, { layout: 'flow' })

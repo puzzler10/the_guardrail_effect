@@ -691,6 +691,33 @@ input:checked + .slider:before {
   cursor: pointer;
 }
 
+/* Floating help button */
+.help-fab {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
+  font-family: inherit;
+}
+
+.help-fab:hover {
+  background: rgba(0, 240, 255, 0.22);
+  border-color: var(--accent);
+}
+
 .no-sound-link:hover {
   color: #888;
 }

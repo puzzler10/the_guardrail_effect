@@ -8,7 +8,7 @@ export type FailureTier = 1 | 2 | 3 | 4
 export type ParticleState = 'spawning' | 'active' | 'recovering' | 'failed' | 'exploded' | 'completed'
 
 // Layout presets
-export type LayoutPreset = 'clustered' | 'flow' | 'ring'
+export type LayoutPreset = 'spiral' | 'flow' | 'ring'
 
 // Graph node
 export interface GraphNode {

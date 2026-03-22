@@ -152,8 +152,8 @@ export function createSketch(getState: () => SimulationState): Renderer {
           processedEventIds.add(id)
           floatingTexts.push(createFloatingText(event, nowMs))
           
-          // Storm flash for "Angry Storm" mode (guardrails OFF)
-          if (!state.config.guardrailsEnabled) {
+          // Storm flash for "Angry Storm" mode (guardrails OFF) — only for high/critical failures
+          if (!state.config.guardrailsEnabled && event.tier >= 3) {
             effects.push(createStormFlash(nowMs));
           }
           

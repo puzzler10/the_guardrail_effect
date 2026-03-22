@@ -108,17 +108,13 @@ function buildTierLayout(
 
     let x: number, y: number
 
-    if (layout === 'clustered') {
-      // Elliptical pentagon — scaled to fit 2400×1000 canvas without clipping
-      const angles = [0, Math.PI * 0.4, Math.PI * 0.8, Math.PI * 1.2, Math.PI * 1.6]
-      const cx = CENTER_X + Math.cos(angles[riskIndex]) * 700
-      const cy = CENTER_Y + Math.sin(angles[riskIndex]) * 340
-      // Golden angle spiral — no overlap, organic packing
-      const goldenAngle = 2.399  // ≈ 137.5°
-      const localRadius = 65 * Math.sqrt(groupIndex)
-      const localAngle = groupIndex * goldenAngle
-      x = cx + Math.cos(localAngle) * localRadius + jitter(8)
-      y = cy + Math.sin(localAngle) * localRadius + jitter(8)
+    if (layout === 'spiral') {
+      // Archimedean spiral — risk tiers ordered center→edge (safe=inner, critical=outer)
+      const spiralI = riskIndex * 40 + groupIndex
+      const angle = spiralI * 0.4
+      const radius = 30 + angle * 6
+      x = CENTER_X + Math.cos(angle) * radius * 1.4 + jitter(10)
+      y = CENTER_Y + Math.sin(angle) * radius * 0.85 + jitter(10)
     } else {
       // ring
       const radius = 120 + riskIndex * 100  // max 520

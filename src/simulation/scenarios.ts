@@ -145,15 +145,12 @@ export function buildScenarioGraph(scenarioId: string, layout: LayoutPreset = 'f
     const jitter = (amount: number) => Math.sin(seed) * amount
 
     let x: number, y: number
-    if (layout === 'clustered') {
-      const angles = [0, Math.PI * 0.4, Math.PI * 0.8, Math.PI * 1.2, Math.PI * 1.6]
-      const dist = 450 * scale
-      const cx = CENTER_X + Math.cos(angles[riskIndex]) * dist
-      const cy = CENTER_Y + Math.sin(angles[riskIndex]) * dist
-      const localAngle = (index / Math.max(count, 1)) * Math.PI * 2
-      const localDist = (60 + index * 15) * scale
-      x = cx + Math.cos(localAngle) * localDist + jitter(20)
-      y = cy + Math.sin(localAngle) * localDist + jitter(20)
+    if (layout === 'spiral') {
+      const spiralI = riskIndex * 20 + index
+      const angle = spiralI * 0.4
+      const radius = (30 + angle * 6) * scale
+      x = CENTER_X + Math.cos(angle) * radius * 1.4 + jitter(10)
+      y = CENTER_Y + Math.sin(angle) * radius * 0.85 + jitter(10)
     } else { // ring
       const radius = (150 + riskIndex * 120) * scale
       const angleOffset = riskIndex * 0.5

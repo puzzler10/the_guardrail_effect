@@ -97,7 +97,7 @@ export function initControls(callbacks: ControlsCallbacks): void {
   // Section: Display
   createSection('Display', () => {
     createDropdown('Layout', [
-      { id: 'clustered', name: 'Clustered' },
+      { id: 'spiral', name: 'Spiral' },
       { id: 'flow', name: 'Flow' },
       { id: 'ring', name: 'Ring' },
     ], (val) => callbacks.onConfigChange({ layout: val as LayoutPreset }), 'layout-preset');

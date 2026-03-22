@@ -94,10 +94,10 @@ function updateStormBuffers(p: p5) {
   for (let x = 0; x < p.width; x += step) {
     for (let y = 0; y < p.height; y += step) {
       const n = getSeamlessNoise(p, x, y, p.width, 0.004, 500 / 0.004)
-      if (n > 0.65) {
+      if (n > 0.52) {
         // Luminous red "static" or lightning-esque energy
-        const alpha = p.map(n, 0.65, 1, 0, 180)
-        cloudLayer2.fill(180, 20, 40, alpha)
+        const alpha = p.map(n, 0.52, 1, 0, 230)
+        cloudLayer2.fill(210, 25, 55, alpha)
         cloudLayer2.rect(x, y, step, step)
       }
     }
@@ -114,7 +114,7 @@ function updateRainbowBuffer(p: p5) {
     for (let y = 0; y < p.height; y += step) {
       const n = getSeamlessNoise3D(p, x, y, 100, p.width, BACKGROUND.noiseScale * 0.5)
       const hue = (n * 360) % 360
-      rainbowBuffer.fill(hue, 45, 88, 1)
+      rainbowBuffer.fill(hue, 40, 93, 1)
       rainbowBuffer.rect(x, y, step, step)
     }
   }
