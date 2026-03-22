@@ -114,7 +114,7 @@ function updateRainbowBuffer(p: p5) {
     for (let y = 0; y < p.height; y += step) {
       const n = getSeamlessNoise3D(p, x, y, 100, p.width, BACKGROUND.noiseScale * 0.5)
       const hue = (n * 360) % 360
-      rainbowBuffer.fill(hue, 70, 55, 1)
+      rainbowBuffer.fill(hue, 45, 88, 1)
       rainbowBuffer.rect(x, y, step, step)
     }
   }
