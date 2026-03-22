@@ -88,7 +88,7 @@ function updateRainbowBuffer(p: p5) {
       const n = p.noise(x * BACKGROUND.noiseScale * 0.5, y * BACKGROUND.noiseScale * 0.5, 100)
       // Soft rainbow hues
       const hue = (n * 360) % 360
-      rainbowBuffer.fill(hue, 50, 25, 1)
+      rainbowBuffer.fill(hue, 70, 55, 1)
       rainbowBuffer.rect(x, y, step, step)
     }
   }
@@ -125,7 +125,7 @@ export function drawBackground(p: p5, guardrailsEnabled: boolean) {
     
     // Layer 1: Base clouds
     p.image(stormBuffer, -offset1, 0)
-    p.image(stormBuffer, p.width - offset1, 0)
+    p.image(stormBuffer, p.width - offset1 - 1, 0)
     
     // Layer 2: Faster wispy red clouds
     p.blendMode(p.ADD)
@@ -141,7 +141,7 @@ export function drawBackground(p: p5, guardrailsEnabled: boolean) {
     
     p.blendMode(p.SCREEN);
     p.image(rainbowBuffer, -rOffset, 0);
-    p.image(rainbowBuffer, p.width - rOffset, 0);
+    p.image(rainbowBuffer, p.width - rOffset - 1, 0);
     p.blendMode(p.BLEND);
   }
   p.pop()

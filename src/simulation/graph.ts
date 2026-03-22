@@ -112,16 +112,16 @@ function buildTierLayout(
 
     if (layout === 'clustered') {
       const angles = [0, Math.PI * 0.4, Math.PI * 0.8, Math.PI * 1.2, Math.PI * 1.6]
-      const dist = 350
+      const dist = 550
       const cx = CENTER_X + Math.cos(angles[riskIndex]) * dist
       const cy = CENTER_Y + Math.sin(angles[riskIndex]) * dist
       const localAngle = (groupIndex / Math.max(groupCount, 1)) * Math.PI * 2
-      const localDist = 40 + (groupIndex % 6) * 12
+      const localDist = 80 + (groupIndex % 6) * 20
       x = cx + Math.cos(localAngle) * localDist + jitter(15)
       y = cy + Math.sin(localAngle) * localDist + jitter(15)
     } else {
       // ring
-      const radius = 80 + riskIndex * 70  // max 360
+      const radius = 120 + riskIndex * 100  // max 520
       const angleOffset = riskIndex * 0.5
       const angle = angleOffset + (groupIndex / Math.max(groupCount, 1)) * Math.PI * 2
       x = CENTER_X + Math.cos(angle) * radius + jitter(10)
