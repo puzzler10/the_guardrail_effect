@@ -43,7 +43,7 @@ export const DEFAULT_CONFIG: SimulationConfig = {
   scenario: 'global',
   failureMultiplier: 0.01,
   agentSpeed: 0.5,
-  particleCount: 700,
+  particleCount: 400,
   guardrailsEnabled: false,
   autoZoomEnabled: true,
   darkMode: true,
@@ -70,7 +70,7 @@ export const PARTICLE = {
   minSteps: 8,
   maxSteps: 20,
   spawnRate: 8,           // particles per second
-  trailLength: 8,         // motion blur trail length
+  trailLength: 5,         // motion blur trail length
   baseSpeed: 0.0012,       // progress units per ms at 1x speed
 }
 
@@ -384,8 +384,8 @@ export const UI = {
 // ─── Visual Upgrades (Phase 9) ───────────────────────────────────────────────
 
 export const NODE_GLOW = {
-  layersSafe: 2,
-  layersCritical: 5,
+  layersSafe: 1,
+  layersCritical: 3,
   glowSpread: 0.4,     // Multiplier for glow radius per layer
   breatheSpeed: 0.002,  // Radians per ms
   breatheAmount: 0,  // Max size variation (0% - disabled)
@@ -397,7 +397,7 @@ export const BACKGROUND = {
   noiseScale: 0.005,           // Spatial frequency
   noiseSpeed: 0.001,           // Temporal speed
   noiseIntensity: 0.05,        // Brightness variation (5%)
-  dustCount: 80,               // Number of dust particles
+  dustCount: 40,               // Number of dust particles
   dustAlpha: 30,               // Dust opacity (out of 255)
   dustSpeed: 0.2,              // Pixels per frame
   noiseUpdateInterval: 30,     // Frames between noise buffer updates

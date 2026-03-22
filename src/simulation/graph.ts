@@ -60,10 +60,12 @@ function buildFlowLayout(
     const colPos = row % 2 === 0 ? col : (N_COLS - 1 - col)
 
     const seed = hashId(template.id)
-    const jitter = (amount: number) => Math.sin(seed + i * 7) * amount
+    // Two independent jitter terms per axis so nodes aren't on a perfect diagonal
+    const jitterX = Math.sin(seed * 1.3 + i * 7) * 30 + Math.cos(seed * 0.7 + col * 11) * 15
+    const jitterY = Math.cos(seed * 1.7 + i * 5) * 28 + Math.sin(seed * 0.9 + row * 13) * 18
 
-    const x = padX + colPos * colStep + jitter(12)
-    const y = padY + row * rowStep + jitter(12)
+    const x = Math.max(padX, Math.min(CANVAS_WIDTH - padX, padX + colPos * colStep + jitterX))
+    const y = Math.max(padY, Math.min(CANVAS_HEIGHT - padY, padY + row * rowStep + jitterY))
 
     // Neighbors: bidirectional serpentine + long-range jumps for path variety
     const neighbors: string[] = []

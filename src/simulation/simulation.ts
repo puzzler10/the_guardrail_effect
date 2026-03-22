@@ -93,7 +93,7 @@ export function tick(state: SimulationState, deltaMs: number, nowMs: number): Si
 
   // Scale spawn rate: far below target = spawn faster for responsive slider
   const deficit = config.particleCount - activeCount
-  const rampMultiplier = Math.min(20, Math.max(1, Math.ceil(deficit / 50)))
+  const rampMultiplier = Math.min(8, Math.max(1, Math.ceil(deficit / 50)))
   const spawnInterval = 1000 / (PARTICLE.spawnRate * rampMultiplier)
 
   const timeSinceLastSpawn = nowMs - lastSpawnMs
