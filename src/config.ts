@@ -35,8 +35,8 @@ export const SCENARIOS = [
 
 // ─── Default simulation config ────────────────────────────────────────────────
 
-export const CANVAS_WIDTH = 1200
-export const CANVAS_HEIGHT = 900
+export const CANVAS_WIDTH = 2400
+export const CANVAS_HEIGHT = 1000
 
 export const DEFAULT_CONFIG: SimulationConfig = {
   modelPreset: 'frontier',
@@ -77,11 +77,11 @@ export const PARTICLE = {
 // ─── Node sizes (used for particle fade at boundaries) ───────────────────────
 
 export const NODE_SIZES: Record<string, number> = {
-  safe: 20,
-  low: 24,
-  medium: 28,
-  high: 34,
-  critical: 44,
+  safe: 22,
+  low: 22,
+  medium: 22,
+  high: 22,
+  critical: 22,
 }
 
 // ─── Trail rendering ─────────────────────────────────────────────────────────
