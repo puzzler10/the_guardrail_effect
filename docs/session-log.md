@@ -1,6 +1,22 @@
 # Session Log
 
-## 2026-03-21 — Session 24: Title + Layout Density + Particle Slider Fix
+## 2026-03-22 — Session 26: Help Page & Failure Expansion
+
+**What was done:**
+- Overhauled help page (`src/ui/help.ts`) with a detailed explanation of guardrails and a practical Stripe-based example.
+- Updated the "Agent Status" color guide to align with the T1-T4 failure tiers and current particle hues (Cyan, Yellow, Orange, Red, White Flash).
+- Added the missing `C` (Toggle Controls) shortcut to the help overlay.
+- Expanded the failure message library in `src/config.ts` with 40+ new, realistic, and "scary" scenarios for Tier 3 and Tier 4.
+- Implemented connector-specific failure scenarios for high/critical nodes including AWS IAM, RDS, Kubernetes, Stripe, Okta, and 1Password.
+- Verified all changes with `npm run check` (106 tests passed).
+
+**What's next:**
+- Review the new failure messages in action during a simulation.
+- Proceed with any remaining UI or sound polish.
+
+---
+
+## 2026-03-22 — Session 25: Title + Layout Density + Particle Slider Fix
 
 **What was done:**
 - Renamed project to "The Guardrail Effect" — updated `index.html` title, sound overlay, onboarding modal, `docs/project.md`

@@ -2,6 +2,13 @@
 
 *(Note: Tasks from Phase 0 to Phase 9 have been completed and archived. See [docs/archive/completed-tasks.md](archive/completed-tasks.md) for history.)*
 
+## Phase 18: Help & Failures Expansion ✅ DONE
+- [x] **Help Page Overhaul**: Added detailed Guardrails explanation and Stripe-based example.
+- [x] **Status Guide**: Updated colors/labels to match T1-T4 failure tiers and particle hues.
+- [x] **Keyboard Shortcuts**: Added missing 'C' (Controls) shortcut to the help overlay.
+- [x] **Failure Expansion**: Added 40+ realistic, high-impact failure messages for T3/T4.
+- [x] **Connector Specifics**: Implemented custom scary failure scenarios for AWS, K8s, Stripe, and Slack.
+
 ## Phase 17: Robust Agent Automation ✅ DONE
 - [x] **Dynamic Path Finding**: Update `agent-merge.sh` to find worktrees via `git worktree list`.
 - [x] **Artifact Auto-Cleanup**: Automated discarding of `dist/` and `.vite/` results before merging.
