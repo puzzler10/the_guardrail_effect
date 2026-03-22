@@ -397,10 +397,10 @@ export const BACKGROUND = {
   noiseScale: 0.005,           // Spatial frequency
   noiseSpeed: 0.001,           // Temporal speed
   noiseIntensity: 0.05,        // Brightness variation (5%)
-  dustCount: 40,               // Number of dust particles
+  dustCount: 0,                // Number of dust particles
   dustAlpha: 30,               // Dust opacity (out of 255)
   dustSpeed: 0.2,              // Pixels per frame
-  noiseUpdateInterval: 30,     // Frames between noise buffer updates
+  noiseUpdateInterval: 90,     // Frames between noise buffer updates
 }
 
 // ─── Cha Cha Cha Theme Palettes ─────────────────────────────────────────────
