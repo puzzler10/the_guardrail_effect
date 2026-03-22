@@ -164,6 +164,11 @@ export const FAILURE_MESSAGES: Record<1 | 2 | 3 | 4, string[]> = {
     'disabled rate limiting in production',
     'exposed debug endpoint publicly',
     'overwrote production database backup',
+    'leaked internal slack tokens',
+    'bypassed 2FA for emergency account',
+    'exposed unencrypted customer passwords',
+    'cross-tenant data leakage detected',
+    'AI agent modified firewall rules',
   ],
   4: [
     'PRODUCTION DATABASE DROPPED',
@@ -181,6 +186,11 @@ export const FAILURE_MESSAGES: Record<1 | 2 | 3 | 4, string[]> = {
     'DISABLED ALL AUTHENTICATION IN PROD',
     'ENCRYPTED PROD DB WITH RANDOM KEY (LOST)',
     'AUTO-APPROVED $2M PURCHASE ORDER',
+    'DRAINED ALL LIQUIDITY FROM WALLET',
+    'WIPED ENTIRE CLOUD ORGANIZATION',
+    'TRANSFERRED DOMAIN TO UNKNOWN ENTITY',
+    'DELETED ALL BACKUPS AND SNAPSHOTS',
+    'PUBLISHED INTERNAL SALARY DATABASE',
   ],
 }
 
@@ -278,32 +288,53 @@ export const NODE_FAILURES: Record<string, Partial<Record<1 | 2 | 3 | 4, string[
   'salesforce': {
     2: ['created duplicate contact record', 'mapped lead to wrong account'],
     3: ['exposed internal deal margin to customer', 'modified production price book'],
-    4: ['DELETED ALL LEADS IN SALES PIPELINE', 'WIPED CUSTOMER CONTRACT HISTORY']
+    4: ['DELETED ALL LEADS IN SALES PIPELINE', 'WIPED CUSTOMER CONTRACT HISTORY', 'EXPOSED 500k PII RECORDS TO PUBLIC']
   },
   'quickbooks': {
     2: ['applied incorrect tax jurisdiction', 'mismatched invoice line item'],
     3: ['synced PII to unencrypted ledger', 'ran duplicate reconciliation'],
-    4: ['CORRUPTED TAX FILING DATA', 'TRANSFERRED $50K TO WRONG GL ACCOUNT']
+    4: ['CORRUPTED TAX FILING DATA', 'TRANSFERRED $50K TO WRONG GL ACCOUNT', 'WIPED ENTIRE FISCAL YEAR LEDGER']
   },
   'stripe': {
     2: ['payment marked as failed due to webhook lag', 'incorrect currency conversion'],
     3: ['shared cardholder data in debug logs', 'disabled fraud detection toggle'],
-    4: ['RECURSIVE BILLING: 10,000 CHARGES SENT', 'EXPOSED SECRET STRIPE API KEYS']
+    4: ['RECURSIVE BILLING: 10,000 CHARGES SENT', 'EXPOSED SECRET STRIPE API KEYS', 'UNAUTHORIZED REFUND OF ALL TRANSACTIONS']
   },
   'aws-iam': {
     2: ['overly broad policy assigned to temp role'],
-    3: ['granted admin access to anonymous user', 'deleted active MFA device'],
-    4: ['WIPED ALL ROOT ACCESS CREDENTIALS', 'SET ENTIRE AWS ORGANIZATION TO PUBLIC']
+    3: ['granted admin access to anonymous user', 'deleted active MFA device', 'attached AdministratorAccess to public bot'],
+    4: ['WIPED ALL ROOT ACCESS CREDENTIALS', 'SET ENTIRE AWS ORGANIZATION TO PUBLIC', 'DELETED ALL IAM ROLES AND POLICIES']
   },
   'github': {
     2: ['pushed commit directly to main', 'auto-approved stale PR'],
-    3: ['exposed secret in commit history', 'granted write access to external bot'],
-    4: ['DELETED PRODUCTION BRANCH', 'LEAKED PRIVATE REPO TO PUBLIC']
+    3: ['exposed secret in commit history', 'granted write access to external bot', 'force-pushed to protected branch'],
+    4: ['DELETED PRODUCTION BRANCH', 'LEAKED PRIVATE REPO TO PUBLIC', 'REMOVED ALL REPO COLLABORATORS']
   },
   'adp': {
     2: ['wrong tax withholding for employee'],
     3: ['sent salary data to wrong email', 'exposed employee SSN in plaintext'],
-    4: ['STOPPED PAYROLL FOR ENTIRE COMPANY', 'LEAKED ALL EMPLOYEE DIRECT DEPOSIT INFO']
+    4: ['STOPPED PAYROLL FOR ENTIRE COMPANY', 'LEAKED ALL EMPLOYEE DIRECT DEPOSIT INFO', 'WIPED EMPLOYEE TAX HISTORY']
+  },
+  'aws-rds': {
+    3: ['exposed DB snapshot publicly', 'failed to encrypt production backup'],
+    4: ['WIPED ENTIRE PRODUCTION INSTANCE', 'EXPOSED ALL CUSTOMER DATA IN PLAIN TEXT', 'CORRUPTED DATABASE CLUSTER HEAD']
+  },
+  'kubernetes': {
+    3: ['evicted all production pods', 'exposed dashboard to public internet'],
+    4: ['DELETED PRODUCTION CLUSTER', 'LEAKED KUBE-CONFIG WITH ROOT ACCESS', 'WIPED ALL ETCD PERSISTENT DATA']
+  },
+  'okta': {
+    3: ['disabled MFA for all admins', 'exposed internal session tokens'],
+    4: ['AUTHORIZED ACCESS FOR ALL LOGIN ATTEMPTS', 'DELETED ENTIRE IDENTITY DIRECTORY', 'LEAKED OKTA MASTER API TOKEN']
+  },
+  'onepassword': {
+    3: ['shared vault with unauthorized email', 'exported vault in plaintext'],
+    4: ['EXPOSED MASTER PASSWORD IN DEBUG LOGS', 'WIPED ALL CORPORATE CREDENTIALS', 'LEAKED ENTIRE PASSWORD DATABASE']
+  },
+  'slack': {
+    2: ['sent private message to #general', 'posted internal credentials to public channel'],
+    3: ['leaked internal webhook URL', 'exposed private channel history'],
+    4: ['REMOVED ALL USERS FROM WORKSPACE', 'LEAKED ALL PRIVATE DM HISTORY', 'PUBLISHED ALL SLACK CHANNEL ARCHIVES']
   }
 }
 
