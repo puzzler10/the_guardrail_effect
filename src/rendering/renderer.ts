@@ -1,8 +1,8 @@
 import p5 from 'p5'
 import type { SimulationState } from '../types'
-import { COLORS_DARK, COLORS_LIGHT, UI, CANVAS_WIDTH, CANVAS_HEIGHT } from '../config'
+import { COLORS_DARK, COLORS_LIGHT, UI } from '../config'
 
-const DEFAULT_ZOOM = 0.8
+const DEFAULT_ZOOM = 1.2
 import { drawNodes, drawEdges } from './node-renderer'
 import { drawParticles } from './particle-renderer'
 import type { Effect } from './effects'
@@ -35,83 +35,44 @@ const RISK_LABELS: Record<string, string> = {
   critical: 'Critical Risk',
 }
 
-function wrapText(p: p5, text: string, maxWidth: number): string[] {
-  const words = text.split(' ');
-  const lines = [];
-  let currentLine = words[0];
-
-  for (let i = 1; i < words.length; i++) {
-    const word = words[i];
-    const width = p.textWidth(currentLine + ' ' + word);
-    if (width < maxWidth) {
-      currentLine += ' ' + word;
-    } else {
-      lines.push(currentLine);
-      currentLine = word;
-    }
-  }
-  lines.push(currentLine);
-  return lines;
-}
-
 function drawNodeTooltip(p: p5, node: GraphNode, sx: number, sy: number, colors: typeof COLORS_DARK) {
-  const padding = 12;
-  p.textSize(13);
-  
-  const headerLines = [node.name, RISK_LABELS[node.risk] || node.risk];
-  let descLines: string[] = [];
-  
-  const maxDescWidth = 200; // Constrain description width
-  
-  if (node.description) {
-    p.textSize(11); // Slightly smaller for description
-    descLines = wrapText(p, node.description, maxDescWidth);
-  }
-  
-  p.textSize(13); // Reset for header width calc
-  const headerTextW = Math.max(...headerLines.map(l => p.textWidth(l)));
-  
-  p.textSize(11);
-  const descTextW = descLines.length > 0 ? Math.max(...descLines.map(l => p.textWidth(l))) : 0;
-  
-  const textW = Math.max(headerTextW, descTextW);
-  const boxW = textW + padding * 2;
-  const boxH = (headerLines.length * 20) + (descLines.length > 0 ? (descLines.length * 16 + 8) : 0) + padding * 2;
-  
+  const padding = 12
+  const lines = [node.name, RISK_LABELS[node.risk] || node.risk]
+  p.textSize(13)
+  const textW = Math.max(...lines.map(l => p.textWidth(l)))
+  const boxW = textW + padding * 2
+  const boxH = lines.length * 20 + padding * 2
   // Position above the node, clamped to screen
-  const tx = p.constrain(sx - boxW / 2, 8, p.width - boxW - 8);
-  const tyRaw = sy - boxH - 12;
-  const ty = tyRaw < 8 ? sy + 20 : tyRaw;
+  const tx = p.constrain(sx - boxW / 2, 8, p.width - boxW - 8)
+  const tyRaw = sy - boxH - 12
+  const ty = tyRaw < 8 ? sy + 20 : tyRaw
 
-  p.push();
-  p.noStroke();
+  p.push()
+  p.noStroke()
   // Background
-  p.fill(10, 10, 20, 230); // Slightly more opaque
-  p.rect(tx, ty, boxW, boxH, 6);
-
+  p.fill(10, 10, 20, 220)
+  p.rect(tx, ty, boxW, boxH, 6)
+  // Accent border
+  const nodeColor = p.color(colors.nodeByRisk[node.risk] || '#ffffff')
+  nodeColor.setAlpha(180)
+  p.stroke(nodeColor)
+  p.strokeWeight(1)
+  p.noFill()
+  p.rect(tx, ty, boxW, boxH, 6)
   // Text
-  p.textAlign(p.LEFT, p.TOP);
-  
-  // Name
-  p.fill(255);
-  p.textSize(13);
-  p.text(headerLines[0], tx + padding, ty + padding);
-  
-  // Risk Label
-  p.fill(colors.nodeByRisk[node.risk] || colors.tier1);
-  p.text(headerLines[1], tx + padding, ty + padding + 20);
-  
-  // Description
-  if (descLines.length > 0) {
-    p.fill(180, 180, 190); // Dimmer text for description
-    p.textSize(11);
-    const startY = ty + padding + 44; // Give it a little gap
-    for (let i = 0; i < descLines.length; i++) {
-      p.text(descLines[i], tx + padding, startY + (i * 16));
-    }
-  }
-
-  p.pop();
+  p.noStroke()
+  p.fill(255)
+  p.textAlign(p.LEFT, p.TOP)
+  p.textStyle(p.BOLD)
+  p.textSize(13)
+  p.text(lines[0], tx + padding, ty + padding)
+  p.textStyle(p.NORMAL)
+  p.textSize(11)
+  const riskColor = p.color(colors.nodeByRisk[node.risk] || '#ffffff')
+  riskColor.setAlpha(200)
+  p.fill(riskColor)
+  p.text(lines[1], tx + padding, ty + padding + 18)
+  p.pop()
 }
 
 export interface Renderer {
@@ -120,12 +81,12 @@ export interface Renderer {
 }
 
 export function createSketch(getState: () => SimulationState): Renderer {
-  let camX = CANVAS_WIDTH / 2 // Current camera X
-  let camY = CANVAS_HEIGHT / 2 // Current camera Y
+  let camX = 600 // Current camera X
+  let camY = 450 // Current camera Y
   let zoom = DEFAULT_ZOOM // Current zoom
 
-  let targetCamX = CANVAS_WIDTH / 2
-  let targetCamY = CANVAS_HEIGHT / 2
+  let targetCamX = 600
+  let targetCamY = 450
   let targetZoom = DEFAULT_ZOOM
   let focusEndTime = 0
   
@@ -193,8 +154,8 @@ export function createSketch(getState: () => SimulationState): Renderer {
 
       // Auto-return to default view
       if (focusEndTime > 0 && nowMs > focusEndTime) {
-        targetCamX = CANVAS_WIDTH / 2
-        targetCamY = CANVAS_HEIGHT / 2
+        targetCamX = 600
+        targetCamY = 450
         targetZoom = DEFAULT_ZOOM
         focusEndTime = 0
       }

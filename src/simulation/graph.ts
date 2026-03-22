@@ -1,5 +1,5 @@
 import { CONNECTOR_LIBRARY, CANVAS_WIDTH, CANVAS_HEIGHT } from '../config'
-import type { GraphNode, LayoutPreset } from '../types'
+import type { GraphNode, LayoutPreset, RiskLevel } from '../types'
 import { buildScenarioGraph } from './scenarios'
 
 export function buildGraph(layout: LayoutPreset, scenarioId: string = 'global'): GraphNode[] {
@@ -7,68 +7,84 @@ export function buildGraph(layout: LayoutPreset, scenarioId: string = 'global'):
     return buildScenarioGraph(scenarioId, layout)
   }
 
-  // Global Nexus (All Connectors) - Organise into a 4x15 horizontal serpentine grid
-  const ROWS = 4
-  const COLS = 15
-  const totalCells = ROWS * COLS
-  
-  // Create a mapping of nodes to grid positions
+  // Global Nexus (All Connectors)
+  const byRisk: Record<RiskLevel, typeof CONNECTOR_LIBRARY> = {
+    safe: [],
+    low: [],
+    medium: [],
+    high: [],
+    critical: [],
+  }
+  CONNECTOR_LIBRARY.forEach(t => byRisk[t.risk].push(t))
+
+  const riskOrder: RiskLevel[] = ['safe', 'low', 'medium', 'high', 'critical']
+
+  // Expand each tier with one duplicate per node for visual density
+  type TemplateEntry = { id: string; name: string; icon: string; risk: RiskLevel }
+  const expandedByRisk: Record<RiskLevel, TemplateEntry[]> = {
+    safe: [], low: [], medium: [], high: [], critical: [],
+  }
+  riskOrder.forEach(risk => {
+    for (const t of byRisk[risk]) {
+      expandedByRisk[risk].push(t)
+      expandedByRisk[risk].push({ id: `${t.id}-2`, name: t.name, icon: t.icon, risk: t.risk })
+    }
+  })
+
+  const hashId = (id: string) => id.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0)
+
   const nodes: GraphNode[] = []
-  
-  CONNECTOR_LIBRARY.forEach((template, index) => {
-    // Basic linear index to grid cell (row, col)
-    const cellIndex = index % totalCells
-    const row = Math.floor(cellIndex / COLS)
-    let col = cellIndex % COLS
-    
-    // Serpentine logic: reverse col on odd rows
-    const isReverseRow = row % 2 === 1
-    if (isReverseRow) {
-      col = (COLS - 1) - col
-    }
 
-    // Calculate coordinates using grid position
-    const coords = calculateCoordinates(template.id, row, col, index, layout)
-    
-    // Connectivity: Primarily follow the serpentine sequence (index -> index + 1)
-    const neighbors: string[] = []
-    
-    // 1. Next in sequence (main flow)
-    const nextTemplate = CONNECTOR_LIBRARY[(index + 1) % CONNECTOR_LIBRARY.length]
-    if (nextTemplate && nextTemplate.id !== template.id) {
-      neighbors.push(nextTemplate.id)
-    }
+  riskOrder.forEach((risk, riskIndex) => {
+    const templates = expandedByRisk[risk]
 
-    // 2. Occasional "long jumps" and loops for visual interest
-    const seed = template.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-    
-    // Skip-ahead jump (long travel time)
-    if (seed % 13 === 0) {
-      const jumpTarget = CONNECTOR_LIBRARY[(index + 5) % CONNECTOR_LIBRARY.length]
-      if (jumpTarget) neighbors.push(jumpTarget.id)
-    }
+    templates.forEach((template, index) => {
+      const coords = calculateCoordinates(template.id, riskIndex, index, templates.length, layout)
 
-    // Horizontal bridge (skipping rows)
-    if (seed % 17 === 0) {
-      const rowJumpTarget = CONNECTOR_LIBRARY[(index + COLS) % CONNECTOR_LIBRARY.length]
-      if (rowJumpTarget) neighbors.push(rowJumpTarget.id)
-    }
+      const neighbors: string[] = []
 
-    // Small backward loop
-    if (seed % 19 === 0 && index > 2) {
-      const backTarget = CONNECTOR_LIBRARY[index - 2]
-      if (backTarget) neighbors.push(backTarget.id)
-    }
+      // 1. Next in same tier (cycle)
+      const nextInTier = templates[(index + 1) % templates.length]
+      if (nextInTier && nextInTier.id !== template.id) neighbors.push(nextInTier.id)
 
-    nodes.push({
-      id: template.id,
-      name: template.name,
-      icon: template.icon,
-      risk: template.risk,
-      description: template.description,
-      x: coords.x,
-      y: coords.y,
-      neighbors: Array.from(new Set(neighbors)),
+      // 2. Cross-tier: link to next tier
+      if (riskIndex < riskOrder.length - 1) {
+        const nextTier = expandedByRisk[riskOrder[riskIndex + 1]]
+        if (nextTier.length > 0) {
+          const target = nextTier[index % nextTier.length]
+          neighbors.push(target.id)
+        }
+      }
+
+      // 3. Skip-tier cross link for denser paths
+      if (riskIndex < riskOrder.length - 2) {
+        const skipTier = expandedByRisk[riskOrder[riskIndex + 2]]
+        if (skipTier.length > 0) {
+          const h = hashId(template.id)
+          const target = skipTier[h % skipTier.length]
+          if (!neighbors.includes(target.id)) neighbors.push(target.id)
+        }
+      }
+
+      // 4. Same-tier non-adjacent link (if tier has 5+ nodes)
+      if (templates.length >= 5) {
+        const h = hashId(template.id)
+        const skipIndex = (index + 2 + (h % 3)) % templates.length
+        const skipNode = templates[skipIndex]
+        if (skipNode && skipNode.id !== template.id && !neighbors.includes(skipNode.id)) {
+          neighbors.push(skipNode.id)
+        }
+      }
+
+      nodes.push({
+        id: template.id,
+        name: template.name,
+        icon: template.icon,
+        risk: template.risk,
+        x: coords.x,
+        y: coords.y,
+        neighbors,
+      })
     })
   })
 
@@ -76,59 +92,46 @@ export function buildGraph(layout: LayoutPreset, scenarioId: string = 'global'):
 }
 
 function calculateCoordinates(
-  id: string, 
-  row: number, 
-  col: number, 
-  index: number, 
+  id: string,
+  riskIndex: number,
+  index: number,
+  count: number,
   layout: LayoutPreset
 ): { x: number; y: number } {
   const CENTER_X = CANVAS_WIDTH / 2
   const CENTER_Y = CANVAS_HEIGHT / 2
 
-  const seed = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-  const jitter = (amount: number) => (Math.sin(seed * 0.5) * amount)
+  const seed = id.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0)
+  const jitter = (amount: number) => (Math.sin(seed) * amount)
 
   if (layout === 'clustered') {
-    // Keep cluster logic based on some grouping (risk or just modulo)
-    const groupIndex = index % 5 
     const angles = [0, Math.PI * 0.4, Math.PI * 0.8, Math.PI * 1.2, Math.PI * 1.6]
-    const distance = 550
-    const clusterCenterX = CENTER_X + Math.cos(angles[groupIndex]) * distance
-    const clusterCenterY = CENTER_Y + Math.sin(angles[groupIndex]) * distance
-    const localAngle = (index / 12) * Math.PI * 2
-    const localDist = 60 + ((index % 12) * 12)
-    
+    const distance = 280
+    const clusterCenterX = CENTER_X + Math.cos(angles[riskIndex]) * distance
+    const clusterCenterY = CENTER_Y + Math.sin(angles[riskIndex]) * distance
+    const localAngle = (index / count) * Math.PI * 2
+    const localDist = 50 + (index % 8) * 10  // cap spiral radius to avoid bounds violations
+
     return {
       x: clusterCenterX + Math.cos(localAngle) * localDist + jitter(20),
       y: clusterCenterY + Math.sin(localAngle) * localDist + jitter(20),
     }
   } else if (layout === 'flow') {
-    // Horizontal serpentine layout
-    const xPadding = 200
-    const yPadding = 250
-    const COLS = 15
-    const ROWS = 4
-    
-    const availableWidth = CANVAS_WIDTH - (xPadding * 2)
+    const xBase = 150 + (riskIndex * 200)
+    const yPadding = 80
     const availableHeight = CANVAS_HEIGHT - (yPadding * 2)
-    
-    const xStep = availableWidth / (COLS - 1)
-    const yStep = availableHeight / (ROWS - 1)
-    
-    // row and col are passed in from buildGraph
-    const xBase = xPadding + (col * xStep)
-    const yBase = yPadding + (row * yStep)
+    const yStep = count > 1 ? availableHeight / (count - 1) : 0
+    const yBase = yPadding + (index * yStep)
 
-    // Reduced jitter for "tidier" look, but enough to avoid perfect grids
     return {
-      x: xBase + jitter(35),
-      y: yBase + jitter(35),
+      x: xBase + jitter(30),
+      y: yBase + jitter(30),
     }
   } else if (layout === 'ring') {
-    const radius = 250 + ((index % 5) * 150)
-    const angleOffset = (index % 5) * 0.5
-    const angle = angleOffset + (index / 12) * Math.PI * 2
-    
+    const radius = 80 + (riskIndex * 70)  // max 360, fits within CANVAS_HEIGHT/2=450
+    const angleOffset = riskIndex * 0.5
+    const angle = angleOffset + (index / count) * Math.PI * 2
+
     return {
       x: CENTER_X + Math.cos(angle) * radius + jitter(10),
       y: CENTER_Y + Math.sin(angle) * radius + jitter(10),
@@ -151,19 +154,12 @@ export function getNodeById(nodes: GraphNode[], nodeId: string): GraphNode | und
 }
 
 export function getEntryNodes(nodes: GraphNode[]): GraphNode[] {
-  // Always include the first few nodes of the serpentine path to ensure full-length journeys
-  const startNodes = nodes.slice(0, 5)
-  // Plus any safe/low risk nodes for uniform spread
-  const safeNodes = nodes.filter(n => n.risk === 'safe' || n.risk === 'low')
-  
-  return Array.from(new Set([...startNodes, ...safeNodes]))
+  const entry = nodes.filter(n => n.risk === 'safe' || n.risk === 'low')
+  return entry.length > 0 ? entry : nodes.slice(0, 3)
 }
 
 export function getExitNodes(nodes: GraphNode[]): GraphNode[] {
-  // Exit at the end of the serpentine path
   const endNodes = nodes.slice(-5)
-  // Plus any safe/low risk nodes
   const safeNodes = nodes.filter(n => n.risk === 'safe' || n.risk === 'low')
-  
   return Array.from(new Set([...endNodes, ...safeNodes]))
 }

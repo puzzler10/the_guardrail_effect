@@ -8,7 +8,7 @@ export function initOnboarding() {
 
   overlay.innerHTML = `
     <div class="modal-card">
-      <h2 style="color: var(--accent); margin-top: 0;">Welcome to the AI Guardrail Demo</h2>
+      <h2 style="color: var(--accent); margin-top: 0;">Welcome to The Guardrail Effect</h2>
       <p style="font-size: 14px; line-height: 1.6; color: #bbb;">
         This simulation visualizes AI agents navigating a graph of capabilities. 
         Each node represents a tool or action with varying risk levels.

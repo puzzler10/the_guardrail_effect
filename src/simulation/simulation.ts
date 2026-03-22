@@ -78,23 +78,28 @@ export function tick(state: SimulationState, deltaMs: number, nowMs: number): Si
   const usedTextsSet = new Set(usedFailureTexts)
 
   // 1. Spawn new particles
-  const spawnInterval = 1000 / PARTICLE.spawnRate
   if (lastSpawnMs === 0) {
     lastSpawnMs = nowMs
   }
+
+  // Count active particles first so we can scale spawn rate with deficit
+  const entryNodes = getEntryNodes(nodes)
+  let activeCount = 0
+  for (const p of particles) {
+    if (!['completed', 'failed', 'exploded'].includes(p.state)) {
+      activeCount++
+    }
+  }
+
+  // Scale spawn rate: far below target = spawn faster for responsive slider
+  const deficit = config.particleCount - activeCount
+  const rampMultiplier = Math.min(20, Math.max(1, Math.ceil(deficit / 50)))
+  const spawnInterval = 1000 / (PARTICLE.spawnRate * rampMultiplier)
 
   const timeSinceLastSpawn = nowMs - lastSpawnMs
   const spawnCount = Math.floor(timeSinceLastSpawn / spawnInterval)
 
   if (spawnCount > 0) {
-    const entryNodes = getEntryNodes(nodes)
-    let activeCount = 0
-    for (const p of particles) {
-      if (!['completed', 'failed', 'exploded'].includes(p.state)) {
-        activeCount++
-      }
-    }
-
     for (let i = 0; i < spawnCount; i++) {
       if (activeCount < config.particleCount) {
         const startNode = entryNodes[Math.floor(Math.random() * entryNodes.length)]

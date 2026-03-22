@@ -10,6 +10,7 @@ import { initHelp, toggleHelp } from './ui/help'
 import { initKeyboard } from './ui/keyboard'
 import { initSoundOverlay } from './ui/sound-overlay'
 import { initOnboarding } from './ui/onboarding'
+import { initTitle } from './ui/title'
 import type { SimulationState } from './types'
 
 // 1. State Initialization & Global Variables
@@ -20,6 +21,7 @@ const processedEventIds = new Set<string>()
 
 function init() {
   // 2. UI Component Initialization
+  initTitle()
   initEventLog()
   initStats()
   initHelp()

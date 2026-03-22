@@ -114,14 +114,20 @@ export function buildScenarioGraph(scenarioId: string, layout: LayoutPreset = 'f
     }
   })
 
+  // Hardcoded positions were designed for a 3000×2000 canvas — scale to current canvas
+  const ORIGINAL_W = 3000
+  const ORIGINAL_H = 2000
+  const scaleX = CANVAS_WIDTH / ORIGINAL_W
+  const scaleY = CANVAS_HEIGHT / ORIGINAL_H
+
   if (layout === 'flow') {
-    // Use hardcoded positions directly — they are already designed as clean flow layouts
-    return rawNodes.map(n => ({ ...n, x: n.flowX, y: n.flowY }))
+    return rawNodes.map(n => ({ ...n, x: n.flowX * scaleX, y: n.flowY * scaleY }))
   }
 
   // For clustered/ring: reposition by risk level
   const CENTER_X = CANVAS_WIDTH / 2
   const CENTER_Y = CANVAS_HEIGHT / 2
+  const scale = Math.min(scaleX, scaleY)
   const riskOrder = ['safe', 'low', 'medium', 'high', 'critical'] as const
 
   // Group by risk
@@ -141,15 +147,15 @@ export function buildScenarioGraph(scenarioId: string, layout: LayoutPreset = 'f
     let x: number, y: number
     if (layout === 'clustered') {
       const angles = [0, Math.PI * 0.4, Math.PI * 0.8, Math.PI * 1.2, Math.PI * 1.6]
-      const dist = 450
+      const dist = 450 * scale
       const cx = CENTER_X + Math.cos(angles[riskIndex]) * dist
       const cy = CENTER_Y + Math.sin(angles[riskIndex]) * dist
       const localAngle = (index / Math.max(count, 1)) * Math.PI * 2
-      const localDist = 60 + index * 15
+      const localDist = (60 + index * 15) * scale
       x = cx + Math.cos(localAngle) * localDist + jitter(20)
       y = cy + Math.sin(localAngle) * localDist + jitter(20)
     } else { // ring
-      const radius = 150 + riskIndex * 120
+      const radius = (150 + riskIndex * 120) * scale
       const angleOffset = riskIndex * 0.5
       const angle = angleOffset + (index / Math.max(count, 1)) * Math.PI * 2
       x = CENTER_X + Math.cos(angle) * radius + jitter(10)

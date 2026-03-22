@@ -35,15 +35,15 @@ export const SCENARIOS = [
 
 // ─── Default simulation config ────────────────────────────────────────────────
 
-export const CANVAS_WIDTH = 3000
-export const CANVAS_HEIGHT = 2000
+export const CANVAS_WIDTH = 1200
+export const CANVAS_HEIGHT = 900
 
 export const DEFAULT_CONFIG: SimulationConfig = {
   modelPreset: 'frontier',
   scenario: 'global',
   failureMultiplier: 0.01,
   agentSpeed: 0.5,
-  particleCount: 300,
+  particleCount: 700,
   guardrailsEnabled: false,
   autoZoomEnabled: true,
   darkMode: true,
@@ -375,7 +375,7 @@ export const UI = {
   agentSpeedMax: 4,
   particleCountMin: 50,
   particleCountMax: 2000,
-  zoomMin: 0.3,
+  zoomMin: 0.5,
   zoomMax: 4,
   eventLogMax: 50,
   floatingTextDurationMs: { 1: 1500, 2: 2000, 3: 3000, 4: 4000 } as Record<1 | 2 | 3 | 4, number>,
