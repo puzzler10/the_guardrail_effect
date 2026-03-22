@@ -35,43 +35,71 @@ const RISK_LABELS: Record<string, string> = {
   critical: 'Critical Risk',
 }
 
+function wrapText(p: p5, text: string, maxWidth: number): string[] {
+  const words = text.split(' ')
+  const lines: string[] = []
+  let currentLine = words[0]
+  for (let i = 1; i < words.length; i++) {
+    if (p.textWidth(currentLine + ' ' + words[i]) < maxWidth) {
+      currentLine += ' ' + words[i]
+    } else {
+      lines.push(currentLine)
+      currentLine = words[i]
+    }
+  }
+  lines.push(currentLine)
+  return lines
+}
+
 function drawNodeTooltip(p: p5, node: GraphNode, sx: number, sy: number, colors: typeof COLORS_DARK) {
   const padding = 12
-  const lines = [node.name, RISK_LABELS[node.risk] || node.risk]
+  const maxDescWidth = 200
+
   p.textSize(13)
-  const textW = Math.max(...lines.map(l => p.textWidth(l)))
-  const boxW = textW + padding * 2
-  const boxH = lines.length * 20 + padding * 2
-  // Position above the node, clamped to screen
+  const headerLines = [node.name, RISK_LABELS[node.risk] || node.risk]
+  const headerTextW = Math.max(...headerLines.map(l => p.textWidth(l)))
+
+  p.textSize(11)
+  const descLines: string[] = node.description ? wrapText(p, node.description, maxDescWidth) : []
+  const descTextW = descLines.length > 0 ? Math.max(...descLines.map(l => p.textWidth(l))) : 0
+
+  const boxW = Math.max(headerTextW, descTextW) + padding * 2
+  const boxH = (headerLines.length * 20) + (descLines.length > 0 ? descLines.length * 16 + 8 : 0) + padding * 2
+
   const tx = p.constrain(sx - boxW / 2, 8, p.width - boxW - 8)
   const tyRaw = sy - boxH - 12
   const ty = tyRaw < 8 ? sy + 20 : tyRaw
 
   p.push()
   p.noStroke()
-  // Background
   p.fill(10, 10, 20, 220)
   p.rect(tx, ty, boxW, boxH, 6)
-  // Accent border
   const nodeColor = p.color(colors.nodeByRisk[node.risk] || '#ffffff')
   nodeColor.setAlpha(180)
   p.stroke(nodeColor)
   p.strokeWeight(1)
   p.noFill()
   p.rect(tx, ty, boxW, boxH, 6)
-  // Text
+
   p.noStroke()
-  p.fill(255)
   p.textAlign(p.LEFT, p.TOP)
+  p.fill(255)
   p.textStyle(p.BOLD)
   p.textSize(13)
-  p.text(lines[0], tx + padding, ty + padding)
+  p.text(headerLines[0], tx + padding, ty + padding)
   p.textStyle(p.NORMAL)
   p.textSize(11)
   const riskColor = p.color(colors.nodeByRisk[node.risk] || '#ffffff')
   riskColor.setAlpha(200)
   p.fill(riskColor)
-  p.text(lines[1], tx + padding, ty + padding + 18)
+  p.text(headerLines[1], tx + padding, ty + padding + 18)
+
+  if (descLines.length > 0) {
+    p.fill(200, 200, 210, 190)
+    descLines.forEach((line, i) => {
+      p.text(line, tx + padding, ty + padding + 40 + i * 16)
+    })
+  }
   p.pop()
 }
 

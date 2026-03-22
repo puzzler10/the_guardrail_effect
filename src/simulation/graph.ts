@@ -14,7 +14,7 @@ export function buildGraph(layout: LayoutPreset, scenarioId: string = 'global'):
     return buildScenarioGraph(scenarioId, layout)
   }
 
-  type TemplateEntry = { id: string; name: string; icon: string; risk: RiskLevel }
+  type TemplateEntry = { id: string; name: string; icon: string; risk: RiskLevel; description?: string }
 
   const byRisk: Record<RiskLevel, TemplateEntry[]> = {
     safe: [], low: [], medium: [], high: [], critical: [],
@@ -26,7 +26,7 @@ export function buildGraph(layout: LayoutPreset, scenarioId: string = 'global'):
   RISK_ORDER.forEach(risk => {
     for (const t of byRisk[risk]) {
       allTemplates.push(t)
-      allTemplates.push({ id: `${t.id}-2`, name: t.name, icon: t.icon, risk: t.risk })
+      allTemplates.push({ id: `${t.id}-2`, name: t.name, icon: t.icon, risk: t.risk, description: t.description })
     }
   })
 
@@ -44,7 +44,7 @@ export function buildGraph(layout: LayoutPreset, scenarioId: string = 'global'):
 // ─── Flow layout: horizontal serpentine grid ─────────────────────────────────
 
 function buildFlowLayout(
-  shuffled: { id: string; name: string; icon: string; risk: RiskLevel }[]
+  shuffled: { id: string; name: string; icon: string; risk: RiskLevel; description?: string }[]
 ): GraphNode[] {
   const N_COLS = 13
   const padX = 80
@@ -79,7 +79,7 @@ function buildFlowLayout(
     // Second long-range hop every 7th node
     if (i % 7 === 0 && i + 21 < shuffled.length) neighbors.push(shuffled[i + 21].id)
 
-    return { id: template.id, name: template.name, icon: template.icon, risk: template.risk, x, y, neighbors }
+    return { id: template.id, name: template.name, icon: template.icon, risk: template.risk, description: template.description, x, y, neighbors }
   })
 
   return nodes
@@ -88,7 +88,7 @@ function buildFlowLayout(
 // ─── Clustered / Ring layouts: group by risk tier (secondary modes) ──────────
 
 function buildTierLayout(
-  shuffled: { id: string; name: string; icon: string; risk: RiskLevel }[],
+  shuffled: { id: string; name: string; icon: string; risk: RiskLevel; description?: string }[],
   byRisk: Record<RiskLevel, { id: string }[]>,
   layout: LayoutPreset
 ): GraphNode[] {
@@ -137,7 +137,7 @@ function buildTierLayout(
     if (i % 5 === 0 && i + 11 < shuffled.length) neighbors.push(shuffled[i + 11].id)
     if (i % 7 === 0 && i + 21 < shuffled.length) neighbors.push(shuffled[i + 21].id)
 
-    return { id: template.id, name: template.name, icon: template.icon, risk: template.risk, x, y, neighbors }
+    return { id: template.id, name: template.name, icon: template.icon, risk: template.risk, description: template.description, x, y, neighbors }
   })
 
   return nodes
