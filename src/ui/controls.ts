@@ -89,7 +89,7 @@ export function initControls(callbacks: ControlsCallbacks): void {
     createSlider('Agent Speed', UI.agentSpeedMin, UI.agentSpeedMax, 0.25,
       (val) => callbacks.onConfigChange({ agentSpeed: val }),
       (val) => `${val.toFixed(2)}x`, 'agent-speed');
-    createSlider('Particle Count', UI.particleCountMin, UI.particleCountMax, 50,
+    createSlider('Agent Count', UI.particleCountMin, UI.particleCountMax, 50,
       (val) => callbacks.onConfigChange({ particleCount: Math.round(val) }),
       (val) => Math.round(val).toString(), 'particle-count');
   });

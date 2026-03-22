@@ -114,7 +114,7 @@ function updateRainbowBuffer(p: p5) {
     for (let y = 0; y < p.height; y += step) {
       const n = getSeamlessNoise3D(p, x, y, 100, p.width, BACKGROUND.noiseScale * 0.5)
       const hue = (n * 360) % 360
-      rainbowBuffer.fill(hue, 50, 25, 1)
+      rainbowBuffer.fill(hue, 70, 55, 1)
       rainbowBuffer.rect(x, y, step, step)
     }
   }
@@ -149,7 +149,7 @@ export function drawBackground(p: p5, guardrailsEnabled: boolean) {
     
     // Storm base
     p.image(stormBuffer, -offset1, 0)
-    p.image(stormBuffer, p.width - offset1, 0)
+    p.image(stormBuffer, p.width - offset1 - 1, 0)
     
     // Storm lightning/static wisps
     // Subtle flicker
@@ -166,7 +166,7 @@ export function drawBackground(p: p5, guardrailsEnabled: boolean) {
     const rOffset = (p.frameCount * BACKGROUND.noiseSpeed * 40) % p.width
     p.blendMode(p.SCREEN)
     p.image(rainbowBuffer, -rOffset, 0)
-    p.image(rainbowBuffer, p.width - rOffset, 0)
+    p.image(rainbowBuffer, p.width - rOffset - 1, 0)
     p.blendMode(p.BLEND)
   }
   p.pop()
