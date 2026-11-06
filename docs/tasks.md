@@ -2,6 +2,16 @@
 
 *(Note: Tasks from Phase 0 to Phase 9 have been completed and archived. See [docs/archive/completed-tasks.md](archive/completed-tasks.md) for history.)*
 
+## Phase 19: CV Finish & Swarms ✅ DONE
+- [x] README refreshed (working demo link, local screenshot), MIT LICENSE added
+- [x] Removed duplicate floating help button; added "made march 2026" date line
+- [x] E2E stabilised (serial workers, main-canvas locator) + test for single help button
+- [x] Subagent swarms: ~15% of agents travel with 4–9 helper subagents that orbit, spread mid-edge and converge at nodes (`src/simulation/swarm.ts`, tested)
+
+## Future ideas (parked)
+- **The Fleet / waiting for humans** — agent fleet with a human decision bottleneck and AI judges, told in acts. Draft in `plans/self-healing-fleet.md`. Parked: effectively a new piece.
+- **Stigmergy** — agents coordinating through the world vs. n² chatter. Possible separate piece.
+
 ## Phase 18: Help & Failures Expansion ✅ DONE
 - [x] **Help Page Overhaul**: Added detailed Guardrails explanation and Stripe-based example.
 - [x] **Status Guide**: Updated colors/labels to match T1-T4 failure tiers and particle hues.

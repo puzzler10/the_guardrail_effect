@@ -12,6 +12,8 @@ Toggle guardrails ON, and the chaos stops. Force fields appear around dangerous 
 
 ## How It Works
 
+Some agents travel alone; others move as small swarms of helper subagents that spread out between tools and converge as they arrive.
+
 Each tool connector has a calibrated risk level and failure probability. Particles traverse the graph, and at each node a probability roll determines the outcome — from self-correcting retries (yellow flash) up to catastrophic explosions with screen shake and alarms.
 
 Guardrails completely block catastrophic events and reduce severe failures by ~95%, with visible green shields and intercept messages like "blocked: requires human approval."

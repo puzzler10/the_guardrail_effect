@@ -212,3 +212,19 @@ The simulation now runs "smooth as butter" with a stabilized frame rate even at 
 
 ## Results
 The "Angry Storm" state is now much more atmospheric and visceral. The layered clouds provide a sense of scale and motion, while the pure red flashes clearly distinguish the high-risk state from the safer rainbow mode.
+
+## 2026-11-06 — CV readiness check + swarms
+
+**What was done:**
+- Verified live site (theguardraileffect.netlify.app) serves the latest build; GitHub README had a dead demo link and image — replaced with refreshed README + committed screenshot, added LICENSE.
+- Removed duplicate help button, added "made march 2026" subtitle.
+- Added subagent swarms (pure offset function in `simulation/swarm.ts` + renderer), tests first.
+- Stabilised Playwright e2e (workers: 1, `canvas.p5Canvas` locator). Note: e2e needs to run outside the sandbox (Chromium can't launch inside it).
+- Researched recent agent developments; brainstormed pivots (fleet/judges, stigmergy). Parked as future pieces.
+
+**What's next:**
+- Nothing required. Optional: new piece based on parked ideas in `docs/tasks.md`.
+
+**Decisions:**
+- Keep the guardrail theme for this piece; it's dated as a March 2026 snapshot rather than reworked.
+- Visual work done directly, not via Gemini.
