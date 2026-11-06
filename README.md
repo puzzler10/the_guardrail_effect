@@ -1,67 +1,64 @@
-# The Guardrail Effect (Agent Swarm Simulator)
+# The Guardrail Effect
 
-A high-fidelity p5.js + Tone.js visualization of autonomous AI agent swarms and the cascading failure risks of interconnected agentic workflows. Built for the Encode Hackathon.
+**An interactive visualization showing why AI agent guardrails matter.**
 
-![Screenshot](https://res.cloudinary.com/dp9h4v8as/image/upload/v1711000000/guardrail-effect.png)
+Hundreds of particles — each representing an AI agent — flow through a network of 65+ real-world tools (AWS, Stripe, Slack, databases, etc.). As they interact with riskier tools, failures cascade: minor retries, wrong Slack channels, and then the catastrophic stuff — production databases dropped, API keys leaked, customer data exposed.
 
-## 🌐 [Live Demo](https://the-guardrail-effect.netlify.app/)
+Toggle guardrails ON, and the chaos stops. Force fields appear around dangerous nodes, particles deflect to safer paths, catastrophic failures drop to zero. The contrast is immediate.
 
-## 🚀 Concept
-Modern AI systems aren't just single LLMs; they are **agentic swarms** orchestrating complex workflows across dozens of platforms (CRM, DevOps, HR, Finance). When an agent hallucinates, fails, or is compromised, the impact can cascade across the entire network.
+![The Guardrail Effect — AI agents flowing through a network of tool connectors](screenshot.png)
 
-This simulator visualizes:
-- **Luminous Agents**: Each particle is a distinct agent with its own trajectory and "identity."
-- **Connector Ecosystem**: 40+ connectors (Salesforce, GitHub, AWS, Stripe, etc.) with specific risk profiles.
-- **Cascading Failures**: 4 tiers of severity — from minor hallucinations to catastrophic data leaks.
-- **The Guardrail Effect**: Toggleable safety layers that intercept failures before they spiral.
+## [Live Demo](https://theguardraileffect.netlify.app/)
 
-## ✨ Visuals & Atmosphere
-- **OpenProcessing-Grade Aesthetics**: Luminous comet trails, ghostly persistence buffers, and noise-based atmospheric backgrounds.
-- **Cinematic Easing**: A responsive camera that "snaps" to focus on critical incidents.
-- **Dynamic Theming**: Transitions between a tense "Angry Storm" (Guardrails OFF) and a calm "Vivid Rainbow" (Guardrails ON).
-- **Audio Feedback**: Generative "data center" drone and event-triggered chimes/alerts via Tone.js.
+## How It Works
 
-## 🛠️ Tech Stack
-- **p5.js** (WebGL mode) for generative rendering.
-- **Tone.js** for interactive sound synthesis.
-- **Vite + TypeScript** for build and type safety.
-- **Vitest** for unit and integration tests.
-- **Playwright** for E2E testing and screenshots.
-- **lil-gui** for real-time simulation controls.
+Each tool connector has a calibrated risk level and failure probability. Particles traverse the graph, and at each node a probability roll determines the outcome — from self-correcting retries (yellow flash) up to catastrophic explosions with screen shake and alarms.
 
-## 🚦 Getting Started
+Guardrails completely block catastrophic events and reduce severe failures by ~95%, with visible green shields and intercept messages like "blocked: requires human approval."
 
-### Prerequisites
-- Node.js (v18+)
-- npm
+## Tech Stack
 
-### Installation
+- **p5.js** (WebGL) — generative rendering with comet trails, atmospheric effects, cinematic camera
+- **Tone.js** — generative audio: data center drone, event-triggered chimes and alarms
+- **TypeScript + Vite** — type-safe build with hot reload
+- **Vitest + Playwright** — 100+ unit and integration tests (including Monte Carlo failure distributions) plus Playwright E2E
+- **lil-gui** — real-time simulation controls
+- **Netlify** — deployment
+
+## Architecture
+
+Strict simulation/rendering split — all simulation logic is pure TypeScript with zero browser dependencies, enabling full unit testability:
+
+```
+src/simulation/  → pure logic (graph, particles, failures) — tested with Vitest
+src/rendering/   → p5.js drawing (nodes, particles, effects) — tested with Playwright
+src/sound/       → Tone.js audio engine
+src/ui/          → DOM controls and terminal log
+```
+
+## Built With AI Agents
+
+The entire project was built using AI coding agents, with me working at the task and direction level rather than writing code directly.
+
+**Claude Code (Opus)** was the primary orchestrator — architecture, simulation engine, task roadmap, testing, and integration. **Gemini** handled parallelizable visual/rendering tasks, dispatched into isolated git worktrees via custom scripts. The multi-agent workflow worked because the architecture enforced clean boundaries between simulation and rendering.
+
+## Getting Started
+
 ```bash
 git clone https://github.com/puzzler10/the_guardrail_effect.git
 cd the_guardrail_effect
 npm install
-```
-
-### Development
-```bash
 npm run dev
 ```
 
-### Testing & Quality Check
 ```bash
-npm run test    # Run unit/integration tests
-npm run check   # Full suite: test + tsc + eslint + build
+npm run check   # Full suite: vitest + tsc + eslint + vite build
 ```
 
-## 🏗️ Architecture
-The project follows a strict **Simulation / Rendering Split**:
-- `src/simulation/`: Pure TypeScript logic (graph, particles, failures). No browser/p5/Tone dependencies. Fully unit-testable.
-- `src/rendering/`: p5.js drawing code (nodes, particles, effects).
-- `src/sound/`: Tone.js audio engine.
-- `src/ui/`: DOM-based controls and terminal log.
+## License
 
-## 🛡️ License
 MIT
 
 ---
-*Created with 💙 by Tom Roth and the Agentic Swarm for the Encode Hackathon.*
+
+*Built by Tom Roth and the Agentic Swarm for the Encode Hackathon, March 2026.*
