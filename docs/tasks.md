@@ -6,6 +6,8 @@
 - [x] README refreshed (working demo link, local screenshot), MIT LICENSE added
 - [x] Removed duplicate floating help button; added "made march 2026" date line
 - [x] E2E stabilised (serial workers, main-canvas locator) + test for single help button
+- [x] Swarm v2: straight, faster, streaming + flitting helpers; native-canvas particle rendering for performance
+- [ ] Fix flaky Monte Carlo test `failure-distribution.test.ts` (ordered tier distribution)
 - [x] Subagent swarms: ~15% of agents travel with 4–9 helper subagents that orbit, spread mid-edge and converge at nodes (`src/simulation/swarm.ts`, tested)
 
 ## Future ideas (parked)

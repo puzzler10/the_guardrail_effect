@@ -228,3 +228,8 @@ The "Angry Storm" state is now much more atmospheric and visceral. The layered c
 **Decisions:**
 - Keep the guardrail theme for this piece; it's dated as a March 2026 snapshot rather than reworked.
 - Visual work done directly, not via Gemini.
+
+### Follow-up: swarm v2 + performance
+- Swarms now fly straight (no wobble/loop/zigzag), dart 1.3–1.7x faster, and stream along the edge with individual flitting; converge at nodes.
+- Particle rendering moved from p5 `fill()/ellipse()` to native canvas calls; swarms batched (3 draw calls per swarm). Headless fps at 2000 agents: 7.9 → 18.8.
+- Known flake (pre-existing): `failure-distribution.test.ts` "ordered tier distribution" fails ~3-5% of runs (small Monte Carlo sample; counts the rolling `recentFailures` window each tick).
