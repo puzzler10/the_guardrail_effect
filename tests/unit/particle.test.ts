@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { createParticle, advanceParticle, arriveAtNode, applyFailure, updateTrail } from '../../src/simulation/particle'
-import { PARTICLE } from '../../src/config'
+import { PARTICLE, SWARM } from '../../src/config'
 
 describe('Particle Simulation', () => {
   describe('createParticle', () => {
@@ -15,8 +15,10 @@ describe('Particle Simulation', () => {
       expect(p.state).toBe('spawning')
       expect(p.trail).toEqual([])
       expect(p.stepsCompleted).toBe(0)
-      expect(p.speedMultiplier).toBeGreaterThanOrEqual(0.8)
-      expect(p.speedMultiplier).toBeLessThanOrEqual(1.2)
+      // Solo agents vary 0.8–1.2x; swarms dart faster (see swarm.test.ts)
+      const [lo, hi] = p.swarmSize ? [SWARM.speedMin, SWARM.speedMax] : [0.8, 1.2]
+      expect(p.speedMultiplier).toBeGreaterThanOrEqual(lo)
+      expect(p.speedMultiplier).toBeLessThanOrEqual(hi)
     })
 
     it('maxSteps is always within [minSteps, maxSteps] range', () => {

@@ -16,11 +16,14 @@ export function createParticle(id: number, startNodeId: string, neighbors: strin
   const targetNodeId = neighbors[Math.floor(Math.random() * neighbors.length)]
   const maxSteps = Math.floor(Math.random() * (PARTICLE.maxSteps - PARTICLE.minSteps + 1)) + PARTICLE.minSteps
   // Vary speed multiplier to show non-linear agent behavior (Phase 7)
-  const speedMultiplier = 0.8 + Math.random() * 0.4
-  const pathType = pickPathType()
   const swarmSize = Math.random() < SWARM.chance
     ? SWARM.minSize + Math.floor(Math.random() * (SWARM.maxSize - SWARM.minSize + 1))
     : 0
+  // Swarms fly straight and dart faster; solo agents get varied paths and speeds
+  const speedMultiplier = swarmSize > 0
+    ? SWARM.speedMin + Math.random() * (SWARM.speedMax - SWARM.speedMin)
+    : 0.8 + Math.random() * 0.4
+  const pathType: PathType = swarmSize > 0 ? 'straight' : pickPathType()
 
   return {
     id,

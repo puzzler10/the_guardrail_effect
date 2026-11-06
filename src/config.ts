@@ -78,10 +78,14 @@ export const PARTICLE = {
 
 export const SWARM = {
   chance: 0.15,           // fraction of agents that travel as a swarm
-  minSize: 4,             // helper subagents per swarm
-  maxSize: 9,
-  radius: 22,             // max spread (px) of helpers around the lead agent
-  nodeTightness: 0.15,    // spread multiplier at nodes (swarm converges on tools)
+  minSize: 5,             // helper subagents per swarm
+  maxSize: 10,
+  length: 46,             // px: how far the swarm streams along its edge
+  width: 9,               // px: max sideways spread mid-edge
+  flit: 4,                // px: amplitude of each helper's darting jitter
+  nodeTightness: 0.2,     // spread multiplier at nodes (swarm converges on tools)
+  speedMin: 1.3,          // swarms dart between nodes faster than solo agents
+  speedMax: 1.7,
 }
 
 // ─── Node sizes (used for particle fade at boundaries) ───────────────────────

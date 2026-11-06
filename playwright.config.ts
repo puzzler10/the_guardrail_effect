@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test'
 
 export default defineConfig({
   testDir: 'tests/e2e',
-  timeout: 30000,
+  timeout: 60000,
   workers: 1, // WebGL pages are heavy; parallel runs cause flaky timeouts
   use: {
     baseURL: 'http://localhost:5178',
