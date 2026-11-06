@@ -74,6 +74,16 @@ export const PARTICLE = {
   baseSpeed: 0.0012,       // progress units per ms at 1x speed
 }
 
+// ─── Swarms: some agents travel with a cluster of helper subagents ───────────
+
+export const SWARM = {
+  chance: 0.15,           // fraction of agents that travel as a swarm
+  minSize: 4,             // helper subagents per swarm
+  maxSize: 9,
+  radius: 22,             // max spread (px) of helpers around the lead agent
+  nodeTightness: 0.15,    // spread multiplier at nodes (swarm converges on tools)
+}
+
 // ─── Node sizes (used for particle fade at boundaries) ───────────────────────
 
 export const NODE_SIZES: Record<string, number> = {

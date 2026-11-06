@@ -1,5 +1,5 @@
 import type { Particle, FailureTier, PathType } from '../types'
-import { PARTICLE, NODE_SIZES, PATH_TYPES } from '../config'
+import { PARTICLE, NODE_SIZES, PATH_TYPES, SWARM } from '../config'
 
 function pickPathType(): PathType {
   const r = Math.random() * 100
@@ -18,6 +18,9 @@ export function createParticle(id: number, startNodeId: string, neighbors: strin
   // Vary speed multiplier to show non-linear agent behavior (Phase 7)
   const speedMultiplier = 0.8 + Math.random() * 0.4
   const pathType = pickPathType()
+  const swarmSize = Math.random() < SWARM.chance
+    ? SWARM.minSize + Math.floor(Math.random() * (SWARM.maxSize - SWARM.minSize + 1))
+    : 0
 
   return {
     id,
@@ -29,6 +32,7 @@ export function createParticle(id: number, startNodeId: string, neighbors: strin
     maxSteps,
     speedMultiplier,
     pathType,
+    swarmSize,
     trail: []
   }
 }

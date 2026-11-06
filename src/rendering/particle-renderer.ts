@@ -2,6 +2,7 @@ import p5 from 'p5'
 import type { Particle, GraphNode } from '../types'
 import { COLORS_DARK, PARTICLE_VISUALS } from '../config'
 import { getParticlePosition } from '../simulation/particle'
+import { swarmMemberOffset } from '../simulation/swarm'
 
 // Golden angle (degrees) for hue distribution — ensures visually distinct colors for nearby IDs
 const GOLDEN_ANGLE_DEG = 137.508
@@ -95,8 +96,35 @@ export function drawParticles(p: p5, particles: Particle[], _nodes: GraphNode[],
     // 4. White-hot core
     p.fill(0, 0, 100, alpha255)
     p.ellipse(pos.x, pos.y, PARTICLE_VISUALS.coreSize)
+
+    // 5. Helper subagents swarming around the lead agent
+    if (particle.swarmSize) {
+      const last = trail.length >= 1 ? trail[trail.length - 1] : pos
+      drawSwarm(p, particle, pos.x, pos.y, pos.x - last.x, pos.y - last.y, hue, sat, bri, baseSize, pos.alpha)
+    }
   }
 
   // Restore RGB color mode so other renderers are unaffected
   p.colorMode(p.RGB, 255, 255, 255, 255)
+}
+
+function drawSwarm(
+  p: p5, particle: Particle, x: number, y: number, vx: number, vy: number,
+  hue: number, sat: number, bri: number, baseSize: number, alpha: number,
+): void {
+  const now = p.millis()
+  const size = baseSize * 0.55
+  for (let m = 0; m < (particle.swarmSize ?? 0); m++) {
+    const { dx, dy } = swarmMemberOffset(particle.id, m, particle.progress, now)
+    const mx = x + dx
+    const my = y + dy
+    const h = (hue + (m - particle.swarmSize! / 2) * 6 + 360) % 360
+    // short motion streak behind each helper
+    p.fill(h, sat, bri, 60 * alpha)
+    p.ellipse(mx - vx * 0.8, my - vy * 0.8, size * 0.8)
+    p.fill(h, sat, bri, PARTICLE_VISUALS.glowAlpha * 1.4 * alpha)
+    p.ellipse(mx, my, size * 2.6)
+    p.fill(h, sat * 0.5, bri, 230 * alpha)
+    p.ellipse(mx, my, size)
+  }
 }

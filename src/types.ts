@@ -39,6 +39,7 @@ export interface Particle {
   pathType: PathType
   failureTier?: FailureTier
   failureText?: string
+  swarmSize?: number  // helper subagents travelling with this agent (0 = solo)
 }
 
 // Simulation stats
