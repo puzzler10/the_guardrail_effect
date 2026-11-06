@@ -76,14 +76,6 @@ export function initHelp(): void {
   
   backdrop.appendChild(card);
   document.body.appendChild(backdrop);
-
-  // Floating help button — always visible
-  const helpBtn = document.createElement('button');
-  helpBtn.className = 'help-fab';
-  helpBtn.textContent = '?';
-  helpBtn.title = 'Help & keyboard shortcuts';
-  helpBtn.addEventListener('click', toggleHelp);
-  document.body.appendChild(helpBtn);
 }
 
 export function toggleHelp(): void {

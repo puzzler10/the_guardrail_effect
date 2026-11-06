@@ -133,12 +133,20 @@ test.describe('Agent Swarm E2E', () => {
     await page.waitForTimeout(1000);
 
     // Check canvas exists and has size
-    const canvas = page.locator('canvas');
+    const canvas = page.locator('canvas.p5Canvas');
     await expect(canvas).toBeVisible();
     
     const box = await canvas.boundingBox();
     expect(box).not.toBeNull();
     expect(box!.width).toBeGreaterThan(100);
     expect(box!.height).toBeGreaterThan(100);
+  });
+
+  test('has exactly one help button and a date line', async ({ page }) => {
+    await page.goto('/');
+    await dismissOverlays(page);
+    await expect(page.locator('button[aria-label="Help"]')).toHaveCount(1);
+    await expect(page.locator('.help-fab')).toHaveCount(0);
+    await expect(page.locator('.app-subtitle')).toHaveText(/march 2026/i);
   });
 });
